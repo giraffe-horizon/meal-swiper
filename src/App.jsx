@@ -24,11 +24,20 @@ function App() {
   const fetchMeals = async () => {
     try {
       const response = await fetch('/api/meals')
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`)
+      }
       const data = await response.json()
-      setMeals(data)
-      setLoading(false)
+      if (Array.isArray(data) && data.length > 0) {
+        setMeals(data)
+      } else {
+        console.warn('No meals returned from API')
+        setMeals([])
+      }
     } catch (error) {
       console.error('Error fetching meals:', error)
+      setMeals([])
+    } finally {
       setLoading(false)
     }
   }

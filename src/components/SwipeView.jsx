@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import TinderCard from 'react-tinder-card'
+import SwipeCard from './SwipeCard'
 
 const SwipeView = ({ meals, onSwipeRight }) => {
   const [currentIndex, setCurrentIndex] = useState(meals.length - 1)
@@ -89,56 +89,58 @@ const SwipeView = ({ meals, onSwipeRight }) => {
 
       <div className="relative w-full max-w-md h-[600px] mb-8">
         {meals.map((meal, index) => (
-          <TinderCard
-            key={meal.id}
-            ref={meal.ref}
-            className="absolute w-full"
-            onSwipe={(dir) => swiped(dir, meal, index)}
-            onCardLeftScreen={() => outOfFrame(meal.name, index)}
-            preventSwipe={['up', 'down']}
-          >
-            <div
-              className="relative bg-white rounded-2xl shadow-xl overflow-hidden"
-              style={{ height: '600px' }}
+          index >= currentIndex && (
+            <SwipeCard
+              key={meal.id}
+              onSwipe={(dir) => swiped(dir, meal, index)}
+              onCardLeftScreen={() => outOfFrame(meal.name, index)}
+              preventSwipe={['up', 'down']}
             >
-              <div className="h-2/3 overflow-hidden">
-                <img
-                  src={meal.photo}
-                  alt={meal.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800'
-                  }}
-                />
-              </div>
-              <div className="h-1/3 p-6 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">{meal.name}</h2>
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">{meal.description}</p>
-                </div>
-                <div className="flex gap-4 text-sm">
-                  <span className="flex items-center gap-1 text-gray-700">
-                    ⏱️ {meal.prepTime} min
-                  </span>
-                  <span className="flex items-center gap-1 text-gray-700">
-                    🔥 {meal.kcal} kcal
-                  </span>
-                </div>
-                {meal.tags && meal.tags.length > 0 && (
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {meal.tags.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+              <div className="absolute w-full">
+                <div
+                  className="relative bg-white rounded-2xl shadow-xl overflow-hidden"
+                  style={{ height: '600px' }}
+                >
+                  <div className="h-2/3 overflow-hidden">
+                    <img
+                      src={meal.photo}
+                      alt={meal.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800'
+                      }}
+                    />
                   </div>
-                )}
+                  <div className="h-1/3 p-6 flex flex-col justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-800 mb-2">{meal.name}</h2>
+                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{meal.description}</p>
+                    </div>
+                    <div className="flex gap-4 text-sm">
+                      <span className="flex items-center gap-1 text-gray-700">
+                        ⏱️ {meal.prepTime} min
+                      </span>
+                      <span className="flex items-center gap-1 text-gray-700">
+                        🔥 {meal.kcal} kcal
+                      </span>
+                    </div>
+                    {meal.tags && meal.tags.length > 0 && (
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        {meal.tags.map((tag, i) => (
+                          <span
+                            key={i}
+                            className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </TinderCard>
+            </SwipeCard>
+          )
         ))}
       </div>
 
