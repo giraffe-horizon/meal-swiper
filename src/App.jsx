@@ -1,21 +1,28 @@
 import { useState, useEffect } from 'react'
+import CalendarView from './components/CalendarView'
 import SwipeView from './components/SwipeView'
-import WeeklyPlanView from './components/WeeklyPlanView'
 import ShoppingListView from './components/ShoppingListView'
+import BottomNav from './components/BottomNav'
 
 function App() {
-  const [currentView, setCurrentView] = useState('swipe')
+  const [currentView, setCurrentView] = useState('plan')
   const [meals, setMeals] = useState([])
   const [weeklyPlan, setWeeklyPlan] = useState({
     mon: null,
     tue: null,
     wed: null,
     thu: null,
-    fri: null
+    fri: null,
+    mon_free: false,
+    tue_free: false,
+    wed_free: false,
+    thu_free: false,
+    fri_free: false,
   })
   const [loading, setLoading] = useState(true)
+  const [currentSwipeDay, setCurrentSwipeDay] = useState(null)
+  const [weekOffset, setWeekOffset] = useState(0)
 
-  // Load meals from API on mount
   useEffect(() => {
     fetchMeals()
     loadWeeklyPlanFromLocalStorage()
@@ -53,107 +60,108 @@ function App() {
     localStorage.setItem('weeklyPlan', JSON.stringify(plan))
   }
 
-  const addMealToWeek = (meal) => {
-    // Find first empty slot
-    const days = ['mon', 'tue', 'wed', 'thu', 'fri']
-    for (const day of days) {
-      if (!weeklyPlan[day]) {
-        const newPlan = { ...weeklyPlan, [day]: meal }
-        setWeeklyPlan(newPlan)
-        saveWeeklyPlanToLocalStorage(newPlan)
-        return
-      }
-    }
-    // If all slots are full, replace the first one
-    const newPlan = { ...weeklyPlan, mon: meal }
-    setWeeklyPlan(newPlan)
-    saveWeeklyPlanToLocalStorage(newPlan)
+  const handleDayClick = (day) => {
+    if (weeklyPlan[`${day}_free`]) return
+    setCurrentSwipeDay(day)
+    setCurrentView('swipe')
   }
 
-  const removeMealFromDay = (day) => {
+  const handleSwipeRight = (meal) => {
+    if (currentSwipeDay) {
+      const newPlan = { ...weeklyPlan, [currentSwipeDay]: meal }
+      setWeeklyPlan(newPlan)
+      saveWeeklyPlanToLocalStorage(newPlan)
+
+      const days = ['mon', 'tue', 'wed', 'thu', 'fri']
+      const nextEmptyDay = days.find(d => !newPlan[d] && !newPlan[`${d}_free`])
+
+      if (nextEmptyDay) {
+        setCurrentSwipeDay(nextEmptyDay)
+      } else {
+        setTimeout(() => {
+          setCurrentView('plan')
+          setCurrentSwipeDay(null)
+        }, 1500)
+      }
+    } else {
+      const days = ['mon', 'tue', 'wed', 'thu', 'fri']
+      const firstEmptyDay = days.find(d => !weeklyPlan[d] && !weeklyPlan[`${d}_free`])
+
+      if (firstEmptyDay) {
+        const newPlan = { ...weeklyPlan, [firstEmptyDay]: meal }
+        setWeeklyPlan(newPlan)
+        saveWeeklyPlanToLocalStorage(newPlan)
+      }
+    }
+  }
+
+  const handleRemoveMeal = (day) => {
     const newPlan = { ...weeklyPlan, [day]: null }
     setWeeklyPlan(newPlan)
     saveWeeklyPlanToLocalStorage(newPlan)
   }
 
-  const saveWeeklyPlanToNotion = async () => {
-    // Get current week (Monday)
-    const today = new Date()
-    const monday = new Date(today)
-    const dayOfWeek = today.getDay()
-    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
-    monday.setDate(today.getDate() + diff)
-    const weekId = monday.toISOString().split('T')[0]
-
-    try {
-      await fetch('/api/weekly', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          week: weekId,
-          meals: weeklyPlan
-        })
-      })
-      alert('Plan zapisany w Notion! ✅')
-    } catch (error) {
-      console.error('Error saving plan:', error)
-      alert('Błąd podczas zapisywania planu')
+  const handleToggleVacation = (day) => {
+    const key = `${day}_free`
+    const newPlan = { ...weeklyPlan, [key]: !weeklyPlan[key] }
+    if (newPlan[key]) {
+      newPlan[day] = null
     }
+    setWeeklyPlan(newPlan)
+    saveWeeklyPlanToLocalStorage(newPlan)
+  }
+
+  const handleGenerateShoppingList = () => {
+    setCurrentView('shopping')
+  }
+
+  const handleSwipeComplete = () => {
+    setCurrentView('plan')
+    setCurrentSwipeDay(null)
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="text-2xl text-gray-600">Ładowanie...</div>
+      <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
+        <div className="text-center">
+          <span className="material-symbols-outlined text-primary text-6xl mb-4 block animate-spin">restaurant</span>
+          <div className="text-xl text-slate-600 dark:text-slate-400">Ładowanie...</div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-cream pb-20">
-      {currentView === 'swipe' && (
-        <SwipeView meals={meals} onSwipeRight={addMealToWeek} />
-      )}
-      {currentView === 'plan' && (
-        <WeeklyPlanView
-          weeklyPlan={weeklyPlan}
-          onRemoveMeal={removeMealFromDay}
-          onSave={saveWeeklyPlanToNotion}
-        />
-      )}
-      {currentView === 'shopping' && (
-        <ShoppingListView weeklyPlan={weeklyPlan} />
-      )}
+    <div className="min-h-screen bg-background-light dark:bg-background-dark flex justify-center">
+      <div className="w-full max-w-[400px] relative shadow-xl">
+        {currentView === 'plan' && (
+          <CalendarView
+            weeklyPlan={weeklyPlan}
+            onDayClick={handleDayClick}
+            onRemoveMeal={handleRemoveMeal}
+            onToggleVacation={handleToggleVacation}
+            onGenerateShoppingList={handleGenerateShoppingList}
+          />
+        )}
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 shadow-lg">
-        <button
-          onClick={() => setCurrentView('swipe')}
-          className={`flex flex-col items-center justify-center flex-1 h-full ${
-            currentView === 'swipe' ? 'text-green-accent' : 'text-gray-500'
-          }`}
-        >
-          <span className="text-2xl">🍽️</span>
-          <span className="text-xs mt-1">Propozycje</span>
-        </button>
-        <button
-          onClick={() => setCurrentView('plan')}
-          className={`flex flex-col items-center justify-center flex-1 h-full ${
-            currentView === 'plan' ? 'text-green-accent' : 'text-gray-500'
-          }`}
-        >
-          <span className="text-2xl">📅</span>
-          <span className="text-xs mt-1">Plan</span>
-        </button>
-        <button
-          onClick={() => setCurrentView('shopping')}
-          className={`flex flex-col items-center justify-center flex-1 h-full ${
-            currentView === 'shopping' ? 'text-green-accent' : 'text-gray-500'
-          }`}
-        >
-          <span className="text-2xl">🛒</span>
-          <span className="text-xs mt-1">Lista</span>
-        </button>
+        {currentView === 'swipe' && (
+          <SwipeView
+            meals={meals}
+            onSwipeRight={handleSwipeRight}
+            currentDay={currentSwipeDay}
+            onComplete={handleSwipeComplete}
+          />
+        )}
+
+        {currentView === 'shopping' && (
+          <ShoppingListView
+            weeklyPlan={weeklyPlan}
+            weekOffset={weekOffset}
+            onWeekChange={setWeekOffset}
+          />
+        )}
+
+        <BottomNav currentView={currentView} onNavigate={setCurrentView} />
       </div>
     </div>
   )

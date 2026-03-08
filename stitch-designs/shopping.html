@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Meal Swiper - Lista zakupów</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#207951",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#131f1a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2a23",
+                        "text-primary-light": "#101915",
+                        "text-primary-dark": "#e9f1ee",
+                        "text-secondary-light": "#588d75",
+                        "text-secondary-dark": "#8ebda6",
+                        "border-light": "#d3e4dc",
+                        "border-dark": "#2a4237"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-primary-light dark:text-text-primary-dark overflow-x-hidden min-h-screen flex flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
+<h2 class="text-lg font-bold flex-1 text-center">Lista zakupów</h2>
+</header>
+<!-- Week Navigation -->
+<div class="flex items-center justify-between px-4 py-3 bg-surface-light dark:bg-surface-dark shadow-sm">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<span class="font-semibold text-text-primary-light dark:text-text-primary-dark">10 - 14 mar 2026</span>
+<button class="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Main Content -->
+<main class="flex-1 p-4 pb-24 space-y-6 overflow-y-auto">
+<!-- Category: Mięso -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<h3 class="text-lg font-bold px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-border-light dark:border-border-dark">🥩 Mięso</h3>
+<div class="divide-y divide-border-light dark:divide-border-dark">
+<!-- Unchecked item -->
+<label class="flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
+<div class="flex size-6 items-center justify-center shrink-0">
+<input class="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors" type="checkbox"/>
+</div>
+<span class="text-base font-medium flex-1 truncate">Pierś z kurczaka</span>
+<span class="text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0">500g</span>
+</label>
+</div>
+</section>
+<!-- Category: Warzywa -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<h3 class="text-lg font-bold px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-border-light dark:border-border-dark">🥦 Warzywa</h3>
+<div class="divide-y divide-border-light dark:divide-border-dark">
+<!-- Checked item -->
+<label class="flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors opacity-60">
+<div class="flex size-6 items-center justify-center shrink-0">
+<input checked="" class="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors" type="checkbox"/>
+</div>
+<span class="text-base font-medium flex-1 truncate line-through">Pomidory</span>
+<span class="text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0 line-through">3 szt.</span>
+</label>
+<!-- Unchecked item -->
+<label class="flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
+<div class="flex size-6 items-center justify-center shrink-0">
+<input class="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors" type="checkbox"/>
+</div>
+<span class="text-base font-medium flex-1 truncate">Papryka czerwona</span>
+<span class="text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0">2 szt.</span>
+</label>
+</div>
+</section>
+<!-- Category: Nabiał -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<h3 class="text-lg font-bold px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-border-light dark:border-border-dark">🥛 Nabiał</h3>
+<div class="divide-y divide-border-light dark:divide-border-dark">
+<!-- Unchecked item -->
+<label class="flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
+<div class="flex size-6 items-center justify-center shrink-0">
+<input class="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors" type="checkbox"/>
+</div>
+<span class="text-base font-medium flex-1 truncate">Mleko 2%</span>
+<span class="text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0">1l</span>
+</label>
+</div>
+</section>
+<!-- Category: Suche i inne -->
+<section class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<h3 class="text-lg font-bold px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-border-light dark:border-border-dark">🌾 Suche i inne</h3>
+<div class="divide-y divide-border-light dark:divide-border-dark">
+<!-- Checked item -->
+<label class="flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors opacity-60">
+<div class="flex size-6 items-center justify-center shrink-0">
+<input checked="" class="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors" type="checkbox"/>
+</div>
+<span class="text-base font-medium flex-1 truncate line-through">Makaron penne</span>
+<span class="text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0 line-through">500g</span>
+</label>
+</div>
+</section>
+<!-- Reset Button -->
+<div class="pt-4 pb-8 flex justify-center">
+<button class="px-6 py-2.5 rounded-full border border-border-light dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">refresh</span>
+                Resetuj listę
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark px-4 pb-safe pt-2 flex justify-between z-20 pb-4">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors py-1" href="#">
+<span class="material-symbols-outlined text-2xl">calendar_month</span>
+<span class="text-[10px] font-medium tracking-wide">Plan</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors py-1" href="#">
+<span class="material-symbols-outlined text-2xl">lightbulb</span>
+<span class="text-[10px] font-medium tracking-wide">Propozycje</span>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary transition-colors py-1 relative" href="#">
+<div class="absolute -top-1 w-12 h-1 bg-primary rounded-full"></div>
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">list_alt</span>
+<span class="text-[10px] font-bold tracking-wide">Lista</span>
+</a>
+</nav>
+</body></html>

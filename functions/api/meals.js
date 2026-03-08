@@ -38,17 +38,15 @@ export async function onRequest(context) {
       const props = page.properties
       return {
         id: page.id,
-        name: props.Name?.title?.[0]?.plain_text || 'Bez nazwy',
-        description: props.Opis?.rich_text?.[0]?.plain_text || '',
-        photo: props.Zdjecie?.url || '',
-        prepTime: props.Czas_przygotowania?.number || 0,
-        kcalBase: props.Kcal_baza?.number || 0,
-        kcalMeat: props.Kcal_z_miesem?.number || 0,
-        kcal: props.Kcal_z_miesem?.number || props.Kcal_baza?.number || 0, // Default to meat version
-        ingredientsBase: props.Skladniki_baza?.rich_text?.[0]?.plain_text || '[]',
-        ingredientsMeat: props.Skladniki_mieso?.rich_text?.[0]?.plain_text || '[]',
-        tags: props.Tagi?.multi_select?.map(t => t.name) || [],
-        vegetarian: props.Wegetarianskie?.checkbox || false
+        nazwa: props.Name?.title?.[0]?.plain_text || 'Bez nazwy',
+        opis: props.Opis?.rich_text?.[0]?.plain_text || '',
+        photo_url: props.Zdjecie?.url || '',
+        prep_time: props.Czas_przygotowania?.number || 0,
+        kcal_baza: props.Kcal_baza?.number || 0,
+        kcal_z_miesem: props.Kcal_z_miesem?.number || 0,
+        skladniki_baza: props.Skladniki_baza?.rich_text?.[0]?.plain_text || '[]',
+        skladniki_mieso: props.Skladniki_mieso?.rich_text?.[0]?.plain_text || '[]',
+        tags: props.Tagi?.multi_select?.map(t => t.name) || []
       }
     })
 

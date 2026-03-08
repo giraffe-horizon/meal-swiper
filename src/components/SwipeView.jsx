@@ -1,165 +1,221 @@
-import { useState, useEffect, useRef } from 'react'
-import SwipeCard from './SwipeCard'
+import { useState, useRef, useEffect } from 'react'
 
-const SwipeView = ({ meals, onSwipeRight }) => {
-  const [currentIndex, setCurrentIndex] = useState(meals.length - 1)
-  const [lastDirection, setLastDirection] = useState()
-  const currentIndexRef = useRef(currentIndex)
+const SwipeView = ({ meals, onSwipeRight, currentDay, onComplete }) => {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const dragStartPos = useRef({ x: 0, y: 0 })
+  const cardRef = useRef(null)
 
-  useEffect(() => {
-    currentIndexRef.current = currentIndex
-  }, [currentIndex])
+  const currentMeal = meals[currentIndex]
 
-  const canSwipe = currentIndex >= 0
-
-  const swiped = (direction, meal, index) => {
-    setLastDirection(direction)
-    if (direction === 'right') {
-      onSwipeRight(meal)
-    }
-    updateCurrentIndex(index - 1)
+  const handleDragStart = (clientX, clientY) => {
+    setIsDragging(true)
+    dragStartPos.current = { x: clientX, y: clientY }
   }
 
-  const outOfFrame = (name, idx) => {
-    console.log(`${name} (${idx}) left the screen!`)
+  const handleDragMove = (clientX, clientY) => {
+    if (!isDragging) return
+    const deltaX = clientX - dragStartPos.current.x
+    const deltaY = clientY - dragStartPos.current.y
+    setDragOffset({ x: deltaX, y: deltaY })
   }
 
-  const updateCurrentIndex = (val) => {
-    setCurrentIndex(val)
-    currentIndexRef.current = val
-  }
+  const handleDragEnd = () => {
+    if (!isDragging) return
+    setIsDragging(false)
 
-  const swipe = async (dir) => {
-    if (canSwipe && currentIndex < meals.length) {
-      const meal = meals[currentIndex]
-      if (dir === 'right') {
-        onSwipeRight(meal)
+    const threshold = 120
+    if (Math.abs(dragOffset.x) > threshold) {
+      if (dragOffset.x > 0) {
+        handleSwipeRight()
+      } else {
+        handleSwipeLeft()
       }
-      setLastDirection(dir)
-      updateCurrentIndex(currentIndex - 1)
+    } else {
+      setDragOffset({ x: 0, y: 0 })
     }
   }
 
-  // Keyboard controls
+  const handleSwipeRight = () => {
+    setDragOffset({ x: 1000, y: 0 })
+    setTimeout(() => {
+      onSwipeRight(currentMeal)
+      nextCard()
+    }, 300)
+  }
+
+  const handleSwipeLeft = () => {
+    setDragOffset({ x: -1000, y: 0 })
+    setTimeout(() => {
+      nextCard()
+    }, 300)
+  }
+
+  const nextCard = () => {
+    if (currentIndex >= meals.length - 1) {
+      setShowSuccess(true)
+      setTimeout(() => {
+        onComplete?.()
+      }, 2000)
+    } else {
+      setCurrentIndex(prev => prev + 1)
+      setDragOffset({ x: 0, y: 0 })
+    }
+  }
+
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') {
-        swipe('left')
-      } else if (e.key === 'ArrowRight') {
-        swipe('right')
-      }
+      if (e.key === 'ArrowLeft') handleSwipeLeft()
+      if (e.key === 'ArrowRight') handleSwipeRight()
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentIndex])
+  }, [currentIndex, currentMeal])
 
-  if (meals.length === 0) {
+  const rotation = isDragging ? dragOffset.x / 20 : 0
+  const opacity = Math.abs(dragOffset.x) / 120
+
+  const dayNames = {
+    mon: 'Poniedziałek',
+    tue: 'Wtorek',
+    wed: 'Środa',
+    thu: 'Czwartek',
+    fri: 'Piątek'
+  }
+
+  if (showSuccess) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <div className="text-4xl mb-4">🍽️</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Brak przepisów</h2>
-        <p className="text-gray-600 text-center">
-          Dodaj przepisy do bazy danych Notion, aby zacząć planowanie.
-        </p>
+      <div className="flex-1 flex items-center justify-center bg-background-light dark:bg-background-dark">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Tydzień gotowy!</h2>
+        </div>
       </div>
     )
   }
 
-  if (!canSwipe) {
+  if (!currentMeal) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Koniec propozycji</h2>
-        <p className="text-gray-600 text-center mb-6">
-          Przejrzyłeś wszystkie dostępne przepisy!
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="bg-green-accent text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition"
-        >
-          Zacznij od nowa
-        </button>
+      <div className="flex-1 flex items-center justify-center bg-background-light dark:bg-background-dark">
+        <div className="text-center text-slate-500">
+          <p className="text-lg">Brak więcej posiłków</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      {/* Card container - takes up remaining space above bottom controls */}
-      <div className="flex-1 relative overflow-hidden">
-        {meals.map((meal, index) => (
-          index >= currentIndex && (
-            <SwipeCard
-              key={meal.id}
-              onSwipe={(dir) => swiped(dir, meal, index)}
-              onCardLeftScreen={() => outOfFrame(meal.name, index)}
-            >
-              <div className="absolute inset-0 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-                {/* Image - 70% of card height */}
-                <div className="h-[70%] overflow-hidden">
-                  <img
-                    src={meal.photo}
-                    alt={meal.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800'
-                    }}
-                  />
-                </div>
+    <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+      {/* Header */}
+      <header className="flex items-center justify-between p-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10">
+        <div className="flex size-10 items-center justify-center text-primary">
+          <span className="material-symbols-outlined text-2xl">restaurant_menu</span>
+        </div>
+        <h1 className="text-xl font-bold text-center flex-1 text-slate-900 dark:text-slate-100">Meal Swiper</h1>
+        <button className="flex size-10 items-center justify-center text-slate-700 dark:text-slate-300">
+          <span className="material-symbols-outlined text-2xl">tune</span>
+        </button>
+      </header>
 
-                {/* Content - 30% of card height */}
-                <div className="h-[30%] p-6 flex flex-col justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">{meal.name}</h2>
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{meal.description}</p>
-                  </div>
-                  <div className="flex gap-4 text-sm">
-                    <span className="flex items-center gap-1 text-gray-700">
-                      ⏱️ {meal.prepTime} min
-                    </span>
-                    <span className="flex items-center gap-1 text-gray-700">
-                      🔥 {meal.kcal} kcal
-                    </span>
-                  </div>
-                  {meal.tags && meal.tags.length > 0 && (
-                    <div className="flex gap-2 mt-2 flex-wrap">
-                      {meal.tags.map((tag, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+      {/* Date Pill */}
+      <div className="px-4 pb-2 flex justify-center z-10">
+        <div className="bg-primary/10 dark:bg-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium">
+          📅 {currentDay ? dayNames[currentDay] : 'Wybierz posiłek'}
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col justify-center px-4 pb-6 relative overflow-hidden">
+        {/* The Card */}
+        <div
+          ref={cardRef}
+          onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
+          onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
+          onMouseUp={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+          onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
+          onTouchMove={(e) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY)}
+          onTouchEnd={handleDragEnd}
+          className="relative bg-white dark:bg-slate-800 rounded-3xl shadow-lg flex flex-col h-[70vh] w-full overflow-hidden shrink-0 cursor-grab active:cursor-grabbing select-none touch-none"
+          style={{
+            transform: `translateX(${dragOffset.x}px) translateY(${dragOffset.y}px) rotate(${rotation}deg)`,
+            transition: isDragging ? 'none' : 'transform 0.3s ease-out'
+          }}
+        >
+          {/* Image Area */}
+          <div className="relative h-[60%] w-full bg-slate-200 dark:bg-slate-700">
+            <img
+              alt={currentMeal.nazwa}
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+              src={currentMeal.photo_url}
+              draggable="false"
+            />
+            {/* Overlays */}
+            <div
+              className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded border-2 border-red-500 font-bold text-xl rotate-[-15deg] transition-opacity"
+              style={{ opacity: dragOffset.x < 0 ? opacity : 0 }}
+            >
+              NOPE
+            </div>
+            <div
+              className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded border-2 border-green-500 font-bold text-xl rotate-[15deg] transition-opacity"
+              style={{ opacity: dragOffset.x > 0 ? opacity : 0 }}
+            >
+              LIKE
+            </div>
+          </div>
+
+          {/* Content Area */}
+          <div className="flex-1 p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-start mb-2">
+                <h2 className="text-2xl font-bold leading-tight text-slate-900 dark:text-slate-100">{currentMeal.nazwa}</h2>
+                <div className="bg-primary/10 dark:bg-primary/20 text-primary rounded-full px-2 py-1 text-xs font-bold whitespace-nowrap">
+                  {currentIndex + 1}/{meals.length}
                 </div>
               </div>
-            </SwipeCard>
-          )
-        ))}
-      </div>
+              <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">{currentMeal.opis}</p>
+            </div>
+            <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300 font-medium text-sm">
+              <div className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-[18px]">schedule</span>
+                <span>{currentMeal.prep_time} min</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
+                <span>{currentMeal.kcal_baza} kcal</span>
+              </div>
+              <div className="flex items-center gap-1 ml-auto">
+                <span className="material-symbols-outlined text-[18px]">restaurant</span>
+                <span>Główne</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {/* Bottom controls */}
-      <div className="flex flex-col items-center pb-8 pt-4 px-4 bg-gradient-to-t from-white to-transparent">
-        <div className="flex gap-6 mb-3">
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-6 mt-6 shrink-0">
           <button
-            onClick={() => swipe('left')}
-            className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center text-3xl hover:scale-110 transition transform text-red-500 border-2 border-red-200"
+            onClick={handleSwipeLeft}
+            className="w-16 h-16 bg-white dark:bg-slate-800 rounded-full shadow-md flex items-center justify-center text-red-500 border border-slate-100 dark:border-slate-700 transition-transform active:scale-90"
           >
-            ✗
+            <span className="material-symbols-outlined text-3xl font-bold">close</span>
           </button>
           <button
-            onClick={() => swipe('right')}
-            className="w-16 h-16 rounded-full bg-green-accent shadow-lg flex items-center justify-center text-3xl hover:scale-110 transition transform text-white"
+            onClick={handleSwipeRight}
+            className="w-16 h-16 bg-primary rounded-full shadow-md flex items-center justify-center text-white transition-transform active:scale-90 shadow-primary/30"
           >
-            ✓
+            <span className="material-symbols-outlined text-3xl font-bold">favorite</span>
           </button>
         </div>
-        <p className="text-gray-500 text-xs">
-          Użyj klawiszy ← → lub przyciski powyżej
+
+        {/* Hint */}
+        <p className="text-center text-slate-400 dark:text-slate-500 text-xs mt-4">
+          użyj klawiszy strzałek lub przeciągnij kartę
         </p>
-      </div>
+      </main>
     </div>
   )
 }

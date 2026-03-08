@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react'
 
-const ShoppingListView = ({ weeklyPlan }) => {
+const ShoppingListView = ({ weeklyPlan, weekOffset, onWeekChange }) => {
   const [checkedItems, setCheckedItems] = useState({})
   const [shoppingList, setShoppingList] = useState({})
+
+  const getWeekKey = () => {
+    const today = new Date()
+    const monday = new Date(today)
+    const dayOfWeek = today.getDay()
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+    monday.setDate(today.getDate() + diff + (weekOffset * 7))
+    return monday.toISOString().split('T')[0]
+  }
 
   useEffect(() => {
     generateShoppingList()
@@ -10,9 +19,12 @@ const ShoppingListView = ({ weeklyPlan }) => {
   }, [weeklyPlan])
 
   const loadCheckedItems = () => {
-    const saved = localStorage.getItem('checkedItems')
+    const weekKey = getWeekKey()
+    const saved = localStorage.getItem(`checkedItems_${weekKey}`)
     if (saved) {
       setCheckedItems(JSON.parse(saved))
+    } else {
+      setCheckedItems({})
     }
   }
 
@@ -24,39 +36,42 @@ const ShoppingListView = ({ weeklyPlan }) => {
       suche: []
     }
 
-    // Aggregate ingredients from all meals in the weekly plan
     Object.values(weeklyPlan).forEach(meal => {
-      if (!meal) return
+      if (!meal || typeof meal !== 'object' || !meal.skladniki_baza) return
 
-      // Parse base ingredients
-      if (meal.ingredientsBase) {
-        const baseIngredients = typeof meal.ingredientsBase === 'string'
-          ? JSON.parse(meal.ingredientsBase)
-          : meal.ingredientsBase
+      try {
+        const baseIngredients = typeof meal.skladniki_baza === 'string'
+          ? JSON.parse(meal.skladniki_baza)
+          : meal.skladniki_baza
 
-        baseIngredients.forEach(ing => {
-          const category = ing.category || 'suche'
-          const existing = list[category].find(item => item.name === ing.name)
-          if (existing) {
-            // If ingredient already exists, we could sum amounts here
-            // For now, just list separately
-            list[category].push(ing)
-          } else {
-            list[category].push(ing)
-          }
-        })
+        if (Array.isArray(baseIngredients)) {
+          baseIngredients.forEach(ing => {
+            const category = (ing.category || 'suche').toLowerCase()
+            if (list[category]) {
+              list[category].push(ing)
+            } else {
+              list.suche.push(ing)
+            }
+          })
+        }
+      } catch (e) {
+        console.error('Error parsing base ingredients:', e)
       }
 
-      // Parse meat ingredients (for Łukasz)
-      if (meal.ingredientsMeat) {
-        const meatIngredients = typeof meal.ingredientsMeat === 'string'
-          ? JSON.parse(meal.ingredientsMeat)
-          : meal.ingredientsMeat
+      if (meal.skladniki_mieso) {
+        try {
+          const meatIngredients = typeof meal.skladniki_mieso === 'string'
+            ? JSON.parse(meal.skladniki_mieso)
+            : meal.skladniki_mieso
 
-        meatIngredients.forEach(ing => {
-          const category = ing.category || 'mięso'
-          list[category].push(ing)
-        })
+          if (Array.isArray(meatIngredients)) {
+            meatIngredients.forEach(ing => {
+              list.mięso.push(ing)
+            })
+          }
+        } catch (e) {
+          console.error('Error parsing meat ingredients:', e)
+        }
       }
     })
 
@@ -67,92 +82,144 @@ const ShoppingListView = ({ weeklyPlan }) => {
     const key = `${category}-${index}`
     const newChecked = { ...checkedItems, [key]: !checkedItems[key] }
     setCheckedItems(newChecked)
-    localStorage.setItem('checkedItems', JSON.stringify(newChecked))
+    const weekKey = getWeekKey()
+    localStorage.setItem(`checkedItems_${weekKey}`, JSON.stringify(newChecked))
   }
 
-  const clearCheckedItems = () => {
-    setCheckedItems({})
-    localStorage.removeItem('checkedItems')
+  const resetList = () => {
+    if (window.confirm('Czy na pewno chcesz zresetować listę?')) {
+      setCheckedItems({})
+      const weekKey = getWeekKey()
+      localStorage.removeItem(`checkedItems_${weekKey}`)
+    }
+  }
+
+  const formatWeekRange = () => {
+    const today = new Date()
+    const monday = new Date(today)
+    const dayOfWeek = today.getDay()
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+    monday.setDate(today.getDate() + diff + (weekOffset * 7))
+
+    const friday = new Date(monday)
+    friday.setDate(monday.getDate() + 4)
+
+    const monthNames = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru']
+
+    if (monday.getMonth() === friday.getMonth()) {
+      return `${monday.getDate()} - ${friday.getDate()} ${monthNames[friday.getMonth()]}`
+    }
+    return `${monday.getDate()} ${monthNames[monday.getMonth()]} - ${friday.getDate()} ${monthNames[friday.getMonth()]}`
   }
 
   const categories = [
     { key: 'mięso', label: '🥩 Mięso', emoji: '🥩' },
-    { key: 'warzywa', label: '🥬 Warzywa i owoce', emoji: '🥬' },
+    { key: 'warzywa', label: '🥦 Warzywa', emoji: '🥦' },
     { key: 'nabiał', label: '🥛 Nabiał', emoji: '🥛' },
-    { key: 'suche', label: '🌾 Produkty suche', emoji: '🌾' }
+    { key: 'suche', label: '🌾 Suche i inne', emoji: '🌾' }
   ]
 
   const hasAnyItems = Object.values(shoppingList).some(items => items.length > 0)
 
-  if (!hasAnyItems) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <div className="text-6xl mb-4">🛒</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Brak listy zakupów</h2>
-        <p className="text-gray-600 text-center">
-          Zaplanuj posiłki na tydzień, aby wygenerować listę zakupów.
-        </p>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen px-4 py-8 pb-24">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">Lista zakupów</h1>
-        <p className="text-gray-600 text-center mb-6">
-          Zaznacz produkty podczas robienia zakupów
-        </p>
+    <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark">
+      {/* Header */}
+      <header className="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
+        <h2 className="text-lg font-bold flex-1 text-center text-text-primary-light dark:text-text-primary-dark">Lista zakupów</h2>
+      </header>
 
-        <div className="mb-4 text-right">
-          <button
-            onClick={clearCheckedItems}
-            className="text-sm text-gray-500 hover:text-gray-700 underline"
-          >
-            Wyczyść zaznaczenia
-          </button>
-        </div>
-
-        <div className="space-y-6">
-          {categories.map(({ key, label }) => {
-            const items = shoppingList[key] || []
-            if (items.length === 0) return null
-
-            return (
-              <div key={key} className="bg-white rounded-xl shadow-md overflow-hidden">
-                <div className="bg-green-50 px-4 py-3 border-b border-green-100">
-                  <h3 className="text-lg font-semibold text-gray-800">{label}</h3>
-                </div>
-                <div className="p-4 space-y-2">
-                  {items.map((item, index) => {
-                    const itemKey = `${key}-${index}`
-                    const isChecked = checkedItems[itemKey] || false
-                    return (
-                      <label
-                        key={index}
-                        className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => toggleItem(key, index)}
-                          className="w-5 h-5 text-green-accent rounded border-gray-300 focus:ring-green-accent"
-                        />
-                        <span className={`flex-1 ${isChecked ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                          {item.name}
-                        </span>
-                        <span className={`text-sm ${isChecked ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {item.amount}
-                        </span>
-                      </label>
-                    )
-                  })}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+      {/* Week Navigation */}
+      <div className="flex items-center justify-between px-4 py-3 bg-surface-light dark:bg-surface-dark shadow-sm">
+        <button
+          onClick={() => onWeekChange?.(weekOffset - 1)}
+          className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
+        >
+          <span className="material-symbols-outlined">chevron_left</span>
+        </button>
+        <span className="font-semibold text-text-primary-light dark:text-text-primary-dark">{formatWeekRange()}</span>
+        <button
+          onClick={() => onWeekChange?.(weekOffset + 1)}
+          className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
+        >
+          <span className="material-symbols-outlined">chevron_right</span>
+        </button>
       </div>
+
+      {/* Main Content */}
+      <main className="flex-1 p-4 pb-24 space-y-6 overflow-y-auto">
+        {!hasAnyItems ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="text-6xl mb-4">🛒</div>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Brak listy zakupów</h2>
+            <p className="text-slate-600 dark:text-slate-400 text-center">
+              Zaplanuj posiłki na tydzień, aby wygenerować listę.
+            </p>
+          </div>
+        ) : (
+          <>
+            {categories.map(({ key, label }) => {
+              const items = shoppingList[key] || []
+              if (items.length === 0) return null
+
+              return (
+                <section
+                  key={key}
+                  className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark"
+                >
+                  <h3 className="text-lg font-bold px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark">
+                    {label}
+                  </h3>
+                  <div className="divide-y divide-border-light dark:divide-border-dark">
+                    {items.map((item, index) => {
+                      const itemKey = `${key}-${index}`
+                      const isChecked = checkedItems[itemKey] || false
+
+                      return (
+                        <label
+                          key={index}
+                          className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
+                            isChecked ? 'opacity-60' : ''
+                          }`}
+                        >
+                          <div className="flex size-6 items-center justify-center shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => toggleItem(key, index)}
+                              className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
+                            />
+                          </div>
+                          <span className={`text-base font-medium flex-1 truncate text-text-primary-light dark:text-text-primary-dark ${
+                            isChecked ? 'line-through' : ''
+                          }`}>
+                            {item.name}
+                          </span>
+                          <span className={`text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0 ${
+                            isChecked ? 'line-through' : ''
+                          }`}>
+                            {item.amount}
+                          </span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </section>
+              )
+            })}
+
+            {/* Reset Button */}
+            <div className="pt-4 pb-8 flex justify-center">
+              <button
+                onClick={resetList}
+                className="px-6 py-2.5 rounded-full border border-border-light dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">refresh</span>
+                Resetuj listę
+              </button>
+            </div>
+          </>
+        )}
+      </main>
     </div>
   )
 }

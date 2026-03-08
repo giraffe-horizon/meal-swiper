@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Meal Swiper Weekly Planner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#2D6A4F",
+          "background-light": "#FAFAF8",
+          "background-dark": "#151d19",
+        },
+        fontFamily: {
+          "display": ["Plus Jakarta Sans", "sans-serif"]
+        },
+        borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 flex justify-center w-full min-h-screen">
+<div class="relative flex h-full min-h-screen w-full max-w-[400px] flex-col bg-background-light dark:bg-background-dark overflow-x-hidden pb-24 shadow-xl">
+<!-- Header -->
+<div class="flex items-center px-4 pt-6 pb-2 justify-between sticky top-0 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">restaurant</span>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Meal Swiper</h1>
+</div>
+<div class="flex items-center">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300">search</span>
+</button>
+</div>
+</div>
+<!-- Week Navigation -->
+<div class="flex items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 mx-4 rounded-xl shadow-sm mb-6 mt-2">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">chevron_left</span>
+</button>
+<p class="text-base font-bold text-slate-800 dark:text-slate-200">14 - 20 Października</p>
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">chevron_right</span>
+</button>
+</div>
+<!-- Main Content - Daily Cards -->
+<div class="flex flex-col gap-4 px-4 flex-1">
+<!-- Monday (Filled) -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-4">
+<div class="h-14 w-14 rounded-full bg-cover bg-center shadow-sm" data-alt="Talerz pierogów z jagodami" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD_UbDHlvws8lXCVl46HQb3dhsj5sP4qTiKjutMn6_UYIUo20c_kp965kfl6ru10KJdaoHnZVslDkTVS2sec5GoNCBf2g35yAMUAmWuuAUQE5WRGdYaODKEcV1gL9JLCUbyRFhM0ZJQGROkKiBKOdZJLv1GG9KYjbEgUk21lCCp11YjBA0vRwaJgeJnOghcFKXncOrxi49BIFiMtYzsCEFSz6wkLitNnEPp2_Ozsh-HwSeA9VFqNs0wYqRz9FQYz9XkKmB872wEUqw");'></div>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Poniedziałek, 14 Paź</p>
+<p class="text-base font-bold text-slate-900 dark:text-slate-100">Pierogi z jagodami</p>
+</div>
+</div>
+<button class="p-2">
+<span class="material-symbols-outlined text-slate-400">more_vert</span>
+</button>
+</div>
+<!-- Tuesday (Empty) -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800 border-dashed">
+<div class="flex items-center gap-4">
+<div class="h-14 w-14 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">restaurant_menu</span>
+</div>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Wtorek, 15 Paź</p>
+<p class="text-base font-medium text-slate-400 dark:text-slate-500 italic">Brak planu</p>
+</div>
+</div>
+<button class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary">add</span>
+</button>
+</div>
+<!-- Wednesday (Filled) -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-4">
+<div class="h-14 w-14 rounded-full bg-cover bg-center shadow-sm" data-alt="Miska pożywnego bigosu" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBGpdYpZDlFLmZvdjUGQD9F4dOFmAtxSTaLNTiYxB3LkYgUs6UjEh01IPr7zTarEbKJ46tONpRxOFSGSLMFc-D7fFwMeGPSGJ0KC-BdglehatrMyf9sUDy4aMmOjf5Nt0NJthBlz9APVmAWmF0qnMrCTj_I103HTYFIX2RgDHmiICkM9SRwE2JJvcNpJBIKDBDqdkelmG4DYlTwkDcgcSeZkmWbf4yr9CZUXq-rtgt8i40emniJ0Dbert3VqeXn3D85QMU87NrzIXg");'></div>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Środa, 16 Paź</p>
+<p class="text-base font-bold text-slate-900 dark:text-slate-100">Bigos myśliwski</p>
+</div>
+</div>
+<button class="p-2">
+<span class="material-symbols-outlined text-slate-400">more_vert</span>
+</button>
+</div>
+<!-- Thursday (Vacation) -->
+<div class="bg-slate-100 dark:bg-slate-800/50 rounded-xl p-4 flex items-center justify-between opacity-70">
+<div class="flex items-center gap-4">
+<div class="h-14 w-14 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-500">flight_takeoff</span>
+</div>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Czwartek, 17 Paź</p>
+<p class="text-base font-bold text-slate-600 dark:text-slate-300">Urlop</p>
+</div>
+</div>
+</div>
+<!-- Friday (Empty) -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800 border-dashed mb-6">
+<div class="flex items-center gap-4">
+<div class="h-14 w-14 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">restaurant_menu</span>
+</div>
+<div class="flex flex-col">
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Piątek, 18 Paź</p>
+<p class="text-base font-medium text-slate-400 dark:text-slate-500 italic">Brak planu</p>
+</div>
+</div>
+<button class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary">add</span>
+</button>
+</div>
+</div>
+<!-- CTA Button -->
+<div class="fixed bottom-20 left-0 right-0 max-w-[400px] mx-auto px-4 z-20">
+<button class="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">shopping_cart</span>
+      Generuj listę zakupów
+    </button>
+</div>
+<!-- Bottom Nav Bar -->
+<div class="fixed bottom-0 left-0 right-0 max-w-[400px] mx-auto bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 pb-6 pt-3 flex justify-between z-30">
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors flex-1" href="#">
+<span class="material-symbols-outlined text-[28px]">explore</span>
+<span class="text-[10px] font-medium">Odkrywaj</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary flex-1" href="#">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<span class="text-[10px] font-bold">Plan</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors flex-1" href="#">
+<span class="material-symbols-outlined text-[28px]">receipt_long</span>
+<span class="text-[10px] font-medium">Lista</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors flex-1" href="#">
+<span class="material-symbols-outlined text-[28px]">person</span>
+<span class="text-[10px] font-medium">Profil</span>
+</a>
+</div>
+</div>
+</body></html>
