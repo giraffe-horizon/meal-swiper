@@ -1,56 +1,53 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
-const SwipeCard = ({ children, onSwipe, onCardLeftScreen, preventSwipe = [] }) => {
+const SwipeCard = ({ children, onSwipe, onCardLeftScreen }) => {
   const [{ x, y, rotate }, setPosition] = useState({ x: 0, y: 0, rotate: 0 })
   const [isDragging, setIsDragging] = useState(false)
+  const [isSwiping, setIsSwiping] = useState(false)
   const cardRef = useRef(null)
   const startPosRef = useRef({ x: 0, y: 0 })
 
+  const SWIPE_THRESHOLD = 100
+  const MAX_ROTATION = 15
+
   const handleStart = (clientX, clientY) => {
     setIsDragging(true)
-    startPosRef.current = { x: clientX - x, y: clientY - y }
+    setIsSwiping(false)
+    startPosRef.current = { x: clientX, y: clientY }
   }
 
   const handleMove = (clientX, clientY) => {
     if (!isDragging) return
 
-    const newX = clientX - startPosRef.current.x
-    const newY = clientY - startPosRef.current.y
-    const newRotate = newX / 20 // Rotation based on horizontal movement
+    const deltaX = clientX - startPosRef.current.x
+    const deltaY = clientY - startPosRef.current.y
+    const rotation = (deltaX / window.innerWidth) * MAX_ROTATION * 2
 
-    // Check if swipe direction is prevented
-    if (preventSwipe.includes('up') && newY < -10) return
-    if (preventSwipe.includes('down') && newY > 10) return
-    if (preventSwipe.includes('left') && newX < -10) return
-    if (preventSwipe.includes('right') && newX > 10) return
-
-    setPosition({ x: newX, y: newY, rotate: newRotate })
+    setPosition({ x: deltaX, y: deltaY, rotate: rotation })
   }
 
   const handleEnd = () => {
     if (!isDragging) return
     setIsDragging(false)
 
-    const threshold = 100
-    let direction = null
+    const absX = Math.abs(x)
 
-    if (Math.abs(x) > threshold) {
-      direction = x > 0 ? 'right' : 'left'
-    } else if (Math.abs(y) > threshold) {
-      direction = y > 0 ? 'down' : 'up'
-    }
+    if (absX > SWIPE_THRESHOLD) {
+      // Swipe committed - fly off screen
+      const direction = x > 0 ? 'right' : 'left'
+      const exitX = direction === 'right' ? window.innerWidth * 1.5 : -window.innerWidth * 1.5
+      const exitRotate = direction === 'right' ? MAX_ROTATION * 2 : -MAX_ROTATION * 2
 
-    if (direction && !preventSwipe.includes(direction)) {
-      // Animate card off screen
-      const exitX = direction === 'right' ? 1000 : direction === 'left' ? -1000 : x
-      const exitY = direction === 'down' ? 1000 : direction === 'up' ? -1000 : y
-      setPosition({ x: exitX, y: exitY, rotate: exitX / 10 })
+      setIsSwiping(true)
+      setPosition({ x: exitX, y: y, rotate: exitRotate })
 
-      if (onSwipe) onSwipe(direction)
+      if (onSwipe) {
+        setTimeout(() => onSwipe(direction), 100)
+      }
 
-      setTimeout(() => {
-        if (onCardLeftScreen) onCardLeftScreen()
-      }, 300)
+      if (onCardLeftScreen) {
+        setTimeout(() => onCardLeftScreen(), 300)
+      }
     } else {
       // Spring back to center
       setPosition({ x: 0, y: 0, rotate: 0 })
@@ -63,13 +60,25 @@ const SwipeCard = ({ children, onSwipe, onCardLeftScreen, preventSwipe = [] }) =
     handleStart(e.clientX, e.clientY)
   }
 
-  const handleMouseMove = (e) => {
-    handleMove(e.clientX, e.clientY)
-  }
+  useEffect(() => {
+    if (!isDragging) return
 
-  const handleMouseUp = () => {
-    handleEnd()
-  }
+    const handleMouseMove = (e) => {
+      handleMove(e.clientX, e.clientY)
+    }
+
+    const handleMouseUp = () => {
+      handleEnd()
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isDragging, x, y])
 
   // Touch events
   const handleTouchStart = (e) => {
@@ -78,6 +87,7 @@ const SwipeCard = ({ children, onSwipe, onCardLeftScreen, preventSwipe = [] }) =
   }
 
   const handleTouchMove = (e) => {
+    if (!isDragging) return
     const touch = e.touches[0]
     handleMove(touch.clientX, touch.clientY)
   }
@@ -86,27 +96,51 @@ const SwipeCard = ({ children, onSwipe, onCardLeftScreen, preventSwipe = [] }) =
     handleEnd()
   }
 
-  const style = {
-    transform: `translate(${x}px, ${y}px) rotate(${rotate}deg)`,
-    transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-    cursor: isDragging ? 'grabbing' : 'grab',
-    touchAction: 'none',
-    userSelect: 'none'
-  }
+  // Calculate overlay opacity based on drag distance
+  const overlayOpacity = Math.min(Math.abs(x) / SWIPE_THRESHOLD, 1)
+  const showLeftOverlay = x < -20
+  const showRightOverlay = x > 20
 
   return (
     <div
       ref={cardRef}
-      style={style}
+      className="absolute inset-0 cursor-grab active:cursor-grabbing"
+      style={{
+        transform: `translate(${x}px, ${y}px) rotate(${rotate}deg)`,
+        transition: isDragging || isSwiping ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        touchAction: 'none',
+        userSelect: 'none',
+      }}
       onMouseDown={handleMouseDown}
-      onMouseMove={isDragging ? handleMouseMove : undefined}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={isDragging ? handleMouseUp : undefined}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {children}
+
+      {/* Left overlay (reject) */}
+      {showLeftOverlay && (
+        <div
+          className="absolute inset-0 bg-red-500 bg-opacity-50 rounded-2xl flex items-center justify-center pointer-events-none"
+          style={{ opacity: overlayOpacity }}
+        >
+          <div className="text-white text-8xl font-bold border-8 border-white rounded-full w-32 h-32 flex items-center justify-center rotate-12">
+            ✗
+          </div>
+        </div>
+      )}
+
+      {/* Right overlay (accept) */}
+      {showRightOverlay && (
+        <div
+          className="absolute inset-0 bg-green-500 bg-opacity-50 rounded-2xl flex items-center justify-center pointer-events-none"
+          style={{ opacity: overlayOpacity }}
+        >
+          <div className="text-white text-8xl font-bold border-8 border-white rounded-full w-32 h-32 flex items-center justify-center -rotate-12">
+            ✓
+          </div>
+        </div>
+      )}
     </div>
   )
 }
