@@ -1,0 +1,6 @@
+name = "meal-swiper"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+[vars]
+# NOTION_TOKEN should be set as a secret in Cloudflare Dashboard
