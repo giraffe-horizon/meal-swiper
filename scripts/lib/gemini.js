@@ -14,10 +14,10 @@ const MEAL_SCHEMA = `{
     "z_miesem": { "kcal": "number", "bialko": "number", "wegle": "number", "tluszcz": "number" }
   },
   "skladniki_baza": [
-    { "name": "string", "amount": "string - ilość na 2 porcje" }
+    { "name": "string - nazwa składnika", "amount": "string - DOKŁADNA gramatura na 2 porcje, np. '200g', '2 łyżki (30ml)', '1 puszka (400g)', '3 szt (150g)'" }
   ],
   "skladniki_mieso": [
-    { "name": "string", "amount": "string - ilość na 1 porcję" }
+    { "name": "string - nazwa mięsa/jaj/nabiału", "amount": "string - DOKŁADNA gramatura na 1 porcję, np. '150g', '2 szt (120g)'" }
   ],
   "przepis": {
     "kroki": ["string - krok z czasem i temperaturą"],
@@ -27,13 +27,12 @@ const MEAL_SCHEMA = `{
 }`
 
 function buildPrompt({ count, cuisine, maxTime, existingMeals }) {
-  const cuisineStr = cuisine === 'all'
-    ? 'różnorodna: włoska, koreańska, polska, azjatycka, meksykańska — każda kuchnia max 3 razy'
-    : cuisine
+  const cuisineStr =
+    cuisine === 'all'
+      ? 'różnorodna: włoska, koreańska, polska, azjatycka, meksykańska — każda kuchnia max 3 razy'
+      : cuisine
 
-  const existingList = existingMeals.length > 0
-    ? '\n- ' + existingMeals.join('\n- ')
-    : '(brak)'
+  const existingList = existingMeals.length > 0 ? '\n- ' + existingMeals.join('\n- ') : '(brak)'
 
   return `Jesteś doświadczonym szefem kuchni. Stwórz ${count} autentycznych propozycji obiadowych.
 
@@ -50,6 +49,8 @@ function buildPrompt({ count, cuisine, maxTime, existingMeals }) {
 - Składniki dostępne w polskim sklepie
 - Max czas: ${maxTime} min
 - ZERO ryb, ZERO owoców morza, ZERO jabłek
+- ZERO zup, ZERO bulionów, ZERO żurku, ZERO rosołu — tylko dania główne (obiady/kolacje)
+- DOKŁADNE gramaturykatalogu każdego składnika (gramy, ml, sztuki z gramami w nawiasie)
 
 ## ZAKAZ duplikatów:${existingList}
 
@@ -104,11 +105,11 @@ export async function generateMeals({ count, cuisine, maxTime, existingMeals, ap
 
       console.log(`✅ Wygenerowano ${meals.length} przepisów przez Claude Opus`)
       return meals
-
     } catch (err) {
       console.error(`❌ Próba ${attempt}: ${err.message}`)
-      if (attempt === maxRetries) throw new Error(`Nieudane po ${maxRetries} próbach: ${err.message}`)
-      await new Promise(r => setTimeout(r, 5000 * attempt))
+      if (attempt === maxRetries)
+        throw new Error(`Nieudane po ${maxRetries} próbach: ${err.message}`)
+      await new Promise((r) => setTimeout(r, 5000 * attempt))
     }
   }
 }

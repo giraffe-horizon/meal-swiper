@@ -50,7 +50,11 @@ export function useWeeklyPlan() {
   )
 
   const setMeal = useCallback(
-    (day: DayKey, meal: Meal) => updatePlan({ ...weeklyPlan, [day]: meal }),
+    (day: DayKey, meal: Meal) => {
+      // Zawsze czyść flagę urlopu gdy przypisujesz danie
+      const freeKey = `${day}_free` as `${DayKey}_free`
+      updatePlan({ ...weeklyPlan, [day]: meal, [freeKey]: false })
+    },
     [weeklyPlan, updatePlan]
   )
 
@@ -69,5 +73,5 @@ export function useWeeklyPlan() {
     [weeklyPlan, updatePlan]
   )
 
-  return { weeklyPlan, weekOffset, setWeekOffset, setMeal, removeMeal, toggleVacation }
+  return { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation }
 }

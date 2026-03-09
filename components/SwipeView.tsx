@@ -26,6 +26,7 @@ interface SwipeViewProps {
   weekOffset?: number
   weekDates?: Date[]
   onDaySelect?: (day: DayKey) => void
+  allDaysFilled?: boolean
 }
 
 const SWIPE_THRESHOLD = 120
@@ -40,9 +41,12 @@ export default function SwipeView({
   weekOffset = 0,
   weekDates: weekDatesProp,
   onDaySelect,
+  allDaysFilled = false,
 }: SwipeViewProps) {
-  const [shuffledMeals] = useState<Meal[]>(() => shuffleArray(meals))
+  const [seenIds, setSeenIds] = useState<string[]>([])
+  const [shuffledMeals, setShuffledMeals] = useState<Meal[]>(() => shuffleArray(meals))
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [reshuffleToast, setReshuffleToast] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
   const [confettiItems] = useState(() =>
@@ -72,21 +76,51 @@ export default function SwipeView({
 
   const nextCard = useCallback(() => {
     if (currentIndex >= shuffledMeals.length - 1) {
-      setShowConfetti(true)
-      setShowSuccess(true)
-      setTimeout(() => {
-        onComplete?.()
-      }, 2000)
+      if (allDaysFilled) {
+        // All days filled — show success screen
+        setShowConfetti(true)
+        setShowSuccess(true)
+        setTimeout(() => {
+          onComplete?.()
+        }, 2000)
+      } else {
+        // Generate new round with penalty for recently seen meals
+        const maxSeen = Math.max(0, meals.length - 3)
+        const currentMealId = shuffledMeals[currentIndex]?.id
+        const updatedSeen = currentMealId ? [...seenIds, currentMealId].slice(-maxSeen) : seenIds
+        setSeenIds(updatedSeen)
+
+        const fresh = meals.filter((m) => !updatedSeen.includes(m.id))
+        const old = meals.filter((m) => updatedSeen.includes(m.id))
+        const newBatch = [...shuffleArray(fresh), ...shuffleArray(old)]
+
+        setShuffledMeals((prev) => [...prev, ...newBatch])
+        setCurrentIndex((prev) => prev + 1)
+        x.set(0)
+
+        // Show reshuffle toast
+        setReshuffleToast(true)
+        setTimeout(() => setReshuffleToast(false), 2000)
+      }
     } else {
       setCurrentIndex((prev) => prev + 1)
       x.set(0)
     }
     setIsAnimating(false)
-  }, [currentIndex, shuffledMeals.length, onComplete, x])
+  }, [currentIndex, shuffledMeals, allDaysFilled, onComplete, x, meals, seenIds])
+
+  const trackSeen = useCallback(
+    (mealId: string) => {
+      const maxSeen = Math.max(0, meals.length - 3)
+      setSeenIds((prev) => [...prev, mealId].slice(-maxSeen))
+    },
+    [meals.length]
+  )
 
   const handleSwipeRight = useCallback(() => {
     if (!currentMeal || isAnimating) return
     setIsAnimating(true)
+    trackSeen(currentMeal.id)
     const day = currentDay ? DAY_NAMES_MAP[currentDay] : 'Wybierz dzień'
     setToastText(`Dodano: ${currentMeal.nazwa} do: ${day}`)
     setShowToast(true)
@@ -96,15 +130,16 @@ export default function SwipeView({
       onSwipeRight(currentMeal)
       nextCard()
     })
-  }, [currentMeal, currentDay, isAnimating, x, onSwipeRight, nextCard])
+  }, [currentMeal, currentDay, isAnimating, x, onSwipeRight, nextCard, trackSeen])
 
   const handleSwipeLeft = useCallback(() => {
-    if (isAnimating) return
+    if (isAnimating || !currentMeal) return
     setIsAnimating(true)
+    trackSeen(currentMeal.id)
     animate(x, -600, { duration: 0.3 }).then(() => {
       nextCard()
     })
-  }, [isAnimating, x, nextCard])
+  }, [isAnimating, x, nextCard, currentMeal, trackSeen])
 
   const handleDragEnd = useCallback(
     (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -226,6 +261,14 @@ export default function SwipeView({
         <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-[#2D6A4F] text-white px-6 py-3 rounded-full shadow-2xl z-50 animate-bounce flex items-center gap-2">
           <span className="material-symbols-outlined">check_circle</span>
           <span className="font-bold">{toastText}</span>
+        </div>
+      )}
+
+      {/* Reshuffle Toast */}
+      {reshuffleToast && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-slate-700 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-2">
+          <span>🔄</span>
+          <span className="font-bold">Nowe propozycje!</span>
         </div>
       )}
 

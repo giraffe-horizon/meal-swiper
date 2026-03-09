@@ -14,16 +14,24 @@ const SwipeView = dynamic(() => import('@/components/SwipeView'), {
 
 export default function SwipePage() {
   const router = useRouter()
-  const { meals, weeklyPlan, weekOffset, currentSwipeDay, setCurrentSwipeDay, handleSwipeRight } =
-    useAppContext()
+  const {
+    meals,
+    weeklyPlan,
+    weekOffset,
+    currentSwipeDay,
+    setCurrentSwipeDay,
+    handleSwipeRight,
+    allDaysFilled,
+  } = useAppContext()
   const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
 
-  // Jeśli żaden dzień nie wybrany → domyślnie pierwszy pusty dzień tygodnia
-  const effectiveDay = useMemo(
-    () =>
-      currentSwipeDay ?? DAY_KEYS.find((d) => !weeklyPlan[d] && !weeklyPlan[`${d}_free`]) ?? null,
-    [currentSwipeDay, weeklyPlan]
-  )
+  // Jeśli żaden dzień nie wybrany lub wybrany dzień jest wolny → pierwszy pusty dzień
+  const effectiveDay = useMemo(() => {
+    const isValidDay =
+      currentSwipeDay && !weeklyPlan[currentSwipeDay] && !weeklyPlan[`${currentSwipeDay}_free`]
+    if (isValidDay) return currentSwipeDay
+    return DAY_KEYS.find((d) => !weeklyPlan[d] && !weeklyPlan[`${d}_free`]) ?? null
+  }, [currentSwipeDay, weeklyPlan])
 
   const handleComplete = useCallback(() => {
     setCurrentSwipeDay(null)
@@ -60,6 +68,7 @@ export default function SwipePage() {
       weekOffset={weekOffset}
       weekDates={weekDates}
       onDaySelect={setCurrentSwipeDay}
+      allDaysFilled={allDaysFilled}
     />
   )
 }

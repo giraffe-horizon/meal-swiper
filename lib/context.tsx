@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react'
 import type { Meal, DayKey, WeeklyPlan } from '@/types'
 import { useMeals } from '@/hooks/useMeals'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
@@ -11,6 +11,8 @@ interface AppContextValue {
   mealsLoading: boolean
   weeklyPlan: WeeklyPlan
   weekOffset: number
+  weekKey: string
+  allDaysFilled: boolean
   setWeekOffset: (offset: number) => void
   setMeal: (day: DayKey, meal: Meal) => void
   removeMeal: (day: DayKey) => void
@@ -24,26 +26,25 @@ const AppContext = createContext<AppContextValue | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const { meals, loading: mealsLoading } = useMeals()
-  const {
-    weeklyPlan,
-    weekOffset,
-    setWeekOffset,
-    setMeal,
-    removeMeal,
-    toggleVacation,
-  } = useWeeklyPlan()
+  const { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation } =
+    useWeeklyPlan()
+
+  const allDaysFilled = useMemo(
+    () => DAY_KEYS.every((day) => weeklyPlan[day] || weeklyPlan[`${day}_free`]),
+    [weeklyPlan]
+  )
 
   const [currentSwipeDay, setCurrentSwipeDay] = useState<DayKey | null>(null)
 
   const handleSwipeRight = useCallback(
     (meal: Meal) => {
-      let targetDay = currentSwipeDay
+      // Jeśli wybrany dzień jest wolny lub już wypełniony → szukaj następnego
+      const isDayValid = (d: DayKey) => !weeklyPlan[d] && !weeklyPlan[`${d}_free`]
+      let targetDay: DayKey | null =
+        currentSwipeDay && isDayValid(currentSwipeDay) ? currentSwipeDay : null
 
       if (!targetDay) {
-        targetDay =
-          DAY_KEYS.find(
-            (d) => !weeklyPlan[d] && !weeklyPlan[`${d}_free`]
-          ) ?? null
+        targetDay = DAY_KEYS.find(isDayValid) ?? null
       }
 
       if (targetDay) {
@@ -72,6 +73,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         mealsLoading,
         weeklyPlan,
         weekOffset,
+        weekKey,
+        allDaysFilled,
         setWeekOffset,
         setMeal,
         removeMeal,
