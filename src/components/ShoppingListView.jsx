@@ -121,11 +121,73 @@ const ShoppingListView = ({ weeklyPlan, weekOffset, onWeekChange }) => {
 
   const hasAnyItems = Object.values(shoppingList).some(items => items.length > 0)
 
+  // Calculate progress
+  const totalItems = Object.values(shoppingList).reduce((sum, items) => sum + items.length, 0)
+  const checkedCount = Object.keys(checkedItems).filter(key => checkedItems[key]).length
+  const allChecked = totalItems > 0 && checkedCount === totalItems
+
+  const checkAllItems = () => {
+    const newChecked = {}
+    Object.keys(shoppingList).forEach(category => {
+      shoppingList[category].forEach((_, index) => {
+        newChecked[`${category}-${index}`] = true
+      })
+    })
+    setCheckedItems(newChecked)
+    const weekKey = getWeekKey()
+    localStorage.setItem(`checkedItems_${weekKey}`, JSON.stringify(newChecked))
+  }
+
+  const shareList = () => {
+    let text = '📝 Lista zakupów\n\n'
+    categories.forEach(({ key, label }) => {
+      const items = shoppingList[key] || []
+      if (items.length > 0) {
+        text += `${label}\n`
+        items.forEach(item => {
+          text += `• ${item.name} - ${item.amount}\n`
+        })
+        text += '\n'
+      }
+    })
+    navigator.clipboard.writeText(text)
+    alert('✅ Lista skopiowana do schowka!')
+  }
+
   return (
     <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
-        <h2 className="text-lg font-bold flex-1 text-center text-text-primary-light dark:text-text-primary-dark">Lista zakupów</h2>
+      <header className="flex flex-col gap-3 p-4 bg-background-light dark:bg-background-dark sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold flex-1 text-center text-text-primary-light dark:text-text-primary-dark">Lista zakupów</h2>
+        </div>
+        {hasAnyItems && (
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+                {checkedCount}/{totalItems} produktów
+              </span>
+              {allChecked && (
+                <span className="text-sm">🎉</span>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={checkAllItems}
+                className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Zaznacz wszystkie
+              </button>
+              <button
+                onClick={shareList}
+                className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-[16px]">share</span>
+                Udostępnij
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Week Navigation */}
@@ -146,7 +208,7 @@ const ShoppingListView = ({ weeklyPlan, weekOffset, onWeekChange }) => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 pb-24 space-y-6 overflow-y-auto">
+      <main className="flex-1 p-4 pb-24 overflow-y-auto">
         {!hasAnyItems ? (
           <div className="flex flex-col items-center justify-center h-full">
             <div className="text-6xl mb-4">🛒</div>
@@ -157,55 +219,64 @@ const ShoppingListView = ({ weeklyPlan, weekOffset, onWeekChange }) => {
           </div>
         ) : (
           <>
-            {categories.map(({ key, label }) => {
-              const items = shoppingList[key] || []
-              if (items.length === 0) return null
+            {allChecked && (
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-4 text-center">
+                <div className="text-4xl mb-2">🎉</div>
+                <p className="text-lg font-bold text-green-800 dark:text-green-200">Zakupy zrobione!</p>
+                <p className="text-sm text-green-600 dark:text-green-400 mt-1">Wszystkie produkty zaznaczone</p>
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              {categories.map(({ key, label }) => {
+                const items = shoppingList[key] || []
+                if (items.length === 0) return null
 
-              return (
-                <section
-                  key={key}
-                  className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark"
-                >
-                  <h3 className="text-lg font-bold px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark">
-                    {label}
-                  </h3>
-                  <div className="divide-y divide-border-light dark:divide-border-dark">
-                    {items.map((item, index) => {
-                      const itemKey = `${key}-${index}`
-                      const isChecked = checkedItems[itemKey] || false
+                return (
+                  <section
+                    key={key}
+                    className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark"
+                  >
+                    <h3 className="text-lg font-bold px-4 py-3 bg-primary/5 dark:bg-primary/10 border-b border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark">
+                      {label}
+                    </h3>
+                    <div className="divide-y divide-border-light dark:divide-border-dark">
+                      {items.map((item, index) => {
+                        const itemKey = `${key}-${index}`
+                        const isChecked = checkedItems[itemKey] || false
 
-                      return (
-                        <label
-                          key={index}
-                          className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
-                            isChecked ? 'opacity-60' : ''
-                          }`}
-                        >
-                          <div className="flex size-6 items-center justify-center shrink-0">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleItem(key, index)}
-                              className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
-                            />
-                          </div>
-                          <span className={`text-base font-medium flex-1 truncate text-text-primary-light dark:text-text-primary-dark ${
-                            isChecked ? 'line-through' : ''
-                          }`}>
-                            {item.name}
-                          </span>
-                          <span className={`text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0 ${
-                            isChecked ? 'line-through' : ''
-                          }`}>
-                            {item.amount}
-                          </span>
-                        </label>
-                      )
-                    })}
-                  </div>
-                </section>
-              )
-            })}
+                        return (
+                          <label
+                            key={index}
+                            className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
+                              isChecked ? 'opacity-60' : ''
+                            }`}
+                          >
+                            <div className="flex size-6 items-center justify-center shrink-0">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleItem(key, index)}
+                                className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
+                              />
+                            </div>
+                            <span className={`text-base font-medium flex-1 truncate text-text-primary-light dark:text-text-primary-dark ${
+                              isChecked ? 'line-through' : ''
+                            }`}>
+                              {item.name}
+                            </span>
+                            <span className={`text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0 ${
+                              isChecked ? 'line-through' : ''
+                            }`}>
+                              {item.amount}
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
+                  </section>
+                )
+              })}
+            </div>
 
             {/* Reset Button */}
             <div className="pt-4 pb-8 flex justify-center">

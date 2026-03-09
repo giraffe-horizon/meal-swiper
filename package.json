@@ -11,10 +11,13 @@
     "pages:deploy": "npm run build && wrangler pages deploy dist"
   },
   "dependencies": {
+    "@notionhq/client": "^5.11.1",
+    "axios": "^1.13.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
