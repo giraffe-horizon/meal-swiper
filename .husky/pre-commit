@@ -4,6 +4,9 @@
 echo "🎨 Formatting (Prettier)..."
 npx lint-staged
 
+echo "🔍 Linting (ESLint)..."
+npx eslint components/ app/ lib/ hooks/ --max-warnings=0
+
 echo "🧪 Running tests (Vitest)..."
 npm run test
 

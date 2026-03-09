@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
 import type { Meal, DayKey, WeeklyPlan } from '@/types'
 import { DAY_KEYS, DAY_NAMES_MAP } from '@/lib/utils'
@@ -36,6 +36,16 @@ export default function SwipeView({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
+  const [confettiItems] = useState(() =>
+    [...Array(50)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      delay: Math.random() * 2,
+      duration: 2 + Math.random() * 2,
+      size: 20 + Math.random() * 20,
+      emoji: ['🎉', '🎊', '✨', '🌟', '💫'][Math.floor(Math.random() * 5)],
+    }))
+  )
   const [showToast, setShowToast] = useState(false)
   const [toastText, setToastText] = useState('')
   const [isAnimating, setIsAnimating] = useState(false)
@@ -128,19 +138,19 @@ export default function SwipeView({
       <div className="flex-1 flex items-center justify-center bg-background-light dark:bg-background-dark relative overflow-hidden">
         {showConfetti && (
           <div className="absolute inset-0 pointer-events-none">
-            {[...Array(50)].map((_, i) => (
+            {confettiItems.map((item) => (
               <div
-                key={i}
+                key={item.id}
                 className="absolute animate-bounce"
                 style={{
-                  left: `${Math.random() * 100}%`,
+                  left: `${item.left}%`,
                   top: '-10%',
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${2 + Math.random() * 2}s`,
-                  fontSize: `${20 + Math.random() * 20}px`,
+                  animationDelay: `${item.delay}s`,
+                  animationDuration: `${item.duration}s`,
+                  fontSize: `${item.size}px`,
                 }}
               >
-                {['🎉', '🎊', '✨', '🌟', '💫'][Math.floor(Math.random() * 5)]}
+                {item.emoji}
               </div>
             ))}
           </div>

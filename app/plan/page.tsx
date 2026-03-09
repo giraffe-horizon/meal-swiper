@@ -7,13 +7,7 @@ import CalendarView from '@/components/CalendarView'
 
 export default function PlanPage() {
   const router = useRouter()
-  const {
-    weeklyPlan,
-    weekOffset,
-    removeMeal,
-    toggleVacation,
-    setCurrentSwipeDay,
-  } = useAppContext()
+  const { weeklyPlan, weekOffset, removeMeal, toggleVacation, setCurrentSwipeDay } = useAppContext()
 
   const handleDayClick = (day: DayKey) => {
     if (weeklyPlan[`${day}_free`]) return
@@ -27,7 +21,6 @@ export default function PlanPage() {
       onDayClick={handleDayClick}
       onRemoveMeal={removeMeal}
       onToggleVacation={toggleVacation}
-      onGenerateShoppingList={() => router.push('/shopping')}
       weekOffset={weekOffset}
     />
   )

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import type { WeeklyPlan } from '@/types'
 import { getWeekKey } from '@/lib/utils'
 import { getCheckedItems, saveCheckedItems, removeCheckedItems } from '@/lib/storage'
-import { generateShoppingList, type MergedIngredient } from '@/lib/shopping'
+import { generateShoppingList } from '@/lib/shopping'
 
 interface ShoppingListViewProps {
   weeklyPlan: WeeklyPlan

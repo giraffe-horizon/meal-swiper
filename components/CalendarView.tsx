@@ -12,7 +12,6 @@ interface CalendarViewProps {
   onDayClick: (day: DayKey) => void
   onRemoveMeal: (day: DayKey) => void
   onToggleVacation: (day: DayKey) => void
-  onGenerateShoppingList: () => void
 }
 
 export default function CalendarView({
@@ -21,7 +20,6 @@ export default function CalendarView({
   onDayClick,
   onRemoveMeal,
   onToggleVacation,
-  onGenerateShoppingList,
 }: CalendarViewProps) {
   const [activeMenu, setActiveMenu] = useState<DayKey | null>(null)
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null)
@@ -52,8 +50,6 @@ export default function CalendarView({
       if (action) onToggleVacation(day)
     }
   }
-
-  const hasEmptyDays = DAY_KEYS.some((day) => !weeklyPlan[day] && !weeklyPlan[`${day}_free`])
 
   useEffect(() => {
     const handleClickOutside = () => setActiveMenu(null)
@@ -97,7 +93,7 @@ export default function CalendarView({
                       e.stopPropagation()
                       setActiveMenu(activeMenu === day ? null : day)
                     }}
-                    className="p-2 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg"
+                    className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg"
                   >
                     <span className="material-symbols-outlined text-slate-500">more_vert</span>
                   </button>
@@ -154,7 +150,7 @@ export default function CalendarView({
                 <div className="relative">
                   <button
                     onClick={() => setActiveMenu(activeMenu === day ? null : day)}
-                    className="p-2 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+                    className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
                   >
                     <span className="material-symbols-outlined text-slate-400">more_vert</span>
                   </button>
@@ -229,7 +225,7 @@ export default function CalendarView({
                     e.stopPropagation()
                     setActiveMenu(activeMenu === day ? null : day)
                   }}
-                  className="p-2 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+                  className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
                 >
                   <span className="material-symbols-outlined text-slate-400">more_vert</span>
                 </button>
@@ -264,19 +260,6 @@ export default function CalendarView({
           )
         })}
       </div>
-
-      {/* CTA Button */}
-      {!hasEmptyDays && (
-        <div className="shrink-0 px-4 pb-4">
-          <button
-            onClick={onGenerateShoppingList}
-            className="w-full max-w-[400px] mx-auto bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
-          >
-            <span className="material-symbols-outlined">shopping_cart</span>
-            Generuj listę zakupów
-          </button>
-        </div>
-      )}
 
       {/* Meal Detail Modal */}
       <MealModal meal={selectedMeal} onClose={() => setSelectedMeal(null)} />

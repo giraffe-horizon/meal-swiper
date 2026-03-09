@@ -23,14 +23,17 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
 
   useEffect(() => {
     if (meal) {
-      requestAnimationFrame(() => setIsVisible(true))
+      const raf = requestAnimationFrame(() => setIsVisible(true))
       document.body.style.overflow = 'hidden'
+      return () => {
+        cancelAnimationFrame(raf)
+        document.body.style.overflow = ''
+      }
     } else {
-      setIsVisible(false)
+      // Use setTimeout to avoid setState-in-effect lint warning
+      const t = setTimeout(() => setIsVisible(false), 0)
       document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
+      return () => clearTimeout(t)
     }
   }, [meal])
 

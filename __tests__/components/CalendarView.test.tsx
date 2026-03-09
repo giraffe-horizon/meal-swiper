@@ -22,8 +22,16 @@ const mockMeal: Meal = {
 }
 
 const emptyPlan: WeeklyPlan = {
-  mon: null, tue: null, wed: null, thu: null, fri: null,
-  mon_free: false, tue_free: false, wed_free: false, thu_free: false, fri_free: false,
+  mon: null,
+  tue: null,
+  wed: null,
+  thu: null,
+  fri: null,
+  mon_free: false,
+  tue_free: false,
+  wed_free: false,
+  thu_free: false,
+  fri_free: false,
 }
 
 const defaultProps = {
@@ -32,8 +40,6 @@ const defaultProps = {
   onDayClick: vi.fn(),
   onRemoveMeal: vi.fn(),
   onToggleVacation: vi.fn(),
-  onGenerateShoppingList: vi.fn(),
-  onWeekChange: vi.fn(),
 }
 
 describe('CalendarView', () => {
@@ -68,12 +74,20 @@ describe('CalendarView', () => {
     expect(screen.getByText('Urlop')).toBeInTheDocument()
   })
 
-  it('shows "Generuj listę zakupów" button when all days filled', () => {
+  it('does not show "Generuj listę zakupów" button (removed)', () => {
     const fullPlan: WeeklyPlan = {
-      mon: mockMeal, tue: mockMeal, wed: mockMeal, thu: mockMeal, fri: mockMeal,
-      mon_free: false, tue_free: false, wed_free: false, thu_free: false, fri_free: false,
+      mon: mockMeal,
+      tue: mockMeal,
+      wed: mockMeal,
+      thu: mockMeal,
+      fri: mockMeal,
+      mon_free: false,
+      tue_free: false,
+      wed_free: false,
+      thu_free: false,
+      fri_free: false,
     }
     render(<CalendarView {...defaultProps} weeklyPlan={fullPlan} />)
-    expect(screen.getByText('Generuj listę zakupów')).toBeInTheDocument()
+    expect(screen.queryByText('Generuj listę zakupów')).not.toBeInTheDocument()
   })
 })
