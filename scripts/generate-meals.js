@@ -33,9 +33,14 @@ const maxTime = parseInt(args['max-time'], 10);
 
 // --- Env validation ---
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const MEALS_DB_ID = process.env.MEALS_DB_ID;
 
+if (!ANTHROPIC_API_KEY) {
+  console.error('❌ Brak ANTHROPIC_API_KEY');
+  process.exit(1);
+}
 if (!GEMINI_API_KEY) {
   console.error('❌ Brak GEMINI_API_KEY w zmiennych środowiskowych');
   process.exit(1);
@@ -78,15 +83,26 @@ async function main() {
     await ensureMissingProperties(NOTION_TOKEN, MEALS_DB_ID, schema.properties);
   }
 
-  // 3. Generate meals via Gemini
-  console.log(`\n🤖 Generuję ${count} przepisów przez Gemini AI...`);
-  const rawMeals = await generateMeals({
-    count,
-    cuisine,
-    maxTime,
-    existingMeals: existingNames,
-    apiKey: GEMINI_API_KEY,
-  });
+  // 3. Generate meals via Claude Opus (w partiach max 10)
+  const BATCH_SIZE = 10;
+  const batches = Math.ceil(count / BATCH_SIZE);
+  console.log(`\n🤖 Generuję ${count} przepisów (${batches} partia/e po max ${BATCH_SIZE})...`);
+  let rawMeals = [];
+  let knownNames = [...existingNames];
+  for (let b = 0; b < batches; b++) {
+    const batchCount = Math.min(BATCH_SIZE, count - b * BATCH_SIZE);
+    console.log(`\n📦 Partia ${b + 1}/${batches}: ${batchCount} przepisów`);
+    const batch = await generateMeals({
+      count: batchCount,
+      cuisine,
+      maxTime,
+      existingMeals: knownNames,
+      apiKey: ANTHROPIC_API_KEY,
+    });
+    rawMeals = rawMeals.concat(batch);
+    knownNames = knownNames.concat(batch.map(m => m.nazwa));
+    if (b < batches - 1) await new Promise(r => setTimeout(r, 3000));
+  }
 
   // 4. Deduplicate
   const meals = deduplicateMeals(rawMeals, existingNames);
@@ -115,11 +131,10 @@ async function main() {
     console.log('\n📸 Generuję zdjęcia...');
     for (let i = 0; i < meals.length; i++) {
       console.log(`   Zdjęcie ${i + 1}/${meals.length}: ${meals[i].nazwa}`);
-      const imagePath = await generateImage(meals[i], GEMINI_API_KEY);
-      // For now, just store local path — Notion URL field needs a web URL
-      // Leave photo_url empty if we only have a local path
-      if (imagePath) {
-        meals[i]._localImagePath = imagePath;
+      const imageUrl = await generateImage(meals[i], GEMINI_API_KEY);
+      // generateImage returns Imgur URL (https://i.imgur.com/...)
+      if (imageUrl) {
+        meals[i].photo_url = imageUrl;
       }
     }
   }

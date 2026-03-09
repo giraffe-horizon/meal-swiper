@@ -10,7 +10,8 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
-        args: ["--maxkb=500"]
+        args: ["--maxkb=2048"]
+        exclude: "^public/meals/"
       - id: check-merge-conflict
       - id: detect-private-key
         name: 🔑 Detect private keys

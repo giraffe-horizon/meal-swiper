@@ -1,139 +1,114 @@
-// Gemini AI meal generation
+// Claude Opus meal generation via @anthropic-ai/sdk
+
+import Anthropic from '@anthropic-ai/sdk'
 
 const MEAL_SCHEMA = `{
-  "nazwa": "string - nazwa dania po polsku",
-  "opis": "string - krótki opis 1-2 zdania",
-  "kuchnia": "string - np. włoska, koreańska, polska, azjatycka, meksykańska",
+  "nazwa": "string - krótka, apetyczna nazwa dania po polsku",
+  "opis": "string - opis 2-3 zdania: czym jest, co wyróżnia, dlaczego warto",
+  "kuchnia": "string - włoska|koreańska|polska|azjatycka|meksykańska",
   "trudnosc": "string - łatwe|średnie|trudne",
-  "czas_przygotowania": "number - minuty",
-  "tagi": ["string - tagi opisujące danie"],
+  "czas_przygotowania": "number - minuty max 60",
+  "tagi": ["string"],
   "makro": {
     "baza": { "kcal": "number", "bialko": "number", "wegle": "number", "tluszcz": "number" },
     "z_miesem": { "kcal": "number", "bialko": "number", "wegle": "number", "tluszcz": "number" }
   },
   "skladniki_baza": [
-    { "name": "string - nazwa składnika", "amount": "string - ilość np. 300g, 1 sztuka" }
+    { "name": "string", "amount": "string - ilość na 2 porcje" }
   ],
   "skladniki_mieso": [
-    { "name": "string - nazwa składnika mięsnego", "amount": "string - ilość" }
+    { "name": "string", "amount": "string - ilość na 1 porcję" }
   ],
   "przepis": {
-    "kroki": ["string - kolejne kroki przepisu"],
-    "wskazowki": "string - dodatkowe wskazówki"
+    "kroki": ["string - krok z czasem i temperaturą"],
+    "wskazowki": "string - tip kulinarny"
   },
-  "prompt_zdjecia": "string - English prompt for food photography image generation"
-}`;
+  "prompt_zdjecia": "string - English vivid food photography prompt"
+}`
 
 function buildPrompt({ count, cuisine, maxTime, existingMeals }) {
   const cuisineStr = cuisine === 'all'
-    ? 'dowolna (priorytet: włoska > koreańska > polska > azjatycka > meksykańska)'
-    : cuisine;
+    ? 'różnorodna: włoska, koreańska, polska, azjatycka, meksykańska — każda kuchnia max 3 razy'
+    : cuisine
 
   const existingList = existingMeals.length > 0
-    ? existingMeals.join(', ')
-    : '(brak)';
+    ? '\n- ' + existingMeals.join('\n- ')
+    : '(brak)'
 
-  return `Jesteś ekspertem kulinarnym. Wygeneruj ${count} propozycji obiadowych jako tablicę JSON.
+  return `Jesteś doświadczonym szefem kuchni. Stwórz ${count} autentycznych propozycji obiadowych.
 
-PROFIL:
-- Gotujemy dla 2 osób: Łukasz (mięsożerca) i Ala (wegetarianka)
-- Struktura: baza wegetariańska (dla obojga) + opcjonalna dokładka mięsna (tylko Łukasz)
-- Łukasz: cel ~900 kcal, ~70g białka z mięsem
-- Ala: cel ~550 kcal, ~25g białka z bazy
-- Max czas przygotowania: ${maxTime} minut
-- Kuchnia preferowana: ${cuisineStr}
+## PROFIL
+- Łukasz (mięsożerca, triatleta): cel ~900 kcal, ~70g białka z mięsem
+- Alicja (wegetarianka): cel ~550 kcal, ~25g białka z bazy
 
-ZAKAZY:
-- Zero ryb i owoców morza (jakichkolwiek)
-- Zero jabłek (alergia krzyżowa)
-- Żadnego z tych dań (już istnieją): ${existingList}
+## STRUKTURA każdego dania
+1. Baza wegetariańska (dla obojga, porcje x2)
+2. Dokładka mięsna (tylko Łukasz, porcja x1)
 
-FORMAT: Zwróć TYLKO prawidłowy JSON - tablicę obiektów. Nie dodawaj żadnego tekstu, markdown ani komentarzy przed ani po JSON.
+## WYMAGANIA
+- Autentyczne dania z prawdziwymi nazwami
+- Składniki dostępne w polskim sklepie
+- Max czas: ${maxTime} min
+- ZERO ryb, ZERO owoców morza, ZERO jabłek
 
-SCHEMAT jednego obiektu:
-${MEAL_SCHEMA}
+## ZAKAZ duplikatów:${existingList}
 
-WAŻNE:
-- Składniki w ilościach na 2 porcje
-- Baza MUSI być w pełni wegetariańska (zero mięsa, ryb)
-- Dokładka mięsna to osobna lista składników
-- Makro baza = kalorie/białko BEZ mięsa, makro z_miesem = z dokładką mięsną
-- prompt_zdjecia powinien być po angielsku, opisywać gotowe danie, styl food photography
-- Każde danie musi być UNIKALNE i różnorodne`;
+## FORMAT
+Zwróć WYŁĄCZNIE JSON tablicę. Żadnego tekstu ani markdown.
+
+SCHEMAT:
+${MEAL_SCHEMA}`
 }
 
 export async function generateMeals({ count, cuisine, maxTime, existingMeals, apiKey }) {
-  const prompt = buildPrompt({ count, cuisine, maxTime, existingMeals });
-  const maxRetries = 3;
+  const client = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY || apiKey,
+    timeout: 300000, // 5 minut
+    maxRetries: 2,
+  })
+
+  const prompt = buildPrompt({ count, cuisine, maxTime, existingMeals })
+  const maxRetries = 3
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    console.log(`🤖 Gemini: generowanie przepisów (próba ${attempt}/${maxRetries})...`);
+    console.log(`🤖 Claude Opus: generowanie przepisów (próba ${attempt}/${maxRetries})...`)
 
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 1.0,
-              responseMimeType: 'application/json',
-            },
-          }),
-        }
-      );
+      const message = await client.messages.create({
+        model: 'claude-opus-4-6',
+        max_tokens: 16000,
+        temperature: 1,
+        messages: [{ role: 'user', content: prompt }],
+      })
 
-      if (response.status === 429) {
-        console.log('⏳ Rate limit — czekam 10s...');
-        await new Promise(r => setTimeout(r, 10000));
-        continue;
+      const text = message.content?.[0]?.text
+      if (!text) throw new Error('Brak tekstu w odpowiedzi')
+
+      let cleaned = text.trim()
+      const jsonStart = cleaned.indexOf('[')
+      const jsonEnd = cleaned.lastIndexOf(']')
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        cleaned = cleaned.slice(jsonStart, jsonEnd + 1)
       }
 
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`Gemini API ${response.status}: ${errorBody}`);
+      const meals = JSON.parse(cleaned)
+      if (!Array.isArray(meals) || meals.length === 0) {
+        throw new Error('Odpowiedź nie jest tablicą')
       }
 
-      const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (!text) {
-        throw new Error('Brak tekstu w odpowiedzi Gemini');
-      }
-
-      // Parse JSON — Gemini may wrap in ```json blocks
-      let cleaned = text.trim();
-      if (cleaned.startsWith('```')) {
-        cleaned = cleaned.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
-      }
-
-      const meals = JSON.parse(cleaned);
-
-      if (!Array.isArray(meals)) {
-        throw new Error('Odpowiedź nie jest tablicą JSON');
-      }
-
-      if (meals.length === 0) {
-        throw new Error('Pusta tablica');
-      }
-
-      // Basic validation
       for (const meal of meals) {
         if (!meal.nazwa || !meal.skladniki_baza || !meal.makro) {
-          throw new Error(`Niekompletny przepis: ${meal.nazwa || 'brak nazwy'}`);
+          throw new Error(`Niekompletny: ${meal.nazwa || '?'}`)
         }
       }
 
-      console.log(`✅ Wygenerowano ${meals.length} przepisów`);
-      return meals;
+      console.log(`✅ Wygenerowano ${meals.length} przepisów przez Claude Opus`)
+      return meals
+
     } catch (err) {
-      console.error(`❌ Próba ${attempt}: ${err.message}`);
-      if (attempt === maxRetries) {
-        throw new Error(`Nie udało się wygenerować przepisów po ${maxRetries} próbach: ${err.message}`);
-      }
-      await new Promise(r => setTimeout(r, 2000));
+      console.error(`❌ Próba ${attempt}: ${err.message}`)
+      if (attempt === maxRetries) throw new Error(`Nieudane po ${maxRetries} próbach: ${err.message}`)
+      await new Promise(r => setTimeout(r, 5000 * attempt))
     }
   }
 }
