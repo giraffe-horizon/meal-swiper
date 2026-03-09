@@ -13,9 +13,16 @@ export async function onRequest(context) {
   }
 
   try {
-    // Google Custom Search API
-    const apiKey = 'REDACTED_API_KEY'
-    const cx = '017576662512468239146:omuauf8t8m5'
+    // Google Custom Search API - keys stored as Cloudflare env vars
+    const apiKey = context.env.GOOGLE_CSE_API_KEY
+    const cx = context.env.GOOGLE_CSE_CX
+
+    if (!apiKey || !cx) {
+      return new Response(JSON.stringify({ error: 'Missing API configuration' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
     const searchQuery = `${query} danie przepis`
 
     const searchUrl = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(searchQuery)}&searchType=image&num=3&imgSize=large&safe=active`
