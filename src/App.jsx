@@ -159,7 +159,7 @@ function App() {
           <h1 className="text-xl font-bold text-[#2D6A4F]">Meal Swiper</h1>
         </header>
 
-        <div className="w-full flex-1">
+        <div className="w-full flex-1 flex flex-col">
           {currentView === 'plan' && (
             <CalendarView
               weeklyPlan={weeklyPlan}
