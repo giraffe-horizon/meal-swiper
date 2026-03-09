@@ -14,6 +14,7 @@ const DEFAULT_PLAN: WeeklyPlan = {
 }
 
 export function getWeeklyPlan(weekKey: string): WeeklyPlan {
+  if (typeof window === 'undefined') return createDefaultPlan()
   const saved = localStorage.getItem(`weeklyPlan_${weekKey}`)
   if (saved) {
     return JSON.parse(saved) as WeeklyPlan
@@ -33,10 +34,7 @@ export function getCheckedItems(weekKey: string): Record<string, boolean> {
   return {}
 }
 
-export function saveCheckedItems(
-  weekKey: string,
-  items: Record<string, boolean>
-): void {
+export function saveCheckedItems(weekKey: string, items: Record<string, boolean>): void {
   localStorage.setItem(`checkedItems_${weekKey}`, JSON.stringify(items))
 }
 

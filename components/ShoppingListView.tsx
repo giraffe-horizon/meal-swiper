@@ -12,26 +12,55 @@ interface ShoppingListViewProps {
 }
 
 export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingListViewProps) {
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
-
   const weekKey = getWeekKey(weekOffset)
+
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() =>
+    typeof window !== 'undefined' ? getCheckedItems(weekKey) : {}
+  )
 
   const items = useMemo(() => generateShoppingList(weeklyPlan), [weeklyPlan])
 
+  const syncCheckedToServer = (newChecked: Record<string, boolean>) => {
+    fetch('/api/shopping-checked', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ week: weekKey, checked: newChecked }),
+    }).catch(() => {})
+  }
+
   useEffect(() => {
+    // Reload from localStorage when week changes (initializer only runs once)
     setCheckedItems(getCheckedItems(weekKey))
+  }, [weekKey])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(`/api/shopping-checked?week=${encodeURIComponent(weekKey)}`)
+      .then((r) => r.json())
+      .then((serverChecked: Record<string, boolean> | null) => {
+        if (!cancelled && serverChecked) {
+          setCheckedItems(serverChecked)
+          saveCheckedItems(weekKey, serverChecked)
+        }
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
   }, [weekKey])
 
   const toggleItem = (normalizedName: string) => {
     const newChecked = { ...checkedItems, [normalizedName]: !checkedItems[normalizedName] }
     setCheckedItems(newChecked)
     saveCheckedItems(weekKey, newChecked)
+    syncCheckedToServer(newChecked)
   }
 
   const resetList = () => {
     if (window.confirm('Czy na pewno chcesz zresetować listę?')) {
       setCheckedItems({})
       removeCheckedItems(weekKey)
+      syncCheckedToServer({})
     }
   }
 
@@ -47,6 +76,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
     })
     setCheckedItems(newChecked)
     saveCheckedItems(weekKey, newChecked)
+    syncCheckedToServer(newChecked)
   }
 
   const shareList = () => {
