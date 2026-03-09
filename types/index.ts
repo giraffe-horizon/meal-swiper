@@ -28,9 +28,9 @@ export interface Meal {
   bialko_z_miesem: number
   trudnosc: 'łatwe' | 'średnie' | 'trudne' | ''
   kuchnia: string
-  skladniki_baza: string   // JSON string: Ingredient[]
-  skladniki_mieso: string  // JSON string: Ingredient[]
-  przepis: string          // JSON string: RecipeStep
+  skladniki_baza: string // JSON string: Ingredient[]
+  skladniki_mieso: string // JSON string: Ingredient[]
+  przepis: string // JSON string: RecipeStep
   tags: string[]
 }
 
@@ -42,7 +42,7 @@ export type WeeklyPlan = {
   [K in `${DayKey}_free`]: boolean
 }
 
-export type ViewId = 'plan' | 'swipe' | 'shopping'
+export type ViewId = 'plan' | 'swipe' | 'shopping' | 'cooking'
 
 export interface Tab {
   id: ViewId

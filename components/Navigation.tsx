@@ -11,6 +11,7 @@ const navItems = [
   { id: 'plan' as ViewId, href: '/plan', icon: 'calendar_month', label: 'Plan' },
   { id: 'swipe' as ViewId, href: '/swipe', icon: 'view_carousel', label: 'Propozycje' },
   { id: 'shopping' as ViewId, href: '/shopping', icon: 'list_alt', label: 'Lista' },
+  { id: 'cooking' as ViewId, href: '/cooking', icon: 'skillet', label: 'Gotowanie' },
 ]
 
 export default function Navigation({ activeView }: NavigationProps) {
@@ -25,14 +26,10 @@ export default function Navigation({ activeView }: NavigationProps) {
               key={id}
               href={href}
               className={`flex flex-1 flex-col items-center justify-center gap-1 transition-colors py-1 relative ${
-                isActive
-                  ? 'text-primary'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-primary'
+                isActive ? 'text-primary' : 'text-slate-500 dark:text-slate-400 hover:text-primary'
               }`}
             >
-              {isActive && (
-                <div className="absolute -top-1 w-12 h-1 bg-primary rounded-full"></div>
-              )}
+              {isActive && <div className="absolute -top-1 w-12 h-1 bg-primary rounded-full"></div>}
               <span
                 className="material-symbols-outlined text-2xl"
                 style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
@@ -40,9 +37,7 @@ export default function Navigation({ activeView }: NavigationProps) {
                 {icon}
               </span>
               <span
-                className={`text-[10px] tracking-wide ${
-                  isActive ? 'font-bold' : 'font-medium'
-                }`}
+                className={`text-[10px] tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}
               >
                 {label}
               </span>
@@ -54,9 +49,7 @@ export default function Navigation({ activeView }: NavigationProps) {
       {/* Desktop Sidebar Navigation */}
       <nav className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col items-center py-6 gap-4 z-30">
         <div className="mb-4">
-          <span className="material-symbols-outlined text-primary text-3xl">
-            restaurant
-          </span>
+          <span className="material-symbols-outlined text-primary text-3xl">restaurant</span>
         </div>
         {navItems.map(({ id, href, icon, label }) => {
           const isActive = activeView === id
