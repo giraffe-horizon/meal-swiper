@@ -18,6 +18,13 @@ export default function SwipePage() {
     useAppContext()
   const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
 
+  // Jeśli żaden dzień nie wybrany → domyślnie pierwszy pusty dzień tygodnia
+  const effectiveDay = useMemo(
+    () =>
+      currentSwipeDay ?? DAY_KEYS.find((d) => !weeklyPlan[d] && !weeklyPlan[`${d}_free`]) ?? null,
+    [currentSwipeDay, weeklyPlan]
+  )
+
   const handleComplete = useCallback(() => {
     setCurrentSwipeDay(null)
     router.push('/plan')
@@ -45,7 +52,7 @@ export default function SwipePage() {
       onSwipeRight={(meal) => {
         handleSwipeRight(meal)
       }}
-      currentDay={currentSwipeDay}
+      currentDay={effectiveDay}
       onComplete={handleComplete}
       weeklyPlan={weeklyPlan}
       onSkipAll={handleComplete}
