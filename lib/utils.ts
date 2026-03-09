@@ -1,6 +1,16 @@
 const MONTH_NAMES = [
-  'Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze',
-  'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru',
+  'Sty',
+  'Lut',
+  'Mar',
+  'Kwi',
+  'Maj',
+  'Cze',
+  'Lip',
+  'Sie',
+  'Wrz',
+  'Paź',
+  'Lis',
+  'Gru',
 ]
 
 export function getMonday(weekOffset: number): Date {
@@ -41,15 +51,12 @@ export function formatWeekRange(weekDates: Date[]): string {
 export function formatWeekRangeShort(weekDates: Date[]): string {
   const start = weekDates[0]
   const end = weekDates[4]
-  const months = [
-    'sty', 'lut', 'mar', 'kwi', 'maj', 'cze',
-    'lip', 'sie', 'wrz', 'paź', 'lis', 'gru',
-  ]
+  const pad = (n: number) => String(n + 1).padStart(2, '0')
 
   if (start.getMonth() === end.getMonth()) {
-    return `${start.getDate()}-${end.getDate()} ${months[end.getMonth()]}`
+    return `${start.getDate()}-${end.getDate()}.${pad(end.getMonth())}`
   }
-  return `${start.getDate()} ${months[start.getMonth()]}-${end.getDate()} ${months[end.getMonth()]}`
+  return `${start.getDate()}.${pad(start.getMonth())}-${end.getDate()}.${pad(end.getMonth())}`
 }
 
 export function formatDateShort(date: Date): string {

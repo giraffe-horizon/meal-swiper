@@ -18,26 +18,26 @@ export default function Navigation({ activeView }: NavigationProps) {
   return (
     <>
       {/* Mobile Bottom Navigation */}
-      <nav className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-2 flex justify-between pb-4 lg:hidden">
+      <nav className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-1 sm:pt-2 flex justify-between pb-3 sm:pb-4 lg:hidden">
         {navItems.map(({ id, href, icon, label }) => {
           const isActive = activeView === id
           return (
             <Link
               key={id}
               href={href}
-              className={`flex flex-1 flex-col items-center justify-center gap-1 transition-colors py-1 relative ${
+              className={`flex flex-1 flex-col items-center justify-center gap-0.5 sm:gap-1 transition-colors py-0.5 sm:py-1 relative ${
                 isActive ? 'text-primary' : 'text-slate-500 dark:text-slate-400 hover:text-primary'
               }`}
             >
               {isActive && <div className="absolute -top-1 w-12 h-1 bg-primary rounded-full"></div>}
               <span
-                className="material-symbols-outlined text-2xl"
+                className="material-symbols-outlined text-xl sm:text-2xl"
                 style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
               >
                 {icon}
               </span>
               <span
-                className={`text-[10px] tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}
+                className={`text-[9px] sm:text-[10px] tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}
               >
                 {label}
               </span>

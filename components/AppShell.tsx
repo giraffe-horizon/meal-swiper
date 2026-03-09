@@ -34,10 +34,10 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <div className="h-dvh bg-background-light dark:bg-background-dark flex text-text-primary-light dark:text-text-primary-dark">
       <div className="flex-1 lg:ml-20 w-full flex flex-col h-dvh">
         {/* Global Header */}
-        <header className="shrink-0 flex items-center justify-between px-4 py-3 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-border-light dark:border-border-dark z-10">
+        <header className="shrink-0 flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-border-light dark:border-border-dark z-10">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-2xl">restaurant</span>
-            <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">
               {VIEW_TITLES[activeView]}
             </h1>
           </div>
@@ -45,7 +45,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-1">
             <button
               onClick={() => setWeekOffset(weekOffset - 1)}
-              className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1 sm:p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <span className="material-symbols-outlined text-sm text-slate-600 dark:text-slate-400">
                 chevron_left
@@ -56,7 +56,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
             </span>
             <button
               onClick={() => setWeekOffset(weekOffset + 1)}
-              className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1 sm:p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <span className="material-symbols-outlined text-sm text-slate-600 dark:text-slate-400">
                 chevron_right

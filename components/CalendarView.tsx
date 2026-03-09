@@ -74,10 +74,10 @@ export default function CalendarView({
                 key={day}
                 data-testid={`day-card-${day}`}
                 onContextMenu={(e) => handleContextMenu(e, day)}
-                className="bg-slate-100 dark:bg-slate-800/50 rounded-xl p-4 flex items-center justify-between opacity-70 group relative"
+                className="bg-slate-100 dark:bg-slate-800/50 rounded-xl p-3 sm:p-4 flex items-center justify-between opacity-70 group relative"
               >
                 <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-slate-500">flight_takeoff</span>
                   </div>
                   <div className="flex flex-col min-w-0">
@@ -122,7 +122,7 @@ export default function CalendarView({
                 key={day}
                 data-testid={`day-card-${day}`}
                 onContextMenu={(e) => handleContextMenu(e, day)}
-                className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800 group relative"
+                className="bg-white dark:bg-slate-900 rounded-xl p-3 sm:p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800 group relative"
               >
                 <button
                   type="button"
@@ -130,7 +130,7 @@ export default function CalendarView({
                   className="flex items-center gap-4 min-w-0 flex-1 text-left cursor-pointer hover:opacity-80 transition-opacity"
                 >
                   <div
-                    className="h-14 w-14 rounded-full bg-cover bg-center shadow-sm shrink-0"
+                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-cover bg-center shadow-sm shrink-0"
                     style={{ backgroundImage: `url(${meal.photo_url})` }}
                   />
                   <div className="flex flex-col min-w-0 flex-1">
@@ -201,10 +201,10 @@ export default function CalendarView({
               data-testid={`day-card-${day}`}
               onClick={() => onDayClick(day)}
               onContextMenu={(e) => handleContextMenu(e, day)}
-              className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800 border-dashed cursor-pointer hover:border-primary/50 transition-colors group"
+              className="bg-white dark:bg-slate-900 rounded-xl p-3 sm:p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800 border-dashed cursor-pointer hover:border-primary/50 transition-colors group"
             >
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="h-14 w-14 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-slate-400">restaurant_menu</span>
                 </div>
                 <div className="flex flex-col min-w-0">

@@ -86,7 +86,7 @@ export default function CookingPage() {
   return (
     <div className="flex-1 overflow-y-auto min-h-0">
       {/* Hero image */}
-      <div className="relative w-full" style={{ height: '40vh', minHeight: '200px' }}>
+      <div className="relative w-full" style={{ height: 'clamp(160px, 30vh, 280px)' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={meal.photo_url} alt={meal.nazwa} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
