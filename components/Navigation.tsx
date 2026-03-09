@@ -17,7 +17,7 @@ export default function Navigation({ activeView, onNavigate }: NavigationProps) 
   return (
     <>
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-[400px] md:max-w-[600px] mx-auto bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-2 flex justify-between z-30 pb-4 lg:hidden">
+      <nav className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-2 flex justify-between pb-4 lg:hidden">
         {navItems.map(({ id, icon, label }) => {
           const isActive = activeView === id
           return (

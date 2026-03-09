@@ -67,27 +67,8 @@ export default function CalendarView({
 
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-background-light dark:bg-background-dark">
-      {/* Header */}
-      <div className="flex items-center px-4 pt-6 pb-2 justify-between sticky top-0 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md z-10">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary text-3xl">
-            restaurant
-          </span>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Meal Swiper
-          </h1>
-        </div>
-        <div className="flex items-center">
-          <button className="flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
-            <span className="material-symbols-outlined text-slate-700 dark:text-slate-300">
-              search
-            </span>
-          </button>
-        </div>
-      </div>
-
       {/* Week Navigation */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 mx-4 rounded-xl shadow-sm mb-6 mt-2">
+      <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 mx-4 rounded-xl shadow-sm mb-6 mt-4">
         <button
           onClick={() => onWeekChange(weekOffset - 1)}
           className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -110,7 +91,7 @@ export default function CalendarView({
       </div>
 
       {/* Daily Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 px-4 flex-1 min-h-0 overflow-y-auto pb-32 lg:pb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 px-4 flex-1 min-h-0 pb-4">
         {DAY_KEYS.map((day, index) => {
           const meal = weeklyPlan[day]
           const isFree = weeklyPlan[`${day}_free`]
@@ -333,10 +314,10 @@ export default function CalendarView({
 
       {/* CTA Button */}
       {!hasEmptyDays && (
-        <div className="fixed bottom-20 left-0 right-0 max-w-[400px] mx-auto px-4 z-20">
+        <div className="shrink-0 px-4 pb-4">
           <button
             onClick={onGenerateShoppingList}
-            className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+            className="w-full max-w-[400px] mx-auto bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined">shopping_cart</span>
             Generuj listę zakupów

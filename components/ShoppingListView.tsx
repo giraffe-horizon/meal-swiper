@@ -151,42 +151,35 @@ export default function ShoppingListView({
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background-light dark:bg-background-dark">
-      {/* Header */}
-      <header className="flex flex-col gap-3 p-4 bg-background-light dark:bg-background-dark sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold flex-1 text-center text-text-primary-light dark:text-text-primary-dark">
-            Lista zakupów
-          </h2>
-        </div>
-        {hasAnyItems && (
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
-                {checkedCount}/{totalItems} produktów
-              </span>
-              {allChecked && <span className="text-sm">🎉</span>}
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={checkAllItems}
-                className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
-              >
-                Zaznacz wszystkie
-              </button>
-              <button
-                onClick={shareList}
-                className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  share
-                </span>
-                Udostępnij
-              </button>
-            </div>
+    <div className="flex flex-col flex-1 min-h-0 bg-background-light dark:bg-background-dark">
+      {/* Toolbar */}
+      {hasAnyItems && (
+        <div className="flex items-center justify-between gap-2 px-4 py-2 border-b border-border-light dark:border-border-dark">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
+              {checkedCount}/{totalItems} produktów
+            </span>
+            {allChecked && <span className="text-sm">🎉</span>}
           </div>
-        )}
-      </header>
+          <div className="flex gap-2">
+            <button
+              onClick={checkAllItems}
+              className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Zaznacz wszystkie
+            </button>
+            <button
+              onClick={shareList}
+              className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-[16px]">
+                share
+              </span>
+              Udostępnij
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Week Navigation */}
       <div className="flex items-center justify-between px-4 py-3 bg-surface-light dark:bg-surface-dark shadow-sm">
@@ -208,7 +201,7 @@ export default function ShoppingListView({
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 pb-24 overflow-y-auto">
+      <main className="flex-1 p-4 overflow-y-auto">
         {!hasAnyItems ? (
           <div className="flex flex-col items-center justify-center h-full">
             <div className="text-6xl mb-4">🛒</div>

@@ -170,26 +170,6 @@ export default function SwipeView({
           <span className="font-bold">{toastText}</span>
         </div>
       )}
-      {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10">
-        <div className="flex size-10 items-center justify-center text-primary">
-          <span className="material-symbols-outlined text-2xl">
-            restaurant_menu
-          </span>
-        </div>
-        <h1 className="text-xl font-bold text-center flex-1 text-slate-900 dark:text-slate-100">
-          Meal Swiper
-        </h1>
-        {onSkipAll && (
-          <button
-            onClick={onSkipAll}
-            className="text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-primary px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            Pomiń wszystkie
-          </button>
-        )}
-      </header>
-
       {/* Date Pill with Progress */}
       <div className="px-4 pb-2 flex justify-center gap-2 z-10 flex-wrap">
         {totalDays > 0 && (
