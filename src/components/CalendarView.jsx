@@ -68,7 +68,7 @@ const CalendarView = ({ weeklyPlan, onDayClick, onRemoveMeal, onToggleVacation, 
   }, [activeMenu])
 
   return (
-    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
+    <div className="flex flex-col flex-1 min-h-0 bg-background-light dark:bg-background-dark">
       {/* Header */}
       <div className="flex items-center px-4 pt-6 pb-2 justify-between sticky top-0 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex items-center gap-2">
