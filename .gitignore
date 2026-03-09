@@ -28,6 +28,10 @@ dist-ssr
 .env.local
 .dev.vars
 
+# Next.js
+.next
+.vercel
+
 # Wrangler
 .wrangler
 wrangler.toml.bak
