@@ -142,10 +142,13 @@ describe('SwipeView', () => {
     expect(screen.getByText(/Dodano:/)).toBeInTheDocument()
   })
 
-  it('shows day indicator banner with day name', () => {
+  it('shows interactive day selector with day chips', () => {
     render(<SwipeView {...defaultProps} />)
-    expect(screen.getByText('Wybierasz obiad na:')).toBeInTheDocument()
-    expect(screen.getByText(/Poniedziałek/)).toBeInTheDocument()
+    expect(screen.getByText('Pn')).toBeInTheDocument()
+    expect(screen.getByText('Wt')).toBeInTheDocument()
+    expect(screen.getByText('Śr')).toBeInTheDocument()
+    expect(screen.getByText('Cz')).toBeInTheDocument()
+    expect(screen.getByText('Pt')).toBeInTheDocument()
   })
 
   it('shows "Pomiń ten dzień" button when currentDay is set', () => {

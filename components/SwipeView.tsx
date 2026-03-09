@@ -24,6 +24,8 @@ interface SwipeViewProps {
   onSkipAll: () => void
   onSkipDay?: () => void
   weekOffset?: number
+  weekDates?: Date[]
+  onDaySelect?: (day: DayKey) => void
 }
 
 const SWIPE_THRESHOLD = 120
@@ -36,6 +38,8 @@ export default function SwipeView({
   weeklyPlan,
   onSkipDay,
   weekOffset = 0,
+  weekDates: weekDatesProp,
+  onDaySelect,
 }: SwipeViewProps) {
   const [shuffledMeals] = useState<Meal[]>(() => shuffleArray(meals))
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -61,18 +65,8 @@ export default function SwipeView({
   const likeOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 1])
   const nopeOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [1, 0])
 
-  const emptyDays = weeklyPlan
-    ? DAY_KEYS.filter((d) => !weeklyPlan[d] && !weeklyPlan[`${d}_free`])
-    : []
-  const currentDayIndex = currentDay ? emptyDays.indexOf(currentDay) + 1 : 0
-  const totalDays = emptyDays.length
-
-  const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
-  const currentDayDate = useMemo(() => {
-    if (!currentDay) return null
-    const dayIdx = DAY_KEYS.indexOf(currentDay)
-    return dayIdx >= 0 ? weekDates[dayIdx] : null
-  }, [currentDay, weekDates])
+  const weekDatesComputed = useMemo(() => getWeekDates(weekOffset), [weekOffset])
+  const weekDates = weekDatesProp ?? weekDatesComputed
 
   const currentMeal = shuffledMeals[currentIndex]
 
@@ -235,28 +229,56 @@ export default function SwipeView({
         </div>
       )}
 
-      {/* Day Indicator Banner */}
-      <div className="px-4 pb-2 flex justify-center z-10">
-        <div className="bg-white dark:bg-slate-800 rounded-xl px-5 py-3 shadow-sm border border-slate-100 dark:border-slate-700 text-center w-full max-w-sm">
-          <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-            Wybierasz obiad na:
-          </p>
-          <p className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-0.5">
-            {currentDay ? (
-              <>
-                {DAY_NAMES_MAP[currentDay]}
-                {currentDayDate && `, ${formatDateShort(currentDayDate)}`}
-              </>
-            ) : (
-              'Dowolny posiłek'
-            )}
-          </p>
-          {totalDays > 0 && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              ({currentDayIndex || 1} z {totalDays} wolnych dni)
-            </p>
-          )}
-        </div>
+      {/* Day Selector */}
+      <div className="flex gap-2 px-4 py-2 overflow-x-auto scrollbar-none justify-center">
+        {DAY_KEYS.map((day, idx) => {
+          const meal = weeklyPlan[day]
+          const isFree = weeklyPlan[`${day}_free`]
+          const isActive = currentDay === day
+          const shortName = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt'][idx]
+          const dateLabel = weekDates[idx] ? formatDateShort(weekDates[idx]) : ''
+
+          return (
+            <button
+              key={day}
+              onClick={() => !isFree && onDaySelect?.(day)}
+              disabled={isFree}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all ${
+                isActive
+                  ? 'bg-primary/10 ring-2 ring-primary'
+                  : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+              } ${isFree ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              {/* Thumbnail */}
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-800 shrink-0">
+                {meal ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={meal.photo_url}
+                    alt={meal.nazwa}
+                    className="w-full h-full object-cover"
+                  />
+                ) : isFree ? (
+                  <span className="text-lg">✈️</span>
+                ) : (
+                  <span className="material-symbols-outlined text-slate-400 text-[20px]">
+                    restaurant_menu
+                  </span>
+                )}
+              </div>
+              {/* Day name */}
+              <span
+                className={`text-xs font-semibold ${
+                  isActive ? 'text-primary' : 'text-slate-600 dark:text-slate-400'
+                }`}
+              >
+                {shortName}
+              </span>
+              {/* Date */}
+              {dateLabel && <span className="text-[10px] text-slate-400">{dateLabel}</span>}
+            </button>
+          )
+        })}
       </div>
 
       {/* Card Stack Area */}

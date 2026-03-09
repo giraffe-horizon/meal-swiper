@@ -1,10 +1,10 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useAppContext } from '@/lib/context'
-import { DAY_KEYS } from '@/lib/utils'
+import { DAY_KEYS, getWeekDates } from '@/lib/utils'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 const SwipeView = dynamic(() => import('@/components/SwipeView'), {
@@ -16,6 +16,7 @@ export default function SwipePage() {
   const router = useRouter()
   const { meals, weeklyPlan, weekOffset, currentSwipeDay, setCurrentSwipeDay, handleSwipeRight } =
     useAppContext()
+  const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
 
   const handleComplete = useCallback(() => {
     setCurrentSwipeDay(null)
@@ -50,6 +51,8 @@ export default function SwipePage() {
       onSkipAll={handleComplete}
       onSkipDay={handleSkipDay}
       weekOffset={weekOffset}
+      weekDates={weekDates}
+      onDaySelect={setCurrentSwipeDay}
     />
   )
 }
