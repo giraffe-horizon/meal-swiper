@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { DayKey, WeeklyPlan } from '@/types'
+import type { Meal, DayKey, WeeklyPlan } from '@/types'
 import { useWeekDates } from '@/hooks/useWeekDates'
 import { DAY_KEYS, DAY_NAMES, formatDateShort } from '@/lib/utils'
+import MealModal from '@/components/MealModal'
 
 interface CalendarViewProps {
   weeklyPlan: WeeklyPlan
@@ -23,6 +24,7 @@ export default function CalendarView({
   onGenerateShoppingList,
 }: CalendarViewProps) {
   const [activeMenu, setActiveMenu] = useState<DayKey | null>(null)
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null)
   const { weekDates } = useWeekDates(weekOffset)
 
   const handleContextMenu = (e: React.MouseEvent, day: DayKey) => {
@@ -51,9 +53,7 @@ export default function CalendarView({
     }
   }
 
-  const hasEmptyDays = DAY_KEYS.some(
-    (day) => !weeklyPlan[day] && !weeklyPlan[`${day}_free`]
-  )
+  const hasEmptyDays = DAY_KEYS.some((day) => !weeklyPlan[day] && !weeklyPlan[`${day}_free`])
 
   useEffect(() => {
     const handleClickOutside = () => setActiveMenu(null)
@@ -82,17 +82,13 @@ export default function CalendarView({
               >
                 <div className="flex items-center gap-4">
                   <div className="h-14 w-14 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-slate-500">
-                      flight_takeoff
-                    </span>
+                    <span className="material-symbols-outlined text-slate-500">flight_takeoff</span>
                   </div>
                   <div className="flex flex-col min-w-0">
                     <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
                       {DAY_NAMES[index]}, {dateStr}
                     </p>
-                    <p className="text-base font-bold text-slate-600 dark:text-slate-300">
-                      Urlop
-                    </p>
+                    <p className="text-base font-bold text-slate-600 dark:text-slate-300">Urlop</p>
                   </div>
                 </div>
                 <div className="relative">
@@ -103,9 +99,7 @@ export default function CalendarView({
                     }}
                     className="p-2 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg"
                   >
-                    <span className="material-symbols-outlined text-slate-500">
-                      more_vert
-                    </span>
+                    <span className="material-symbols-outlined text-slate-500">more_vert</span>
                   </button>
                   {activeMenu === day && (
                     <div className="absolute right-0 top-full mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-50 min-w-[180px]">
@@ -116,9 +110,7 @@ export default function CalendarView({
                         }}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-slate-300"
                       >
-                        <span className="material-symbols-outlined text-[18px]">
-                          close
-                        </span>
+                        <span className="material-symbols-outlined text-[18px]">close</span>
                         Anuluj urlop
                       </button>
                     </div>
@@ -136,7 +128,11 @@ export default function CalendarView({
                 onContextMenu={(e) => handleContextMenu(e, day)}
                 className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-slate-800 group relative"
               >
-                <div className="flex items-center gap-4 min-w-0 flex-1">
+                <button
+                  type="button"
+                  onClick={() => setSelectedMeal(meal)}
+                  className="flex items-center gap-4 min-w-0 flex-1 text-left cursor-pointer hover:opacity-80 transition-opacity"
+                >
                   <div
                     className="h-14 w-14 rounded-full bg-cover bg-center shadow-sm shrink-0"
                     style={{ backgroundImage: `url(${meal.photo_url})` }}
@@ -154,17 +150,13 @@ export default function CalendarView({
                       </p>
                     )}
                   </div>
-                </div>
+                </button>
                 <div className="relative">
                   <button
-                    onClick={() =>
-                      setActiveMenu(activeMenu === day ? null : day)
-                    }
+                    onClick={() => setActiveMenu(activeMenu === day ? null : day)}
                     className="p-2 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
                   >
-                    <span className="material-symbols-outlined text-slate-400">
-                      more_vert
-                    </span>
+                    <span className="material-symbols-outlined text-slate-400">more_vert</span>
                   </button>
                   {activeMenu === day && (
                     <div className="absolute right-0 top-full mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-50 min-w-[180px]">
@@ -175,9 +167,7 @@ export default function CalendarView({
                         }}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-slate-300"
                       >
-                        <span className="material-symbols-outlined text-[18px]">
-                          sync_alt
-                        </span>
+                        <span className="material-symbols-outlined text-[18px]">sync_alt</span>
                         Zmień danie
                       </button>
                       <button
@@ -187,9 +177,7 @@ export default function CalendarView({
                         }}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-red-600 dark:text-red-400"
                       >
-                        <span className="material-symbols-outlined text-[18px]">
-                          delete
-                        </span>
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
                         Usuń danie
                       </button>
                       <button
@@ -221,9 +209,7 @@ export default function CalendarView({
             >
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <div className="h-14 w-14 rounded-full bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-slate-400">
-                    restaurant_menu
-                  </span>
+                  <span className="material-symbols-outlined text-slate-400">restaurant_menu</span>
                 </div>
                 <div className="flex flex-col min-w-0">
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
@@ -235,9 +221,7 @@ export default function CalendarView({
                 </div>
               </div>
               <button className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors shrink-0">
-                <span className="material-symbols-outlined text-primary">
-                  add
-                </span>
+                <span className="material-symbols-outlined text-primary">add</span>
               </button>
               <div className="relative ml-2">
                 <button
@@ -247,9 +231,7 @@ export default function CalendarView({
                   }}
                   className="p-2 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
                 >
-                  <span className="material-symbols-outlined text-slate-400">
-                    more_vert
-                  </span>
+                  <span className="material-symbols-outlined text-slate-400">more_vert</span>
                 </button>
                 {activeMenu === day && (
                   <div className="absolute right-0 top-full mt-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-50 min-w-[180px]">
@@ -261,9 +243,7 @@ export default function CalendarView({
                       }}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-slate-300"
                     >
-                      <span className="material-symbols-outlined text-[18px]">
-                        add
-                      </span>
+                      <span className="material-symbols-outlined text-[18px]">add</span>
                       Dodaj danie
                     </button>
                     <button
@@ -274,9 +254,7 @@ export default function CalendarView({
                       }}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-slate-300"
                     >
-                      <span className="material-symbols-outlined text-[18px]">
-                        flight_takeoff
-                      </span>
+                      <span className="material-symbols-outlined text-[18px]">flight_takeoff</span>
                       Oznacz jako wolny
                     </button>
                   </div>
@@ -299,6 +277,9 @@ export default function CalendarView({
           </button>
         </div>
       )}
+
+      {/* Meal Detail Modal */}
+      <MealModal meal={selectedMeal} onClose={() => setSelectedMeal(null)} />
     </div>
   )
 }

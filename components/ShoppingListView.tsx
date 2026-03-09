@@ -3,11 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import type { WeeklyPlan } from '@/types'
 import { getWeekKey } from '@/lib/utils'
-import {
-  getCheckedItems,
-  saveCheckedItems,
-  removeCheckedItems,
-} from '@/lib/storage'
+import { getCheckedItems, saveCheckedItems, removeCheckedItems } from '@/lib/storage'
 import { generateShoppingList, type MergedIngredient } from '@/lib/shopping'
 
 interface ShoppingListViewProps {
@@ -15,10 +11,7 @@ interface ShoppingListViewProps {
   weekOffset: number
 }
 
-export default function ShoppingListView({
-  weeklyPlan,
-  weekOffset,
-}: ShoppingListViewProps) {
+export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingListViewProps) {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
 
   const weekKey = getWeekKey(weekOffset)
@@ -59,7 +52,7 @@ export default function ShoppingListView({
   const shareList = () => {
     let text = '📝 Lista zakupów\n\n'
     items.forEach((item) => {
-      text += `• ${item.name} - ${item.amount}\n`
+      text += `• ${item.name} — ${item.amount}\n`
     })
     navigator.clipboard.writeText(text)
     alert('✅ Lista skopiowana do schowka!')
@@ -87,9 +80,7 @@ export default function ShoppingListView({
               onClick={shareList}
               className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
             >
-              <span className="material-symbols-outlined text-[16px]">
-                share
-              </span>
+              <span className="material-symbols-outlined text-[16px]">share</span>
               Udostępnij
             </button>
           </div>
@@ -142,18 +133,17 @@ export default function ShoppingListView({
                         />
                       </div>
                       <span
-                        className={`text-base font-medium flex-1 truncate text-text-primary-light dark:text-text-primary-dark ${
+                        className={`text-base font-medium flex-1 text-text-primary-light dark:text-text-primary-dark ${
                           isChecked ? 'line-through' : ''
                         }`}
                       >
                         {item.name}
-                      </span>
-                      <span
-                        className={`text-base text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0 ${
-                          isChecked ? 'line-through' : ''
-                        }`}
-                      >
-                        {item.amount}
+                        <span
+                          className={`text-text-secondary-light dark:text-text-secondary-dark font-normal ${isChecked ? 'line-through' : ''}`}
+                        >
+                          {' '}
+                          — {item.amount}
+                        </span>
                       </span>
                     </label>
                   )
@@ -167,9 +157,7 @@ export default function ShoppingListView({
                 onClick={resetList}
                 className="px-6 py-2.5 rounded-full border border-border-light dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-sm">
-                  refresh
-                </span>
+                <span className="material-symbols-outlined text-sm">refresh</span>
                 Resetuj listę
               </button>
             </div>

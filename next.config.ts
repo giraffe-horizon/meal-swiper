@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  transpilePackages: ['framer-motion'],
   async headers() {
     return [
       {
@@ -18,7 +19,7 @@ const nextConfig: NextConfig = {
               "font-src 'self' fonts.gstatic.com",
               "img-src 'self' data: https:",
               "connect-src 'self'",
-            ].join('; ')
+            ].join('; '),
           },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],

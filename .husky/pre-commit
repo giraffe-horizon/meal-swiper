@@ -1,10 +1,10 @@
 #!/bin/sh
 # Husky pre-commit hook
 
-echo "🔍 Linting..."
+echo "🎨 Formatting (Prettier)..."
 npx lint-staged
 
-echo "🧪 Running tests..."
+echo "🧪 Running tests (Vitest)..."
 npm run test
 
 echo "✅ All checks passed!"

@@ -200,8 +200,11 @@ export default function SwipeView({
       </div>
 
       {/* Card Stack Area */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 pb-4 relative">
-        <div className="relative w-full max-w-[400px] h-[calc(100%-80px)]">
+      <div className="flex-1 flex flex-col items-center px-4 pb-2 relative min-h-0">
+        <div
+          className="relative w-full max-w-sm flex-1 min-h-0"
+          style={{ minHeight: '420px', maxHeight: 'calc(100vh - 280px)' }}
+        >
           {/* Stack cards (rendered bottom-to-top) */}
           {stackCards
             .slice()
@@ -329,18 +332,14 @@ export default function SwipeView({
             disabled={isAnimating}
             className="w-16 h-16 bg-white dark:bg-slate-800 rounded-full shadow-lg flex items-center justify-center text-red-500 border-2 border-red-100 dark:border-red-900/30 transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
           >
-            <span className="material-symbols-outlined text-3xl font-bold">
-              close
-            </span>
+            <span className="material-symbols-outlined text-3xl font-bold">close</span>
           </button>
           <button
             onClick={handleSwipeRight}
             disabled={isAnimating}
             className="w-16 h-16 bg-primary rounded-full shadow-lg shadow-primary/30 flex items-center justify-center text-white transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
           >
-            <span className="material-symbols-outlined text-3xl font-bold">
-              favorite
-            </span>
+            <span className="material-symbols-outlined text-3xl font-bold">favorite</span>
           </button>
         </div>
       </div>

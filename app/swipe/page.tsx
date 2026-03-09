@@ -1,18 +1,19 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useAppContext } from '@/lib/context'
-import SwipeView from '@/components/SwipeView'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
+
+const SwipeView = dynamic(() => import('@/components/SwipeView'), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+})
 
 export default function SwipePage() {
   const router = useRouter()
-  const {
-    meals,
-    weeklyPlan,
-    currentSwipeDay,
-    setCurrentSwipeDay,
-    handleSwipeRight,
-  } = useAppContext()
+  const { meals, weeklyPlan, currentSwipeDay, setCurrentSwipeDay, handleSwipeRight } =
+    useAppContext()
 
   const handleComplete = () => {
     setCurrentSwipeDay(null)

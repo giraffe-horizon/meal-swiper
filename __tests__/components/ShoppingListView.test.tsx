@@ -20,16 +20,22 @@ const mockMeal: Meal = {
     { name: 'Makaron', amount: '200g', category: 'suche' },
     { name: 'Pomidory', amount: '3 szt', category: 'warzywa' },
   ]),
-  skladniki_mieso: JSON.stringify([
-    { name: 'Boczek', amount: '100g', category: 'mięso' },
-  ]),
+  skladniki_mieso: JSON.stringify([{ name: 'Boczek', amount: '100g', category: 'mięso' }]),
   przepis: '{}',
   tags: [],
 }
 
 const emptyPlan: WeeklyPlan = {
-  mon: null, tue: null, wed: null, thu: null, fri: null,
-  mon_free: false, tue_free: false, wed_free: false, thu_free: false, fri_free: false,
+  mon: null,
+  tue: null,
+  wed: null,
+  thu: null,
+  fri: null,
+  mon_free: false,
+  tue_free: false,
+  wed_free: false,
+  thu_free: false,
+  fri_free: false,
 }
 
 const defaultProps = {
@@ -52,7 +58,7 @@ describe('ShoppingListView', () => {
     const plan = { ...emptyPlan, mon: mockMeal }
     render(<ShoppingListView {...defaultProps} weeklyPlan={plan} />)
     expect(screen.getByText('Makaron')).toBeInTheDocument()
-    expect(screen.getByText('200g')).toBeInTheDocument()
+    expect(screen.getByText(/— 200g/)).toBeInTheDocument()
     expect(screen.getByText('Pomidory')).toBeInTheDocument()
     expect(screen.getByText('Boczek')).toBeInTheDocument()
   })
@@ -71,7 +77,7 @@ describe('ShoppingListView', () => {
     const saved = localStorage.getItem(`checkedItems_${weekKey}`)
     expect(saved).toBeTruthy()
     const parsed = JSON.parse(saved!)
-    expect(Object.values(parsed).some(v => v === true)).toBe(true)
+    expect(Object.values(parsed).some((v) => v === true)).toBe(true)
   })
 
   it('"Udostępnij" copies text to clipboard', async () => {
