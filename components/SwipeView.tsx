@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
 import type { Meal, DayKey, WeeklyPlan } from '@/types'
-import { DAY_KEYS, DAY_NAMES_MAP } from '@/lib/utils'
+import { DAY_KEYS, DAY_NAMES_MAP, formatDateShort, getWeekDates } from '@/lib/utils'
+import MealModal from '@/components/MealModal'
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
@@ -21,6 +22,8 @@ interface SwipeViewProps {
   onComplete: () => void
   weeklyPlan: WeeklyPlan
   onSkipAll: () => void
+  onSkipDay?: () => void
+  weekOffset?: number
 }
 
 const SWIPE_THRESHOLD = 120
@@ -31,6 +34,8 @@ export default function SwipeView({
   currentDay,
   onComplete,
   weeklyPlan,
+  onSkipDay,
+  weekOffset = 0,
 }: SwipeViewProps) {
   const [shuffledMeals] = useState<Meal[]>(() => shuffleArray(meals))
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -49,6 +54,7 @@ export default function SwipeView({
   const [showToast, setShowToast] = useState(false)
   const [toastText, setToastText] = useState('')
   const [isAnimating, setIsAnimating] = useState(false)
+  const [modalMeal, setModalMeal] = useState<Meal | null>(null)
 
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-300, 0, 300], [-18, 0, 18])
@@ -60,6 +66,13 @@ export default function SwipeView({
     : []
   const currentDayIndex = currentDay ? emptyDays.indexOf(currentDay) + 1 : 0
   const totalDays = emptyDays.length
+
+  const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
+  const currentDayDate = useMemo(() => {
+    if (!currentDay) return null
+    const dayIdx = DAY_KEYS.indexOf(currentDay)
+    return dayIdx >= 0 ? weekDates[dayIdx] : null
+  }, [currentDay, weekDates])
 
   const currentMeal = shuffledMeals[currentIndex]
 
@@ -116,14 +129,39 @@ export default function SwipeView({
     [isAnimating, handleSwipeRight, handleSwipeLeft, x]
   )
 
+  // Tap on card = open recipe modal (only if not dragging)
+  const [dragStartX, setDragStartX] = useState(0)
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    setDragStartX(e.clientX)
+  }, [])
+  const handleCardTap = useCallback(
+    (e: React.PointerEvent) => {
+      // Only open modal if pointer barely moved (tap, not drag)
+      const movedX = Math.abs(e.clientX - dragStartX)
+      if (movedX < 10 && currentMeal) {
+        setModalMeal(currentMeal)
+      }
+    },
+    [dragStartX, currentMeal]
+  )
+
+  const handleSkipDay = useCallback(() => {
+    if (onSkipDay) {
+      onSkipDay()
+    } else {
+      onComplete()
+    }
+  }, [onSkipDay, onComplete])
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (modalMeal) return // don't handle swipe keys when modal is open
       if (e.key === 'ArrowLeft') handleSwipeLeft()
       if (e.key === 'ArrowRight') handleSwipeRight()
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [handleSwipeLeft, handleSwipeRight])
+  }, [handleSwipeLeft, handleSwipeRight, modalMeal])
 
   const handleReshuffle = useCallback(() => {
     setShowSuccess(false)
@@ -197,15 +235,27 @@ export default function SwipeView({
         </div>
       )}
 
-      {/* Date Pill with Progress */}
-      <div className="px-4 pb-2 flex justify-center gap-2 z-10 flex-wrap">
-        {totalDays > 0 && (
-          <div className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1.5 rounded-full text-xs font-medium">
-            Dzień {currentDayIndex || 1} z {totalDays}
-          </div>
-        )}
-        <div className="bg-primary/10 dark:bg-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium">
-          📅 {currentDay ? DAY_NAMES_MAP[currentDay] : 'Wybierz posiłek'}
+      {/* Day Indicator Banner */}
+      <div className="px-4 pb-2 flex justify-center z-10">
+        <div className="bg-white dark:bg-slate-800 rounded-xl px-5 py-3 shadow-sm border border-slate-100 dark:border-slate-700 text-center w-full max-w-sm">
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+            Wybierasz obiad na:
+          </p>
+          <p className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-0.5">
+            {currentDay ? (
+              <>
+                {DAY_NAMES_MAP[currentDay]}
+                {currentDayDate && `, ${formatDateShort(currentDayDate)}`}
+              </>
+            ) : (
+              'Dowolny posiłek'
+            )}
+          </p>
+          {totalDays > 0 && (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              ({currentDayIndex || 1} z {totalDays} wolnych dni)
+            </p>
+          )}
         </div>
       </div>
 
@@ -213,7 +263,7 @@ export default function SwipeView({
       <div className="flex-1 flex flex-col items-center px-4 pb-2 relative min-h-0">
         <div
           className="relative w-full max-w-sm flex-1 min-h-0"
-          style={{ minHeight: '420px', maxHeight: 'calc(100vh - 280px)' }}
+          style={{ minHeight: '420px', maxHeight: 'calc(100vh - 320px)' }}
         >
           {/* Stack cards (rendered bottom-to-top) */}
           {stackCards
@@ -237,6 +287,8 @@ export default function SwipeView({
                     dragElastic={0.7}
                     dragConstraints={{ left: 0, right: 0 }}
                     onDragEnd={handleDragEnd}
+                    onPointerDown={handlePointerDown}
+                    onPointerUp={handleCardTap}
                   >
                     {/* Full image background */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -253,7 +305,7 @@ export default function SwipeView({
                       style={{ opacity: likeOpacity }}
                     >
                       <div className="border-[6px] border-green-400 text-green-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[-20deg] bg-black/20 backdrop-blur-sm">
-                        WYBIERAM ❤️
+                        DODAJ DO PLANU
                       </div>
                     </motion.div>
                     <motion.div
@@ -261,7 +313,7 @@ export default function SwipeView({
                       style={{ opacity: nopeOpacity }}
                     >
                       <div className="border-[6px] border-red-400 text-red-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[20deg] bg-black/20 backdrop-blur-sm">
-                        POMIJAM ✕
+                        POMIJAM
                       </div>
                     </motion.div>
 
@@ -336,23 +388,38 @@ export default function SwipeView({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-center gap-8 h-20 shrink-0">
-          <button
-            onClick={handleSwipeLeft}
-            disabled={isAnimating}
-            className="w-16 h-16 bg-white dark:bg-slate-800 rounded-full shadow-lg flex items-center justify-center text-red-500 border-2 border-red-100 dark:border-red-900/30 transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined text-3xl font-bold">close</span>
-          </button>
-          <button
-            onClick={handleSwipeRight}
-            disabled={isAnimating}
-            className="w-16 h-16 bg-primary rounded-full shadow-lg shadow-primary/30 flex items-center justify-center text-white transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined text-3xl font-bold">favorite</span>
-          </button>
+        <div className="flex flex-col items-center gap-2 shrink-0 pb-2">
+          <div className="flex items-center justify-center gap-8 h-20">
+            <button
+              onClick={handleSwipeLeft}
+              disabled={isAnimating}
+              title="Pomiń tę propozycję"
+              className="w-16 h-16 bg-white dark:bg-slate-800 rounded-full shadow-lg flex items-center justify-center text-red-500 border-2 border-red-100 dark:border-red-900/30 transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-3xl font-bold">close</span>
+            </button>
+            <button
+              onClick={handleSwipeRight}
+              disabled={isAnimating}
+              title="Dodaj do planu"
+              className="w-16 h-16 bg-primary rounded-full shadow-lg shadow-primary/30 flex items-center justify-center text-white transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-3xl font-bold">favorite</span>
+            </button>
+          </div>
+          {currentDay && (
+            <button
+              onClick={handleSkipDay}
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors py-1"
+            >
+              Pomiń ten dzień &rarr;
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Meal Detail Modal */}
+      <MealModal meal={modalMeal} onClose={() => setModalMeal(null)} />
     </div>
   )
 }

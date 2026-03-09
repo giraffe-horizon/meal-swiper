@@ -1,8 +1,10 @@
 'use client'
 
+import { useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useAppContext } from '@/lib/context'
+import { DAY_KEYS } from '@/lib/utils'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 const SwipeView = dynamic(() => import('@/components/SwipeView'), {
@@ -12,13 +14,29 @@ const SwipeView = dynamic(() => import('@/components/SwipeView'), {
 
 export default function SwipePage() {
   const router = useRouter()
-  const { meals, weeklyPlan, currentSwipeDay, setCurrentSwipeDay, handleSwipeRight } =
+  const { meals, weeklyPlan, weekOffset, currentSwipeDay, setCurrentSwipeDay, handleSwipeRight } =
     useAppContext()
 
-  const handleComplete = () => {
+  const handleComplete = useCallback(() => {
     setCurrentSwipeDay(null)
     router.push('/plan')
-  }
+  }, [setCurrentSwipeDay, router])
+
+  const handleSkipDay = useCallback(() => {
+    // Find the next empty day after the current one
+    const currentIdx = currentSwipeDay ? DAY_KEYS.indexOf(currentSwipeDay) : -1
+    const nextEmptyDay =
+      DAY_KEYS.find((d, i) => {
+        if (i <= currentIdx) return false
+        return !weeklyPlan[d] && !weeklyPlan[`${d}_free`]
+      }) ?? null
+
+    if (nextEmptyDay) {
+      setCurrentSwipeDay(nextEmptyDay)
+    } else {
+      handleComplete()
+    }
+  }, [currentSwipeDay, weeklyPlan, setCurrentSwipeDay, handleComplete])
 
   return (
     <SwipeView
@@ -30,6 +48,8 @@ export default function SwipePage() {
       onComplete={handleComplete}
       weeklyPlan={weeklyPlan}
       onSkipAll={handleComplete}
+      onSkipDay={handleSkipDay}
+      weekOffset={weekOffset}
     />
   )
 }

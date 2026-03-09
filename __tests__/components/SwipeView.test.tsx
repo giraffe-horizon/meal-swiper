@@ -9,10 +9,7 @@ vi.mock('framer-motion', () => {
 
   const motionDiv = React.forwardRef(
     (props: Record<string, unknown>, ref: React.Ref<HTMLDivElement>) => {
-      const {
-        drag, dragElastic, dragConstraints, onDragEnd,
-        style: _style, ...rest
-      } = props
+      const { drag, dragElastic, dragConstraints, onDragEnd, style: _style, ...rest } = props
       return React.createElement('div', { ...rest, ref })
     }
   )
@@ -52,8 +49,16 @@ const mockMeal2: Meal = {
 }
 
 const defaultPlan: WeeklyPlan = {
-  mon: null, tue: null, wed: null, thu: null, fri: null,
-  mon_free: false, tue_free: false, wed_free: false, thu_free: false, fri_free: false,
+  mon: null,
+  tue: null,
+  wed: null,
+  thu: null,
+  fri: null,
+  mon_free: false,
+  tue_free: false,
+  wed_free: false,
+  thu_free: false,
+  fri_free: false,
 }
 
 const defaultProps = {
@@ -63,6 +68,7 @@ const defaultProps = {
   onComplete: vi.fn(),
   weeklyPlan: defaultPlan,
   onSkipAll: vi.fn(),
+  onSkipDay: vi.fn(),
 }
 
 describe('SwipeView', () => {
@@ -84,8 +90,8 @@ describe('SwipeView', () => {
     render(<SwipeView {...defaultProps} />)
 
     const buttons = screen.getAllByRole('button')
-    const heartButton = buttons.find(btn =>
-      btn.querySelector('.material-symbols-outlined')?.textContent === 'favorite'
+    const heartButton = buttons.find(
+      (btn) => btn.querySelector('.material-symbols-outlined')?.textContent === 'favorite'
     )
     expect(heartButton).toBeTruthy()
 
@@ -101,8 +107,8 @@ describe('SwipeView', () => {
     render(<SwipeView {...defaultProps} />)
 
     const buttons = screen.getAllByRole('button')
-    const closeButton = buttons.find(btn =>
-      btn.querySelector('.material-symbols-outlined')?.textContent === 'close'
+    const closeButton = buttons.find(
+      (btn) => btn.querySelector('.material-symbols-outlined')?.textContent === 'close'
     )
     expect(closeButton).toBeTruthy()
 
@@ -125,8 +131,8 @@ describe('SwipeView', () => {
     render(<SwipeView {...defaultProps} />)
 
     const buttons = screen.getAllByRole('button')
-    const heartButton = buttons.find(btn =>
-      btn.querySelector('.material-symbols-outlined')?.textContent === 'favorite'
+    const heartButton = buttons.find(
+      (btn) => btn.querySelector('.material-symbols-outlined')?.textContent === 'favorite'
     )
 
     await act(async () => {
@@ -134,5 +140,28 @@ describe('SwipeView', () => {
     })
 
     expect(screen.getByText(/Dodano:/)).toBeInTheDocument()
+  })
+
+  it('shows day indicator banner with day name', () => {
+    render(<SwipeView {...defaultProps} />)
+    expect(screen.getByText('Wybierasz obiad na:')).toBeInTheDocument()
+    expect(screen.getByText(/Poniedziałek/)).toBeInTheDocument()
+  })
+
+  it('shows "Pomiń ten dzień" button when currentDay is set', () => {
+    render(<SwipeView {...defaultProps} />)
+    expect(screen.getByText(/Pomiń ten dzień/)).toBeInTheDocument()
+  })
+
+  it('does not show "Pomiń ten dzień" when currentDay is null', () => {
+    render(<SwipeView {...defaultProps} currentDay={null} />)
+    expect(screen.queryByText(/Pomiń ten dzień/)).not.toBeInTheDocument()
+  })
+
+  it('calls onSkipDay when "Pomiń ten dzień" is clicked', () => {
+    const onSkipDay = vi.fn()
+    render(<SwipeView {...defaultProps} onSkipDay={onSkipDay} />)
+    fireEvent.click(screen.getByText(/Pomiń ten dzień/))
+    expect(onSkipDay).toHaveBeenCalled()
   })
 })
