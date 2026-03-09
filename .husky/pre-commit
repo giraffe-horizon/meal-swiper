@@ -1,0 +1,10 @@
+#!/bin/sh
+# Husky pre-commit hook
+
+echo "🔍 Linting..."
+npx lint-staged
+
+echo "🧪 Running tests..."
+npm run test
+
+echo "✅ All checks passed!"

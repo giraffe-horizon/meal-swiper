@@ -1,0 +1,7 @@
+.next
+.vercel
+node_modules
+public/meals
+*.png
+*.jpg
+*.jpeg
