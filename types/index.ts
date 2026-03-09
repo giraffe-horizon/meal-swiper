@@ -1,7 +1,19 @@
 export interface Ingredient {
   name: string
   amount: string
-  category: 'mięso' | 'warzywa' | 'nabiał' | 'suche'
+  category?: 'mięso' | 'warzywa' | 'nabiał' | 'suche'
+}
+
+export interface RecipeStep {
+  kroki: string[]
+  wskazowki?: string
+}
+
+export interface Makro {
+  kcal: number
+  bialko: number
+  wegle?: number
+  tluszcz?: number
 }
 
 export interface Meal {
@@ -12,8 +24,13 @@ export interface Meal {
   prep_time: number
   kcal_baza: number
   kcal_z_miesem: number
-  skladniki_baza: string
-  skladniki_mieso: string
+  bialko_baza: number
+  bialko_z_miesem: number
+  trudnosc: 'łatwe' | 'średnie' | 'trudne' | ''
+  kuchnia: string
+  skladniki_baza: string   // JSON string: Ingredient[]
+  skladniki_mieso: string  // JSON string: Ingredient[]
+  przepis: string          // JSON string: RecipeStep
   tags: string[]
 }
 
