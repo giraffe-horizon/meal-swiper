@@ -19,7 +19,7 @@
       - generic [ref=e21]:
         - button "chevron_left" [ref=e22] [cursor=pointer]:
           - generic [ref=e23]: chevron_left
-        - paragraph [ref=e24]: 2 - 6 Mar
+        - paragraph [ref=e24]: 9 - 13 Mar
         - button "chevron_right" [ref=e25] [cursor=pointer]:
           - generic [ref=e26]: chevron_right
       - generic [ref=e27]:
@@ -27,7 +27,7 @@
           - generic [ref=e29]:
             - generic [ref=e31]: flight_takeoff
             - generic [ref=e32]:
-              - paragraph [ref=e33]: Poniedziałek, 2 Mar
+              - paragraph [ref=e33]: Poniedziałek, 9 Mar
               - paragraph [ref=e34]: Urlop
           - button "more_vert" [active] [ref=e36] [cursor=pointer]:
             - generic [ref=e37]: more_vert
@@ -35,7 +35,7 @@
           - generic [ref=e39]:
             - generic [ref=e41]: restaurant_menu
             - generic:
-              - paragraph: Wtorek, 3 Mar
+              - paragraph: Wtorek, 10 Mar
               - paragraph: Brak planu
           - button "add" [ref=e42]:
             - generic [ref=e43]: add
@@ -45,7 +45,7 @@
           - generic [ref=e48]:
             - generic [ref=e50]: restaurant_menu
             - generic:
-              - paragraph: Środa, 4 Mar
+              - paragraph: Środa, 11 Mar
               - paragraph: Brak planu
           - button "add" [ref=e51]:
             - generic [ref=e52]: add
@@ -55,7 +55,7 @@
           - generic [ref=e57]:
             - generic [ref=e59]: restaurant_menu
             - generic:
-              - paragraph: Czwartek, 5 Mar
+              - paragraph: Czwartek, 12 Mar
               - paragraph: Brak planu
           - button "add" [ref=e60]:
             - generic [ref=e61]: add
@@ -65,7 +65,7 @@
           - generic [ref=e66]:
             - generic [ref=e68]: restaurant_menu
             - generic:
-              - paragraph: Piątek, 6 Mar
+              - paragraph: Piątek, 13 Mar
               - paragraph: Brak planu
           - button "add" [ref=e69]:
             - generic [ref=e70]: add

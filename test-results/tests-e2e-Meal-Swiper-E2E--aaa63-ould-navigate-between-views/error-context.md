@@ -19,7 +19,7 @@
       - generic [ref=e21]:
         - button "chevron_left" [ref=e22] [cursor=pointer]:
           - generic [ref=e23]: chevron_left
-        - paragraph [ref=e24]: 2 - 6 Mar
+        - paragraph [ref=e24]: 9 - 13 Mar
         - button "chevron_right" [ref=e25] [cursor=pointer]:
           - generic [ref=e26]: chevron_right
       - generic [ref=e27]:
@@ -27,7 +27,7 @@
           - generic [ref=e29]:
             - generic [ref=e31]: restaurant_menu
             - generic:
-              - paragraph: Poniedziałek, 2 Mar
+              - paragraph: Poniedziałek, 9 Mar
               - paragraph: Brak planu
           - button "add" [ref=e32]:
             - generic [ref=e33]: add
@@ -37,7 +37,7 @@
           - generic [ref=e38]:
             - generic [ref=e40]: restaurant_menu
             - generic:
-              - paragraph: Wtorek, 3 Mar
+              - paragraph: Wtorek, 10 Mar
               - paragraph: Brak planu
           - button "add" [ref=e41]:
             - generic [ref=e42]: add
@@ -47,7 +47,7 @@
           - generic [ref=e47]:
             - generic [ref=e49]: restaurant_menu
             - generic:
-              - paragraph: Środa, 4 Mar
+              - paragraph: Środa, 11 Mar
               - paragraph: Brak planu
           - button "add" [ref=e50]:
             - generic [ref=e51]: add
@@ -57,7 +57,7 @@
           - generic [ref=e56]:
             - generic [ref=e58]: restaurant_menu
             - generic:
-              - paragraph: Czwartek, 5 Mar
+              - paragraph: Czwartek, 12 Mar
               - paragraph: Brak planu
           - button "add" [ref=e59]:
             - generic [ref=e60]: add
@@ -67,7 +67,7 @@
           - generic [ref=e65]:
             - generic [ref=e67]: restaurant_menu
             - generic:
-              - paragraph: Piątek, 6 Mar
+              - paragraph: Piątek, 13 Mar
               - paragraph: Brak planu
           - button "add" [ref=e68]:
             - generic [ref=e69]: add

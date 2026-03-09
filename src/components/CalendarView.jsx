@@ -68,7 +68,7 @@ const CalendarView = ({ weeklyPlan, onDayClick, onRemoveMeal, onToggleVacation, 
   }, [activeMenu])
 
   return (
-    <div className="flex flex-col min-h-0 bg-background-light dark:bg-background-dark">
+    <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
       {/* Header */}
       <div className="flex items-center px-4 pt-6 pb-2 justify-between sticky top-0 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex items-center gap-2">
@@ -126,7 +126,10 @@ const CalendarView = ({ weeklyPlan, onDayClick, onRemoveMeal, onToggleVacation, 
                 </div>
                 <div className="relative">
                   <button
-                    onClick={() => setActiveMenu(activeMenu === day ? null : day)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setActiveMenu(activeMenu === day ? null : day)
+                    }}
                     className="p-2 shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg"
                   >
                     <span className="material-symbols-outlined text-slate-500">more_vert</span>
