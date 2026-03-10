@@ -1,7 +1,7 @@
 {
   "name": "meal-swiper",
   "private": true,
-  "version": "1.6.0",
+  "version": "1.5.3",
   "author": "Giraffe Horizon <contact@giraffehorizon.com>",
   "scripts": {
     "dev": "next dev",

@@ -1,3 +1,9 @@
+## [1.5.3](https://github.com/giraffe-horizon/meal-swiper/compare/v1.5.2...v1.5.3) (2026-03-10)
+
+### Bug Fixes
+
+- add relative positioning to DaySelector thumbnail container ([2745d7b](https://github.com/giraffe-horizon/meal-swiper/commit/2745d7b763cacfe3e49dcdd1d1498c1fd42e1861))
+
 # Changelog
 
 Wszystkie znaczące zmiany w tym projekcie będą dokumentowane w tym pliku.
