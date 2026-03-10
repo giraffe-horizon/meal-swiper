@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import type { AppSettings } from '@/types'
 
 const STORAGE_KEY = 'meal_swiper_settings'
+const API_KEY = 'app_settings'
 
 export const DEFAULT_SETTINGS: AppSettings = {
   people: 2,
@@ -16,38 +17,78 @@ export const DEFAULT_SETTINGS: AppSettings = {
 export function useSettings() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS)
   const [isLoaded, setIsLoaded] = useState(false)
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Wczytaj ustawienia z localStorage przy montowaniu
+  // Load settings: try D1 first, fallback to localStorage
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const parsed = JSON.parse(stored) as AppSettings
-        setSettings(parsed)
+    let cancelled = false
+
+    async function load() {
+      // Immediately show localStorage data for fast UX
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+          const parsed = JSON.parse(stored) as AppSettings
+          if (!cancelled) setSettings(parsed)
+        }
+      } catch {
+        // ignore
       }
-    } catch (error) {
-      console.error('Failed to load settings from localStorage:', error)
-    } finally {
-      setIsLoaded(true)
+
+      // Then fetch from D1 (source of truth)
+      try {
+        const res = await fetch(`/api/settings?key=${API_KEY}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data && !cancelled) {
+            setSettings(data as AppSettings)
+            // Sync to localStorage
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+          }
+        }
+      } catch {
+        // D1 unavailable, localStorage data already loaded
+      } finally {
+        if (!cancelled) setIsLoaded(true)
+      }
+    }
+
+    load()
+    return () => {
+      cancelled = true
     }
   }, [])
 
-  // Zapisz ustawienia do localStorage
-  const updateSettings = (newSettings: AppSettings) => {
+  // Save to D1 (debounced) + localStorage (immediate)
+  const updateSettings = useCallback((newSettings: AppSettings) => {
     setSettings(newSettings)
+
+    // Immediate localStorage save
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings))
-    } catch (error) {
-      console.error('Failed to save settings to localStorage:', error)
+    } catch {
+      // ignore
     }
-  }
 
-  // Oblicz całkowitą liczbę kalorii
+    // Debounced D1 save (300ms)
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+    saveTimeoutRef.current = setTimeout(async () => {
+      try {
+        await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: API_KEY, value: newSettings }),
+        })
+      } catch {
+        console.error('Failed to save settings to D1')
+      }
+    }, 300)
+  }, [])
+
   const totalKcal = useMemo(() => {
     return settings.persons.slice(0, settings.people).reduce((sum, person) => sum + person.kcal, 0)
   }, [settings])
 
-  // Oblicz całkowitą ilość białka
   const totalProtein = useMemo(() => {
     return settings.persons
       .slice(0, settings.people)

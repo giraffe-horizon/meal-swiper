@@ -54,7 +54,7 @@ export default function Navigation({ activeView }: NavigationProps) {
       </nav>
 
       {/* Desktop Sidebar Navigation */}
-      <nav className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col items-center py-6 gap-1 z-30 px-2">
+      <nav className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-900 flex-col items-center py-6 gap-1 z-30 px-2">
         <div className="mb-4">
           <span className="material-symbols-outlined text-primary text-3xl">restaurant</span>
         </div>

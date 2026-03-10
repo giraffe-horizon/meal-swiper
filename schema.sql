@@ -32,6 +32,13 @@ CREATE TABLE IF NOT EXISTS shopping_checked (
   updated_at TEXT DEFAULT (datetime('now'))
 );
 
+-- Settings table (replaces localStorage)
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
 -- Index for quick lookups
 CREATE INDEX IF NOT EXISTS idx_meals_kuchnia ON meals(kuchnia);
 CREATE INDEX IF NOT EXISTS idx_meals_trudnosc ON meals(trudnosc);
