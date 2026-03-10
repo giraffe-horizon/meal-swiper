@@ -35,6 +35,9 @@ dist-ssr
 # Wrangler
 .wrangler
 wrangler.toml.bak
+
+# OpenNext
+.open-next
 scripts/.env
 scripts/generated-images/
 screenshots/

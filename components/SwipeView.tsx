@@ -8,6 +8,8 @@ import MealModal from '@/components/MealModal'
 import DaySelector from '@/components/ui/DaySelector'
 import SwipeStack from '@/components/swipe/SwipeStack'
 import SwipeActions from '@/components/swipe/SwipeActions'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import CategoryFilter from '@/components/swipe/CategoryFilter' // kept for future UX redesign
 import { useAppContext } from '@/lib/context'
 
 interface SwipeViewProps {
@@ -57,6 +59,8 @@ export default function SwipeView({
     () => (shuffledMealsFromContext.length > 0 ? shuffledMealsFromContext : []),
     [shuffledMealsFromContext]
   )
+
+  const activeMeals = shuffledMeals
   const currentIndex = currentSwipeIndexFromContext
 
   const [reshuffleToast, setReshuffleToast] = useState(false)
@@ -84,7 +88,7 @@ export default function SwipeView({
 
   const weekDatesComputed = useMemo(() => getWeekDates(weekOffset), [weekOffset])
   const weekDates = weekDatesProp ?? weekDatesComputed
-  const currentMeal = shuffledMeals[currentIndex]
+  const currentMeal = activeMeals[currentIndex]
 
   const usedMealIds = useMemo(
     () => DAY_KEYS.map((d) => weeklyPlan[d]?.id).filter(Boolean) as string[],
@@ -267,15 +271,25 @@ export default function SwipeView({
 
   if (!currentMeal) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-background-light dark:bg-background-dark">
-        <div className="text-center text-slate-500">
-          <p className="text-lg">Brak więcej posiłków</p>
+      <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+        <DaySelector
+          weeklyPlan={weeklyPlan}
+          weekDates={weekDates}
+          selectedDay={currentDay}
+          onSelect={(day) => onDaySelect?.(day)}
+          showThumbnails
+        />
+        {/* <CategoryFilter ... /> hidden for UX redesign */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center text-slate-500 dark:text-text-secondary-dark px-6">
+            <p className="text-lg">Brak więcej posiłków</p>
+          </div>
         </div>
       </div>
     )
   }
 
-  const stackCards = shuffledMeals.slice(currentIndex, currentIndex + 3)
+  const stackCards = activeMeals.slice(currentIndex, currentIndex + 3)
 
   return (
     <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden relative">
@@ -304,12 +318,15 @@ export default function SwipeView({
         showThumbnails
       />
 
+      {/* Category & Cuisine Filter — hidden for UX redesign */}
+      {/* <CategoryFilter ... /> */}
+
       {/* Card Stack Area */}
       <div className="flex-1 flex flex-col items-center px-4 pb-2 relative min-h-0">
         <SwipeStack
           stackCards={stackCards}
           currentIndex={currentIndex}
-          totalCards={shuffledMeals.length}
+          totalCards={activeMeals.length}
           x={x}
           rotate={rotate}
           likeOpacity={likeOpacity}

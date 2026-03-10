@@ -1,5 +1,3 @@
-export const runtime = 'edge'
-
 import { NextRequest, NextResponse } from 'next/server'
 
 let requestCount = 0
@@ -16,27 +14,18 @@ export async function GET(request: NextRequest) {
   }
   requestCount++
   if (requestCount > RATE_LIMIT) {
-    return NextResponse.json(
-      { error: 'Rate limit exceeded. Try again later.' },
-      { status: 429 }
-    )
+    return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 })
   }
 
   const { searchParams } = new URL(request.url)
   const query = searchParams.get('q')
 
   if (!query) {
-    return NextResponse.json(
-      { error: 'Missing query parameter ?q=' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: 'Missing query parameter ?q=' }, { status: 400 })
   }
 
   if (query.length > 100) {
-    return NextResponse.json(
-      { error: 'Query too long (max 100 characters)' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: 'Query too long (max 100 characters)' }, { status: 400 })
   }
 
   const apiKey = process.env.GOOGLE_CSE_API_KEY
@@ -58,19 +47,13 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       const error = await response.text()
       console.error('Google CSE API error:', error)
-      return NextResponse.json(
-        { error: 'Failed to search images' },
-        { status: response.status }
-      )
+      return NextResponse.json({ error: 'Failed to search images' }, { status: response.status })
     }
 
     const data = await response.json()
 
     if (!data.items || data.items.length === 0) {
-      return NextResponse.json(
-        { error: 'No images found', imageUrl: null },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'No images found', imageUrl: null }, { status: 404 })
     }
 
     const imageUrl = data.items[0].link

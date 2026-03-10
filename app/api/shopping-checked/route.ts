@@ -1,10 +1,10 @@
-export const runtime = 'edge'
-
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 import type { NextRequest } from 'next/server'
 import { getShoppingChecked, saveShoppingChecked, type D1Database } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
-  const db = (process.env as unknown as { DB: D1Database }).DB
+  const { env } = await getCloudflareContext()
+  const db = (env as unknown as { DB: D1Database }).DB
   const week = request.nextUrl.searchParams.get('week')
 
   if (!week) return Response.json({ error: 'week required' }, { status: 400 })
@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const db = (process.env as unknown as { DB: D1Database }).DB
+  const { env } = await getCloudflareContext()
+  const db = (env as unknown as { DB: D1Database }).DB
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   const body = await request.json()

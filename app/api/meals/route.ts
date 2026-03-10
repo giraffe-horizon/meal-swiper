@@ -1,10 +1,10 @@
-export const runtime = 'edge'
-
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { NextResponse } from 'next/server'
 import { fetchMealsFromD1, type D1Database } from '@/lib/db'
 
 export async function GET() {
-  const db = (process.env as unknown as { DB: D1Database }).DB
+  const { env } = await getCloudflareContext()
+  const db = (env as unknown as { DB: D1Database }).DB
 
   if (!db) {
     return NextResponse.json({ error: 'D1 database not configured' }, { status: 500 })
