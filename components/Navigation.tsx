@@ -7,26 +7,32 @@ interface NavigationProps {
   activeView: ViewId
 }
 
-const navItems = [
+const mobileNavItems = [
+  { id: 'plan' as ViewId, href: '/plan', icon: 'calendar_month', label: 'Plan' },
+  { id: 'swipe' as ViewId, href: '/swipe', icon: 'view_carousel', label: 'Swipe' },
+  { id: 'shopping' as ViewId, href: '/shopping', icon: 'list_alt', label: 'Lista' },
+  { id: 'cooking' as ViewId, href: '/cooking', icon: 'skillet', label: 'Gotuj' },
+]
+
+const desktopNavItems = [
   { id: 'plan' as ViewId, href: '/plan', icon: 'calendar_month', label: 'Plan' },
   { id: 'swipe' as ViewId, href: '/swipe', icon: 'view_carousel', label: 'Propozycje' },
   { id: 'shopping' as ViewId, href: '/shopping', icon: 'list_alt', label: 'Lista' },
   { id: 'cooking' as ViewId, href: '/cooking', icon: 'skillet', label: 'Gotowanie' },
-  { id: 'settings' as ViewId, href: '/settings', icon: 'settings', label: 'Ustawienia' },
 ]
 
 export default function Navigation({ activeView }: NavigationProps) {
   return (
     <>
       {/* Mobile Bottom Navigation */}
-      <nav className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-1 sm:pt-2 flex justify-between pb-3 sm:pb-4 lg:hidden">
-        {navItems.map(({ id, href, icon, label }) => {
+      <nav className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-1 sm:pt-2 flex justify-center pb-3 sm:pb-4 lg:hidden">
+        {mobileNavItems.map(({ id, href, icon, label }) => {
           const isActive = activeView === id
           return (
             <Link
               key={id}
               href={href}
-              className={`flex flex-1 flex-col items-center justify-center gap-0.5 sm:gap-1 transition-colors py-0.5 sm:py-1 relative ${
+              className={`flex w-1/4 flex-col items-center justify-center gap-0.5 sm:gap-1 transition-colors py-0.5 sm:py-1 relative ${
                 isActive ? 'text-primary' : 'text-slate-500 dark:text-slate-400 hover:text-primary'
               }`}
             >
@@ -52,7 +58,7 @@ export default function Navigation({ activeView }: NavigationProps) {
         <div className="mb-4">
           <span className="material-symbols-outlined text-primary text-3xl">restaurant</span>
         </div>
-        {navItems.map(({ id, href, icon, label }) => {
+        {desktopNavItems.map(({ id, href, icon, label }) => {
           const isActive = activeView === id
           return (
             <Link
@@ -83,6 +89,35 @@ export default function Navigation({ activeView }: NavigationProps) {
             </Link>
           )
         })}
+
+        {/* Settings at bottom of sidebar */}
+        <div className="mt-auto">
+          <Link
+            href="/settings"
+            className={`flex flex-col items-center justify-center gap-2 transition-colors py-3 px-4 rounded-xl relative ${
+              activeView === 'settings'
+                ? 'text-primary bg-primary/10'
+                : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            {activeView === 'settings' && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full"></div>
+            )}
+            <span
+              className="material-symbols-outlined text-2xl"
+              style={activeView === 'settings' ? { fontVariationSettings: "'FILL' 1" } : {}}
+            >
+              settings
+            </span>
+            <span
+              className={`text-[9px] tracking-wide text-center ${
+                activeView === 'settings' ? 'font-bold' : 'font-medium'
+              }`}
+            >
+              Ustawienia
+            </span>
+          </Link>
+        </div>
       </nav>
     </>
   )

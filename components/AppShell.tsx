@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ViewId } from '@/types'
 import { AppProvider, useAppContext } from '@/lib/context'
@@ -65,6 +66,18 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
                 chevron_right
               </span>
             </button>
+            <Link
+              href="/settings"
+              className="ml-1 p-1 sm:p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
+              title="Ustawienia"
+            >
+              <span
+                className={`material-symbols-outlined text-sm ${activeView === 'settings' ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}
+                style={activeView === 'settings' ? { fontVariationSettings: "'FILL' 1" } : {}}
+              >
+                settings
+              </span>
+            </Link>
           </div>
         </header>
 
