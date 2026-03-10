@@ -1,7 +1,7 @@
 {
   "name": "meal-swiper",
   "private": true,
-  "version": "1.4.1",
+  "version": "1.5.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

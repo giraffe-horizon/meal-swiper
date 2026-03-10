@@ -1,3 +1,9 @@
+# [1.5.0](https://github.com/liskeee/meal-swiper/compare/v1.4.1...v1.5.0) (2026-03-10)
+
+### Features
+
+- add meal categories and improve generation prompt ([5c2f605](https://github.com/liskeee/meal-swiper/commit/5c2f6059468e8b574d11ec226afbbe6b7ba13903))
+
 ## [1.4.1](https://github.com/liskeee/meal-swiper/compare/v1.4.0...v1.4.1) (2026-03-10)
 
 ### Bug Fixes
