@@ -3,7 +3,8 @@
 export interface ParsedAmount {
   value: number
   unit: string
-  gramsHint?: number // Optional grams from parentheses, e.g., "2 ząbki (16g)"
+  gramsHint?: number // Optional hint from parentheses, e.g., "2 ząbki (16g)" or "6 łyżki (60ml)"
+  hintUnit?: 'g' | 'ml' // Unit of the hint (defaults to 'g')
 }
 
 const UNIT_ALIASES: Record<string, string> = {
@@ -51,18 +52,20 @@ const UNIT_ALIASES: Record<string, string> = {
 export function parseAmount(amount: string): ParsedAmount | null {
   const trimmed = amount.trim()
 
-  // Match patterns with optional grams in parentheses:
-  // "2 ząbki (16g)" → value: 2, unit: ząbki, gramsHint: 16
-  // "2 ząbki (ok. 16g)" → value: 2, unit: ząbki, gramsHint: 16
+  // Match patterns with optional grams/ml hints in parentheses:
+  // "2 ząbki (16g)" → value: 2, unit: ząbki, gramsHint: 16, hintUnit: 'g'
+  // "2 ząbki (ok. 16g)" → value: 2, unit: ząbki, gramsHint: 16, hintUnit: 'g'
+  // "6 łyżki (60ml)" → value: 6, unit: łyżki, gramsHint: 60, hintUnit: 'ml'
   // "200g" → value: 200, unit: g
   // "2 łyżki" → value: 2, unit: łyżki
-  const matchWithGrams = trimmed.match(
-    /^([\d.,½¼¾⅓⅔]+)\s+([^(]+?)\s*\((?:ok\.\s*)?(\d+(?:[.,]\d+)?)\s*g\)$/i
+  const matchWithHint = trimmed.match(
+    /^([\d.,½¼¾⅓⅔]+)\s+([^(]+?)\s*\((?:ok\.\s*)?(\d+(?:[.,]\d+)?)\s*(g|ml)\)$/i
   )
-  if (matchWithGrams) {
-    const valueStr = matchWithGrams[1]
-    let unit = matchWithGrams[2].trim().toLowerCase()
-    const gramsStr = matchWithGrams[3]
+  if (matchWithHint) {
+    const valueStr = matchWithHint[1]
+    let unit = matchWithHint[2].trim().toLowerCase()
+    const hintStr = matchWithHint[3]
+    const hintUnit = matchWithHint[4].toLowerCase() as 'g' | 'ml'
 
     const fractions: Record<string, number> = {
       '½': 0.5,
@@ -81,10 +84,15 @@ export function parseAmount(amount: string): ParsedAmount | null {
 
     if (isNaN(value)) return null
 
-    const gramsHint = parseFloat(gramsStr.replace(',', '.'))
+    const gramsHint = parseFloat(hintStr.replace(',', '.'))
     unit = UNIT_ALIASES[unit] || unit
 
-    return { value, unit, gramsHint: isNaN(gramsHint) ? undefined : gramsHint }
+    return {
+      value,
+      unit,
+      gramsHint: isNaN(gramsHint) ? undefined : gramsHint,
+      hintUnit: isNaN(gramsHint) ? undefined : hintUnit,
+    }
   }
 
   // Standard pattern: "200g", "2 łyżki", "½ szklanki", also handles fractions "1/2 szklanki"
@@ -132,7 +140,12 @@ export function formatNumber(n: number): string {
   return n.toFixed(1).replace(/\.0$/, '')
 }
 
-export function formatAmount(value: number, unit: string, gramsHint?: number): string {
+export function formatAmount(
+  value: number,
+  unit: string,
+  gramsHint?: number,
+  hintUnit: 'g' | 'ml' = 'g'
+): string {
   let result: string
   if (unit === 'g' && value >= 1000) {
     const kg = value / 1000
@@ -144,9 +157,9 @@ export function formatAmount(value: number, unit: string, gramsHint?: number): s
     result = unit ? `${formatNumber(value)} ${unit}` : formatNumber(value)
   }
 
-  // Append gramsHint if present
+  // Append hint if present
   if (gramsHint !== undefined && gramsHint > 0) {
-    result += ` (ok. ${formatNumber(gramsHint)}g)`
+    result += ` (ok. ${formatNumber(gramsHint)}${hintUnit})`
   }
 
   return result

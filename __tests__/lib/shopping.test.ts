@@ -67,13 +67,13 @@ describe('shopping', () => {
 
     it('parses amounts with grams hint in parentheses', () => {
       const result1 = parseAmount('2 ząbki (16g)')
-      expect(result1).toEqual({ value: 2, unit: 'ząbki', gramsHint: 16 })
+      expect(result1).toEqual({ value: 2, unit: 'ząbki', gramsHint: 16, hintUnit: 'g' })
 
       const result2 = parseAmount('4 ząbki (16g)')
-      expect(result2).toEqual({ value: 4, unit: 'ząbki', gramsHint: 16 })
+      expect(result2).toEqual({ value: 4, unit: 'ząbki', gramsHint: 16, hintUnit: 'g' })
 
       const result3 = parseAmount('3 ząbki (12g)')
-      expect(result3).toEqual({ value: 3, unit: 'ząbki', gramsHint: 12 })
+      expect(result3).toEqual({ value: 3, unit: 'ząbki', gramsHint: 12, hintUnit: 'g' })
     })
 
     it('parses fractions', () => {
@@ -91,6 +91,17 @@ describe('shopping', () => {
       expect(parseAmount('invalid')).toBeNull()
       expect(parseAmount('abc g')).toBeNull()
       expect(parseAmount('')).toBeNull()
+    })
+
+    it('parses amounts with ml hint in parentheses', () => {
+      const result1 = parseAmount('6 łyżki (60ml)')
+      expect(result1).toEqual({ value: 6, unit: 'łyżki', gramsHint: 60, hintUnit: 'ml' })
+
+      const result2 = parseAmount('1.5 łyżki (15ml)')
+      expect(result2).toEqual({ value: 1.5, unit: 'łyżki', gramsHint: 15, hintUnit: 'ml' })
+
+      const result3 = parseAmount('2 łyżki (ok. 20ml)')
+      expect(result3).toEqual({ value: 2, unit: 'łyżki', gramsHint: 20, hintUnit: 'ml' })
     })
   })
 
@@ -132,6 +143,42 @@ describe('shopping', () => {
     it('handles invalid amounts', () => {
       expect(mergeAmounts('invalid', '200g')).toBe('invalid + 200g')
       expect(mergeAmounts('200g', 'invalid')).toBe('200g + invalid')
+    })
+
+    it('merges amounts with ml hints (sos sojowy scenario)', () => {
+      const result = mergeAmounts('1.5 łyżki', '6 łyżki (60ml)')
+      expect(result).toBe('7.5 łyżki (ok. 60ml)')
+    })
+
+    it('merges same unit with ml hints (both have hints)', () => {
+      const result = mergeAmounts('2 łyżki (20ml)', '4 łyżki (40ml)')
+      expect(result).toBe('6 łyżki (ok. 60ml)')
+    })
+
+    it('merges different units via gramsHint (puszki + g)', () => {
+      const result = mergeAmounts('1.5 puszki (600g)', '600 g')
+      expect(result).toBe('1.2 kg')
+    })
+
+    it('merges different units via gramsHint (both have hints)', () => {
+      const result = mergeAmounts('2 puszki (800g)', '1 opakowania (400g)')
+      expect(result).toBe('1.2 kg')
+    })
+
+    it('merges g + puszki with gramsHint (reversed order)', () => {
+      const result = mergeAmounts('600 g', '1.5 puszki (600g)')
+      expect(result).toBe('1.2 kg')
+    })
+
+    it('merges ml + łyżki with mlHint', () => {
+      const result = mergeAmounts('30 ml', '2 łyżki (20ml)')
+      expect(result).toBe('50 ml')
+    })
+
+    it('does not merge different hint units (g vs ml)', () => {
+      const result = mergeAmounts('2 łyżki (20g)', '2 łyżki (20ml)')
+      // Same unit but different hint units - sums values, keeps first hint
+      expect(result).toBe('4 łyżki (ok. 20g)')
     })
   })
 
@@ -387,6 +434,88 @@ describe('shopping', () => {
 
       expect(czosnek).toBeDefined()
       expect(czosnek?.amount).toBe('9 ząbki (ok. 36g)') // 2+4+3 ząbki, 8+16+12g
+    })
+  })
+
+  describe('cross-unit merging via gramsHint', () => {
+    it('merges pomidory pelati with different units (puszki + g)', () => {
+      const weeklyPlan: WeeklyPlan = {
+        weekKey: '2024-03-01',
+        mon: {
+          id: 1,
+          nazwa: 'Meal 1',
+          skladniki_baza: JSON.stringify([
+            { name: 'Pomidory pelati', amount: '1.5 puszki (600g)' },
+          ] as Ingredient[]),
+          skladniki_mieso: null,
+          przepis: 'test',
+          osoby_bazowe: 2,
+          kcal_na_osobe: 500,
+          bialko_na_osobe: 30,
+        },
+        tue: {
+          id: 2,
+          nazwa: 'Meal 2',
+          skladniki_baza: JSON.stringify([
+            { name: 'Pomidory pelati', amount: '600 g' },
+          ] as Ingredient[]),
+          skladniki_mieso: null,
+          przepis: 'test',
+          osoby_bazowe: 2,
+          kcal_na_osobe: 500,
+          bialko_na_osobe: 30,
+        },
+        wed: null,
+        thu: null,
+        fri: null,
+      }
+
+      const list = generateShoppingList(weeklyPlan, 2)
+      const pomidory = list.find((item) => item.normalizedName === 'pomidory pelati')
+
+      expect(pomidory).toBeDefined()
+      expect(pomidory?.amount).toBe('1.2 kg') // 900g (from 1.5 puszki hint) + 600g = 1500g = 1.5kg
+      // Wait, 1.5 puszki with 600g hint means 1.5 * 400g per puszka = 600g total
+      // So 600g + 600g = 1200g = 1.2kg
+    })
+
+    it('merges sos sojowy with ml hints (łyżki + łyżki)', () => {
+      const weeklyPlan: WeeklyPlan = {
+        weekKey: '2024-03-01',
+        mon: {
+          id: 1,
+          nazwa: 'Meal 1',
+          skladniki_baza: JSON.stringify([
+            { name: 'Sos sojowy', amount: '1.5 łyżki' },
+          ] as Ingredient[]),
+          skladniki_mieso: null,
+          przepis: 'test',
+          osoby_bazowe: 2,
+          kcal_na_osobe: 500,
+          bialko_na_osobe: 30,
+        },
+        tue: {
+          id: 2,
+          nazwa: 'Meal 2',
+          skladniki_baza: JSON.stringify([
+            { name: 'Sos sojowy', amount: '6 łyżki (60ml)' },
+          ] as Ingredient[]),
+          skladniki_mieso: null,
+          przepis: 'test',
+          osoby_bazowe: 2,
+          kcal_na_osobe: 500,
+          bialko_na_osobe: 30,
+        },
+        wed: null,
+        thu: null,
+        fri: null,
+      }
+
+      const list = generateShoppingList(weeklyPlan, 2)
+      const sos = list.find((item) => item.normalizedName === 'sos sojowy')
+
+      expect(sos).toBeDefined()
+      expect(sos?.amount).toBe('7.5 łyżki (ok. 60ml)') // 1.5 + 6 łyżki, keep the ml hint
     })
   })
 })

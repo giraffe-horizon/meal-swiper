@@ -148,14 +148,53 @@ export function mergeAmounts(a: string, b: string): string {
     return `${a} + ${b}`
   }
 
-  // Same unit: simple add (also sum gramsHint if present)
+  // Same unit: simple add (also sum gramsHint if present and same hintUnit)
   if (parsedA.unit === parsedB.unit) {
     const sum = parsedA.value + parsedB.value
-    const gramsSum =
-      parsedA.gramsHint !== undefined && parsedB.gramsHint !== undefined
-        ? parsedA.gramsHint + parsedB.gramsHint
-        : (parsedA.gramsHint ?? parsedB.gramsHint)
-    return formatAmount(sum, parsedA.unit, gramsSum)
+    let gramsSum: number | undefined
+    let hintUnit: 'g' | 'ml' = 'g'
+
+    if (parsedA.gramsHint !== undefined && parsedB.gramsHint !== undefined) {
+      // Both have hints - sum if same hintUnit
+      if ((parsedA.hintUnit || 'g') === (parsedB.hintUnit || 'g')) {
+        gramsSum = parsedA.gramsHint + parsedB.gramsHint
+        hintUnit = parsedA.hintUnit || 'g'
+      } else {
+        // Different hint units - can't sum, keep first
+        gramsSum = parsedA.gramsHint
+        hintUnit = parsedA.hintUnit || 'g'
+      }
+    } else {
+      // One or neither has hint - keep whichever exists
+      gramsSum = parsedA.gramsHint ?? parsedB.gramsHint
+      hintUnit = parsedA.hintUnit ?? parsedB.hintUnit ?? 'g'
+    }
+
+    return formatAmount(sum, parsedA.unit, gramsSum, hintUnit)
+  }
+
+  // Try merging via gramsHint if different units but compatible via hint
+  const hintUnitA = parsedA.hintUnit || 'g'
+  const hintUnitB = parsedB.hintUnit || 'g'
+
+  // Both have gramsHint in same base unit
+  if (
+    parsedA.gramsHint !== undefined &&
+    parsedB.gramsHint !== undefined &&
+    hintUnitA === hintUnitB
+  ) {
+    const sum = parsedA.gramsHint + parsedB.gramsHint
+    return formatAmount(sum, hintUnitA, undefined)
+  }
+
+  // One has gramsHint, other is direct g/ml matching the hint unit
+  if (parsedA.gramsHint !== undefined && parsedB.unit === hintUnitA) {
+    const sum = parsedA.gramsHint + parsedB.value
+    return formatAmount(sum, hintUnitA, undefined)
+  }
+  if (parsedB.gramsHint !== undefined && parsedA.unit === hintUnitB) {
+    const sum = parsedB.gramsHint + parsedA.value
+    return formatAmount(sum, hintUnitB, undefined)
   }
 
   // Cross-unit conversion: g+kg, ml+l
@@ -171,7 +210,7 @@ export function mergeAmounts(a: string, b: string): string {
   if (unitA === unitB) {
     const sum = valA + valB
     // For cross-unit conversion, don't preserve gramsHint (it's already in grams)
-    return formatAmount(sum, unitA)
+    return formatAmount(sum, unitA, undefined)
   }
 
   // Incompatible units - concatenate

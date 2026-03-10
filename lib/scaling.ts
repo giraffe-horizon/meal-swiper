@@ -33,7 +33,7 @@ export function scaleIngredient(ing: Ingredient, people: number, basePeople = 2)
 
   return {
     ...ing,
-    amount: formatAmount(rounded, parsed.unit, scaledGramsHint),
+    amount: formatAmount(rounded, parsed.unit, scaledGramsHint, parsed.hintUnit),
   }
 }
 
