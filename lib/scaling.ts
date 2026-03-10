@@ -1,24 +1,7 @@
 import type { Ingredient } from '@/types'
-
-export function parseAmount(amount: string): { value: number; unit: string } | null {
-  if (!amount) return null
-
-  // obsłuż ułamki: "1/2", "3/4" etc
-  const fractionMatch = amount.match(/^(\d+)\/(\d+)\s*(.*)$/)
-  if (fractionMatch) {
-    const value = parseInt(fractionMatch[1]) / parseInt(fractionMatch[2])
-    return { value, unit: fractionMatch[3].trim() }
-  }
-
-  const match = amount.match(/^(\d+(?:[,.]\d+)?)\s*(.*)$/)
-  if (!match) return null
-  const value = parseFloat(match[1].replace(',', '.'))
-  if (isNaN(value)) return null
-  return { value, unit: match[2].trim() }
-}
+import { parseAmount, formatAmount } from '@/lib/amounts'
 
 export function scaleIngredient(ing: Ingredient, people: number, basePeople = 2): Ingredient {
-  if (people === basePeople) return ing
   const parsed = parseAmount(ing.amount)
   if (!parsed) return ing
 
@@ -35,8 +18,21 @@ export function scaleIngredient(ing: Ingredient, people: number, basePeople = 2)
     rounded = Math.round(scaled)
   }
 
+  // Scale gramsHint proportionally if present
+  let scaledGramsHint: number | undefined
+  if (parsed.gramsHint !== undefined) {
+    if (people === basePeople) {
+      // No scaling - preserve original gramsHint
+      scaledGramsHint = parsed.gramsHint
+    } else {
+      // Scaling - round to nearest 5g
+      const rawGrams = parsed.gramsHint * (people / basePeople)
+      scaledGramsHint = Math.round(rawGrams / 5) * 5
+    }
+  }
+
   return {
     ...ing,
-    amount: `${rounded}${parsed.unit ? ' ' + parsed.unit : ''}`.trim(),
+    amount: formatAmount(rounded, parsed.unit, scaledGramsHint),
   }
 }

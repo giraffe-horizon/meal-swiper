@@ -71,7 +71,7 @@ describe('ShoppingListView', () => {
     const plan = { ...emptyPlan, mon: mockMeal }
     render(<ShoppingListView {...defaultProps} weeklyPlan={plan} />)
     expect(screen.getByText('Makaron')).toBeInTheDocument()
-    expect(screen.getByText(/— 200g/)).toBeInTheDocument()
+    expect(screen.getByText(/— 200\s*g/)).toBeInTheDocument()
     expect(screen.getByText('Pomidory')).toBeInTheDocument()
     expect(screen.getByText('Boczek')).toBeInTheDocument()
   })

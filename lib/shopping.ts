@@ -1,52 +1,9 @@
 import type { Ingredient, WeeklyPlan } from '@/types'
 import { scaleIngredient } from '@/lib/scaling'
+import { parseAmount, formatAmount } from '@/lib/amounts'
 
-interface ParsedAmount {
-  value: number
-  unit: string
-}
-
-const UNIT_ALIASES: Record<string, string> = {
-  g: 'g',
-  gram: 'g',
-  gramów: 'g',
-  gramy: 'g',
-  kg: 'kg',
-  ml: 'ml',
-  l: 'l',
-  litr: 'l',
-  litry: 'l',
-  litrów: 'l',
-  szt: 'szt',
-  'szt.': 'szt',
-  sztuka: 'szt',
-  sztuki: 'szt',
-  sztuk: 'szt',
-  łyżka: 'łyżki',
-  łyżki: 'łyżki',
-  łyżek: 'łyżki',
-  łyżeczka: 'łyżeczki',
-  łyżeczki: 'łyżeczki',
-  łyżeczek: 'łyżeczki',
-  opakowanie: 'opakowania',
-  opakowania: 'opakowania',
-  opakowań: 'opakowania',
-  puszka: 'puszki',
-  puszki: 'puszki',
-  puszek: 'puszki',
-  szklanka: 'szklanki',
-  szklanki: 'szklanki',
-  szklankę: 'szklanki',
-  szczypta: 'szczypty',
-  szczypty: 'szczypty',
-  szczypt: 'szczypty',
-  ząbek: 'ząbki',
-  ząbki: 'ząbki',
-  ząbków: 'ząbki',
-  plaster: 'plastry',
-  plastry: 'plastry',
-  plastrów: 'plastry',
-}
+// Re-export for backward compatibility
+export { parseAmount, type ParsedAmount } from '@/lib/amounts'
 
 const DIACRITICS_MAP: Record<string, string> = {
   ą: 'a',
@@ -60,18 +17,104 @@ const DIACRITICS_MAP: Record<string, string> = {
   ż: 'z',
 }
 
+// Polish lemmatization: map plural/genitive forms to base form
+const INGREDIENT_LEMMAS: Record<string, string> = {
+  // jajko
+  jajka: 'jajko',
+  jajek: 'jajko',
+  // pomidor
+  pomidory: 'pomidor',
+  pomidorow: 'pomidor',
+  pomidora: 'pomidor',
+  // cebula
+  cebule: 'cebula',
+  cebuli: 'cebula',
+  cebul: 'cebula',
+  // papryka
+  papryki: 'papryka',
+  papryk: 'papryka',
+  papryce: 'papryka',
+  // pieczarka
+  pieczarki: 'pieczarka',
+  pieczarek: 'pieczarka',
+  // ziemniak
+  ziemniaki: 'ziemniak',
+  ziemniakow: 'ziemniak',
+  ziemniaka: 'ziemniak',
+  // marchew/marchewka
+  marchewka: 'marchew',
+  marchewki: 'marchew',
+  marchewek: 'marchew',
+  // ogórek
+  ogorek: 'ogorek',
+  ogorki: 'ogorek',
+  ogorkow: 'ogorek',
+  // por
+  pory: 'por',
+  porow: 'por',
+  // baklazan
+  baklazan: 'baklazan',
+  baklazany: 'baklazan',
+  baklazanow: 'baklazan',
+  // cukinia
+  cukinie: 'cukinia',
+  cukinii: 'cukinia',
+  // kalafior
+  kalafiory: 'kalafior',
+  kalafiorow: 'kalafior',
+  // brokuł
+  brokuly: 'brokul',
+  brokulow: 'brokul',
+  // seler
+  selery: 'seler',
+  selerow: 'seler',
+  // szczypiorek
+  szczypiorku: 'szczypiorek',
+  szczypiorki: 'szczypiorek',
+  // pietruszka
+  pietruszki: 'pietruszka',
+  // koperek
+  koperku: 'koperek',
+  // natka
+  natki: 'natka',
+  natek: 'natka',
+  // lisc
+  lisc: 'lisc',
+  liscie: 'lisc',
+  lisci: 'lisc',
+  // ząbek (czosnek)
+  zabek: 'zabek',
+  zabki: 'zabek',
+  zabkow: 'zabek',
+  // plasterek
+  plasterek: 'plasterek',
+  plasterki: 'plasterek',
+  plasterkow: 'plasterek',
+}
+
 // Synonyms: map variant names to canonical name
 const NAME_SYNONYMS: Record<string, string> = {
   'czosnek swiezy': 'czosnek',
   'czosnek (zabki)': 'czosnek',
+  zabek: 'czosnek',
+  zabki: 'czosnek',
+  zabkow: 'czosnek',
   'sos sojowy jasny': 'sos sojowy',
   'sos sojowy ciemny': 'sos sojowy',
   'cebula biala': 'cebula',
   'cebula zolta': 'cebula',
+  'cebula czerwona': 'cebula',
   'ryz jasminowy': 'ryz',
   'ryz basmati': 'ryz',
   'ser zolty': 'ser zolty',
   'ser tarty': 'ser tarty',
+  'pomidor koktajlowy': 'pomidor',
+  'pomidor cherry': 'pomidor',
+  'pomidory koktajlowe': 'pomidor',
+  'pomidory cherry': 'pomidor',
+  'papryka czerwona': 'papryka',
+  'papryka zolta': 'papryka',
+  'papryka zielona': 'papryka',
 }
 
 export function normalizeIngredientName(name: string): string {
@@ -79,7 +122,14 @@ export function normalizeIngredientName(name: string): string {
     .toLowerCase()
     .trim()
     .replace(/[ąćęłńóśźż]/g, (ch) => DIACRITICS_MAP[ch] || ch)
-  return NAME_SYNONYMS[lower] || lower
+
+  // First try synonyms (more specific mapping)
+  if (NAME_SYNONYMS[lower]) return NAME_SYNONYMS[lower]
+
+  // Then try lemmatization (plural forms → singular)
+  if (INGREDIENT_LEMMAS[lower]) return INGREDIENT_LEMMAS[lower]
+
+  return lower
 }
 
 // Convert units to a common base for summation: g, ml
@@ -90,56 +140,6 @@ function toBaseUnit(value: number, unit: string): { value: number; unit: string 
 }
 
 // Format result: if >= 1000g -> kg, >= 1000ml -> l
-function formatAmount(value: number, unit: string): string {
-  if (unit === 'g' && value >= 1000) {
-    const kg = value / 1000
-    return `${formatNumber(kg)} kg`
-  }
-  if (unit === 'ml' && value >= 1000) {
-    const l = value / 1000
-    return `${formatNumber(l)} l`
-  }
-  return unit ? `${formatNumber(value)} ${unit}` : formatNumber(value)
-}
-
-function formatNumber(n: number): string {
-  if (Number.isInteger(n)) return n.toString()
-  // Round to 1 decimal, remove trailing zero
-  return n.toFixed(1).replace(/\.0$/, '')
-}
-
-export function parseAmount(amount: string): ParsedAmount | null {
-  const trimmed = amount.trim()
-  // Match patterns like "200g", "200 g", "2 łyżki", "1.5 kg", "½ szklanki"
-  const match = trimmed.match(/^([\d.,½¼¾⅓⅔]+)\s*(.*)$/)
-  if (!match) return null
-
-  const valueStr = match[1]
-  let unit = match[2].trim().toLowerCase()
-
-  // Handle fractions
-  const fractions: Record<string, number> = {
-    '½': 0.5,
-    '¼': 0.25,
-    '¾': 0.75,
-    '⅓': 0.333,
-    '⅔': 0.667,
-  }
-  let value: number
-  if (fractions[valueStr]) {
-    value = fractions[valueStr]
-  } else {
-    value = parseFloat(valueStr.replace(',', '.'))
-  }
-
-  if (isNaN(value)) return null
-
-  // Normalize unit
-  unit = UNIT_ALIASES[unit] || unit
-
-  return { value, unit }
-}
-
 export function mergeAmounts(a: string, b: string): string {
   const parsedA = parseAmount(a)
   const parsedB = parseAmount(b)
@@ -148,10 +148,14 @@ export function mergeAmounts(a: string, b: string): string {
     return `${a} + ${b}`
   }
 
-  // Same unit: simple add
+  // Same unit: simple add (also sum gramsHint if present)
   if (parsedA.unit === parsedB.unit) {
     const sum = parsedA.value + parsedB.value
-    return formatAmount(sum, parsedA.unit)
+    const gramsSum =
+      parsedA.gramsHint !== undefined && parsedB.gramsHint !== undefined
+        ? parsedA.gramsHint + parsedB.gramsHint
+        : (parsedA.gramsHint ?? parsedB.gramsHint)
+    return formatAmount(sum, parsedA.unit, gramsSum)
   }
 
   // Cross-unit conversion: g+kg, ml+l
@@ -166,6 +170,7 @@ export function mergeAmounts(a: string, b: string): string {
 
   if (unitA === unitB) {
     const sum = valA + valB
+    // For cross-unit conversion, don't preserve gramsHint (it's already in grams)
     return formatAmount(sum, unitA)
   }
 
@@ -180,54 +185,51 @@ export interface MergedIngredient {
 }
 
 // Składniki które zawsze są w domu — nie dodawaj do listy zakupów
+// All entries normalized (lowercase, no diacritics) to match normalizeIngredientName output
 const PANTRY_STAPLES = new Set([
-  'sól',
   'sol',
-  'sól morska',
-  'sól kuchenna',
+  'sol morska',
+  'sol kuchenna',
   'pieprz',
   'pieprzu',
   'czarny pieprz',
   'pieprz czarny',
-  'pieprz biały',
+  'pieprz bialy',
   'oliwa',
   'oliwa z oliwek',
   'olej',
-  'olej roślinny',
+  'olej roslinny',
   'olej rzepakowy',
-  'olej słonecznikowy',
+  'olej slonecznikowy',
   'olej kokosowy',
-  'masło',
+  'maslo',
   'cukier',
-  'cukier biały',
-  'cukier brązowy',
+  'cukier bialy',
+  'cukier brazowy',
   'cukier puder',
-  'mąka',
   'maka',
-  'mąka pszenna',
   'maka pszenna',
   'woda',
   'ocet',
   'ocet winny',
   'ocet balsamiczny',
-  'ocet ryżowy',
-  'ocet jabłkowy',
+  'ocet ryzowy',
+  'ocet jablkowy',
   'oregano',
   'bazylia',
   'tymianek',
   'rozmaryn',
   'majeranek',
-  'papryka słodka',
+  'papryka slodka',
   'papryka ostra',
-  'papryka wędzona',
+  'papryka wedzona',
   'kumin',
   'kminek',
   'kmin',
   'kolendra mielona',
   'czosnek w proszku',
   'cebula w proszku',
-  'liść laurowy',
-  'liście laurowe',
+  'lisc laurowy',
   'liscie laurowe',
   'vegeta',
   'przyprawa warzywna',
@@ -236,12 +238,12 @@ const PANTRY_STAPLES = new Set([
   'proszek do pieczenia',
   'soda oczyszczona',
   'cynamon',
-  'gałka muszkatołowa',
+  'galka muszkatołowa',
   'imbir mielony',
   'kurkuma',
   'chili',
   'papryczka chili',
-  'płatki chili',
+  'platki chili',
   'sezam',
   'ziarna sezamu',
 ])
