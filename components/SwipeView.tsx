@@ -8,7 +8,8 @@ import MealModal from '@/components/MealModal'
 import DaySelector from '@/components/ui/DaySelector'
 import SwipeStack from '@/components/swipe/SwipeStack'
 import SwipeActions from '@/components/swipe/SwipeActions'
-import CategoryFilter from '@/components/swipe/CategoryFilter'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import CategoryFilter from '@/components/swipe/CategoryFilter' // kept for future UX redesign
 import { useAppContext } from '@/lib/context'
 
 interface SwipeViewProps {
@@ -53,62 +54,14 @@ export default function SwipeView({
 }: SwipeViewProps) {
   const { settings } = useAppContext()
 
-  // Filter state: categories, cuisines, and filtered-deck index bundled together
-  // so toggling a filter always resets the index atomically (no useEffect needed)
-  const [filterState, setFilterState] = useState<{
-    categories: string[]
-    cuisines: string[]
-    index: number
-  }>({ categories: [], cuisines: [], index: 0 })
-
-  const activeCategories = filterState.categories
-  const activeCuisines = filterState.cuisines
-  const filteredIndex = filterState.index
-
-  const handleToggleCategory = useCallback((category: string) => {
-    setFilterState((prev) => ({
-      categories: prev.categories.includes(category)
-        ? prev.categories.filter((c) => c !== category)
-        : [...prev.categories, category],
-      cuisines: prev.cuisines,
-      index: 0,
-    }))
-  }, [])
-
-  const handleToggleCuisine = useCallback((cuisine: string) => {
-    setFilterState((prev) => ({
-      categories: prev.categories,
-      cuisines: prev.cuisines.includes(cuisine)
-        ? prev.cuisines.filter((c) => c !== cuisine)
-        : [...prev.cuisines, cuisine],
-      index: 0,
-    }))
-  }, [])
-
   const seenIds = seenIdsFromContext
   const shuffledMeals = useMemo(
     () => (shuffledMealsFromContext.length > 0 ? shuffledMealsFromContext : []),
     [shuffledMealsFromContext]
   )
 
-  // Apply category/cuisine filters to the shuffled list without resetting order
-  const isFiltered = activeCategories.length > 0 || activeCuisines.length > 0
-
-  const filteredShuffledMeals = useMemo(() => {
-    if (!isFiltered) return shuffledMeals
-    return shuffledMeals.filter((meal) => {
-      const categoryMatch =
-        activeCategories.length === 0 ||
-        activeCategories.some((cat) => meal.category?.toLowerCase() === cat.toLowerCase())
-      const cuisineMatch =
-        activeCuisines.length === 0 ||
-        activeCuisines.some((cui) => meal.kuchnia?.toLowerCase() === cui.toLowerCase())
-      return categoryMatch && cuisineMatch
-    })
-  }, [shuffledMeals, activeCategories, activeCuisines, isFiltered])
-
-  const activeMeals = isFiltered ? filteredShuffledMeals : shuffledMeals
-  const currentIndex = isFiltered ? filteredIndex : currentSwipeIndexFromContext
+  const activeMeals = shuffledMeals
+  const currentIndex = currentSwipeIndexFromContext
 
   const [reshuffleToast, setReshuffleToast] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -152,21 +105,6 @@ export default function SwipeView({
   }, [])
 
   const nextCard = useCallback(() => {
-    if (isFiltered) {
-      // In filtered mode: advance through filtered list; wrap around when exhausted
-      if (currentIndex >= activeMeals.length - 1) {
-        x.set(0)
-        setFilterState((prev) => ({ ...prev, index: 0 }))
-        setReshuffleToast(true)
-        setTimeout(() => setReshuffleToast(false), 2000)
-      } else {
-        x.set(0)
-        setFilterState((prev) => ({ ...prev, index: prev.index + 1 }))
-      }
-      setIsAnimating(false)
-      return
-    }
-
     if (currentIndex >= shuffledMeals.length - 1) {
       if (allDaysFilled) {
         setShowConfetti(true)
@@ -197,9 +135,7 @@ export default function SwipeView({
     }
     setIsAnimating(false)
   }, [
-    isFiltered,
     currentIndex,
-    activeMeals.length,
     shuffledMeals,
     allDaysFilled,
     onComplete,
@@ -343,22 +279,10 @@ export default function SwipeView({
           onSelect={(day) => onDaySelect?.(day)}
           showThumbnails
         />
-        <CategoryFilter
-          activeCategories={activeCategories}
-          activeCuisines={activeCuisines}
-          onToggleCategory={handleToggleCategory}
-          onToggleCuisine={handleToggleCuisine}
-        />
+        {/* <CategoryFilter ... /> hidden for UX redesign */}
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center text-slate-500 dark:text-text-secondary-dark px-6">
-            {isFiltered ? (
-              <>
-                <p className="text-lg font-medium">Brak posiłków dla wybranych filtrów</p>
-                <p className="text-sm mt-1">Spróbuj zmienić lub usunąć filtry</p>
-              </>
-            ) : (
-              <p className="text-lg">Brak więcej posiłków</p>
-            )}
+            <p className="text-lg">Brak więcej posiłków</p>
           </div>
         </div>
       </div>
@@ -394,13 +318,8 @@ export default function SwipeView({
         showThumbnails
       />
 
-      {/* Category & Cuisine Filter */}
-      <CategoryFilter
-        activeCategories={activeCategories}
-        activeCuisines={activeCuisines}
-        onToggleCategory={handleToggleCategory}
-        onToggleCuisine={handleToggleCuisine}
-      />
+      {/* Category & Cuisine Filter — hidden for UX redesign */}
+      {/* <CategoryFilter ... /> */}
 
       {/* Card Stack Area */}
       <div className="flex-1 flex flex-col items-center px-4 pb-2 relative min-h-0">
