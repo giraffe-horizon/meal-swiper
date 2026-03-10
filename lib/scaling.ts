@@ -36,3 +36,7 @@ export function scaleIngredient(ing: Ingredient, people: number, basePeople = 2)
     amount: formatAmount(rounded, parsed.unit, scaledGramsHint),
   }
 }
+
+export function scaleNutrition(value: number, people: number, basePeople = 2): number {
+  return Math.round((value * people) / basePeople)
+}

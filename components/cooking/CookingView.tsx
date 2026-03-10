@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { Meal } from '@/types'
-import { scaleIngredient } from '@/lib/scaling'
+import { scaleIngredient, scaleNutrition } from '@/lib/scaling'
 import { parseRecipe, enrichStepsStructured } from '@/lib/recipe'
 import RecipeSteps from '@/components/cooking/RecipeSteps'
 
@@ -40,11 +40,11 @@ export default function CookingView({ meal, people }: CookingViewProps) {
             </span>
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
-              {meal.kcal_baza} kcal
+              {scaleNutrition(meal.kcal_baza, people)} kcal
             </span>
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[16px]">fitness_center</span>
-              {meal.bialko_baza}g białka
+              {scaleNutrition(meal.bialko_baza, people)}g białka
             </span>
           </div>
         </div>

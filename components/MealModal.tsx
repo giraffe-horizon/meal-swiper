@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import type { Meal, Ingredient, RecipeStep } from '@/types'
-import { scaleIngredient } from '@/lib/scaling'
+import { scaleIngredient, scaleNutrition } from '@/lib/scaling'
 import { enrichStepsStructured } from '@/lib/recipe'
 import { useAppContext } from '@/lib/context'
 import AmountBadge from '@/components/ui/AmountBadge'
@@ -125,13 +125,13 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
                       <span className="material-symbols-outlined text-[18px]">
                         local_fire_department
                       </span>
-                      <span>{meal.kcal_baza} kcal</span>
+                      <span>{scaleNutrition(meal.kcal_baza, people)} kcal</span>
                     </div>
                   )}
                   {meal.bialko_baza > 0 && (
                     <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
                       <span className="material-symbols-outlined text-[18px]">bolt</span>
-                      <span>{meal.bialko_baza}g białka</span>
+                      <span>{scaleNutrition(meal.bialko_baza, people)}g białka</span>
                     </div>
                   )}
                   {meal.trudnosc && (
