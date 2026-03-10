@@ -185,11 +185,15 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
                     {scaledBase.map((ing, i) => (
                       <li
                         key={i}
-                        className="flex items-baseline gap-2 text-sm text-text-primary-light dark:text-text-primary-dark"
+                        className="flex items-baseline text-sm text-text-primary-light dark:text-text-primary-dark"
                       >
-                        <span className="text-primary shrink-0">•</span>
-                        <span className="flex-1">{ing.name}</span>
-                        <span className="text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0">
+                        <span className="text-primary shrink-0 mr-1.5">•</span>
+                        <span className="min-w-0 truncate">{ing.name}</span>
+                        <span
+                          aria-hidden
+                          className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-text-secondary-light/40 dark:border-text-secondary-dark/40"
+                        />
+                        <span className="text-text-secondary-light dark:text-text-secondary-dark font-bold shrink-0">
                           {ing.amount}
                         </span>
                       </li>
@@ -218,11 +222,15 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
                       {scaledMeat.map((ing, i) => (
                         <li
                           key={i}
-                          className="flex items-baseline gap-2 text-sm text-text-primary-light dark:text-text-primary-dark"
+                          className="flex items-baseline text-sm text-text-primary-light dark:text-text-primary-dark"
                         >
-                          <span className="text-orange-500 shrink-0">•</span>
-                          <span className="flex-1">{ing.name}</span>
-                          <span className="text-text-secondary-light dark:text-text-secondary-dark font-medium shrink-0">
+                          <span className="text-orange-500 shrink-0 mr-1.5">•</span>
+                          <span className="min-w-0 truncate">{ing.name}</span>
+                          <span
+                            aria-hidden
+                            className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-text-secondary-light/40 dark:border-text-secondary-dark/40"
+                          />
+                          <span className="text-text-secondary-light dark:text-text-secondary-dark font-bold shrink-0">
                             {ing.amount}
                           </span>
                         </li>

@@ -86,14 +86,22 @@ export default function CookingView({ meal, people, scaleFactor }: CookingViewPr
                         </span>
                       )}
                     </div>
-                    <span
-                      className={`flex-1 text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                    >
-                      {ing.name}
-                    </span>
-                    <span className="text-sm text-slate-500 dark:text-text-secondary-dark shrink-0">
-                      {ing.amount}
-                    </span>
+                    <div className="flex-1 min-w-0 flex items-baseline">
+                      <span
+                        className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
+                      >
+                        {ing.name}
+                      </span>
+                      <span
+                        aria-hidden
+                        className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
+                      />
+                      <span
+                        className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
+                      >
+                        {ing.amount}
+                      </span>
+                    </div>
                   </label>
                 )
               })}
@@ -137,14 +145,22 @@ export default function CookingView({ meal, people, scaleFactor }: CookingViewPr
                         </span>
                       )}
                     </div>
-                    <span
-                      className={`flex-1 text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                    >
-                      {ing.name}
-                    </span>
-                    <span className="text-sm text-slate-500 dark:text-text-secondary-dark shrink-0">
-                      {ing.amount}
-                    </span>
+                    <div className="flex-1 min-w-0 flex items-baseline">
+                      <span
+                        className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
+                      >
+                        {ing.name}
+                      </span>
+                      <span
+                        aria-hidden
+                        className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
+                      />
+                      <span
+                        className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
+                      >
+                        {ing.amount}
+                      </span>
+                    </div>
                   </label>
                 )
               })}
