@@ -1,3 +1,9 @@
+# [1.3.0](https://github.com/liskeee/meal-swiper/compare/v1.2.0...v1.3.0) (2026-03-10)
+
+### Features
+
+- add dark mode support and theme toggle in settings ([6c7e0e4](https://github.com/liskeee/meal-swiper/commit/6c7e0e4174fbcb1260a0dd0df58270baa95bf659))
+
 # [1.2.0](https://github.com/liskeee/meal-swiper/compare/v1.1.4...v1.2.0) (2026-03-10)
 
 ### Features
