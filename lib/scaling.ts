@@ -25,6 +25,33 @@ export function computePersonRatio(personKcal: number): number {
   return personKcal / BASE_KCAL_PER_PERSON
 }
 
+/**
+ * Zaokrągla wartość do najbliższego "ładnego" ułamka: 1/4, 1/3, 1/2, 2/3, 3/4 lub całości.
+ * Używane dla jednostek miarowych (łyżki, łyżeczki) gdzie precyzja jest ważna.
+ */
+export function snapToNiceFraction(value: number): number {
+  // Minimum 1/4 (mniej niż 1/4 to tyle co nic)
+  if (value < 0.15) return 0.25
+
+  const candidates: number[] = [0.25, 1 / 3, 0.5, 2 / 3, 0.75, 1, 1.25, 1 + 1 / 3, 1.5, 1 + 2 / 3, 1.75, 2]
+
+  if (value > 2) {
+    // Dla większych wartości zaokrąglaj do 0.5
+    return Math.round(value * 2) / 2
+  }
+
+  let best = candidates[0]
+  let bestDiff = Math.abs(value - candidates[0])
+  for (const c of candidates) {
+    const diff = Math.abs(value - c)
+    if (diff < bestDiff) {
+      bestDiff = diff
+      best = c
+    }
+  }
+  return best
+}
+
 export function scaleIngredient(ing: Ingredient, scaleFactor: number): Ingredient {
   const parsed = parseAmount(ing.amount)
   if (!parsed) return ing
@@ -34,17 +61,20 @@ export function scaleIngredient(ing: Ingredient, scaleFactor: number): Ingredien
   // zaokrąglenie: dla g/ml do 5, dla reszty 1 miejsce po przecinku lub pełne
   let rounded: number
   const unit = parsed.unit.toLowerCase()
+
+  // Jednostki, które mogą być wyrażane ułamkami (1/4, 1/3, 1/2, 2/3, 3/4)
+  const isSpoon = unit === 'łyżka' || unit === 'łyżki' || unit === 'łyżeczka' || unit === 'łyżeczki'
+
   const isDiscrete =
     ['ząbek', 'ząbki', 'puszka', 'puszki', 'szt', 'opakowanie', 'opakowania'].some((u) =>
       unit.includes(u)
-    ) ||
-    unit === 'łyżka' ||
-    unit === 'łyżki' ||
-    unit === 'łyżeczka' ||
-    unit === 'łyżeczki'
+    ) || isSpoon
 
   if (unit === 'g' || unit === 'ml') {
     rounded = Math.round(scaled / 5) * 5
+  } else if (isSpoon) {
+    // Dla łyżek i łyżeczek zaokrąglamy do ładnych ułamków: 1/4, 1/3, 1/2, 2/3, 3/4
+    rounded = snapToNiceFraction(scaled)
   } else if (isDiscrete) {
     // Dla jednostek "dyskretnych" (ząbki, puszki, sztuki) zaokrąglamy do 0.5 lub całości
     if (scaled < 1) {

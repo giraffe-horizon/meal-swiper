@@ -4,6 +4,7 @@ import {
   scaleNutrition,
   computeScaleFactor,
   computePersonRatio,
+  snapToNiceFraction,
   BASE_KCAL_PER_PERSON,
 } from '@/lib/scaling'
 import type { Ingredient, PersonSettings } from '@/types'
@@ -130,6 +131,78 @@ describe('scaling', () => {
   describe('BASE_KCAL_PER_PERSON constant', () => {
     it('is 2000', () => {
       expect(BASE_KCAL_PER_PERSON).toBe(2000)
+    })
+  })
+
+  describe('snapToNiceFraction', () => {
+    it('snaps 0.25 to 1/4', () => {
+      expect(snapToNiceFraction(0.25)).toBeCloseTo(0.25)
+    })
+
+    it('snaps 0.1 to 1/4 (minimum value)', () => {
+      expect(snapToNiceFraction(0.1)).toBeCloseTo(0.25)
+    })
+
+    it('snaps 0.33 to 1/3', () => {
+      expect(snapToNiceFraction(1 / 3)).toBeCloseTo(1 / 3)
+    })
+
+    it('snaps 0.5 to 1/2', () => {
+      expect(snapToNiceFraction(0.5)).toBeCloseTo(0.5)
+    })
+
+    it('snaps 0.67 to 2/3', () => {
+      expect(snapToNiceFraction(2 / 3)).toBeCloseTo(2 / 3)
+    })
+
+    it('snaps 0.75 to 3/4', () => {
+      expect(snapToNiceFraction(0.75)).toBeCloseTo(0.75)
+    })
+
+    it('snaps 1.0 to 1', () => {
+      expect(snapToNiceFraction(1.0)).toBe(1)
+    })
+
+    it('snaps values > 2 to 0.5 increments', () => {
+      expect(snapToNiceFraction(2.3)).toBeCloseTo(2.5)
+      expect(snapToNiceFraction(3.1)).toBeCloseTo(3)
+    })
+  })
+
+  describe('fraction scaling for spoon units', () => {
+    it('scales łyżeczka to 1/4 when result is small', () => {
+      // 1 łyżeczka * 0.25 = 0.25 → "1/4 łyżeczki"
+      const ing: Ingredient = { name: 'Sól', amount: '1 łyżeczka' }
+      const result = scaleIngredient(ing, 0.25)
+      expect(result.amount).toBe('1/4 łyżeczki')
+    })
+
+    it('scales łyżeczka to 1/3 when result is ~1/3', () => {
+      // 1 łyżeczka * (1/3) ≈ 0.333 → "1/3 łyżeczki"
+      const ing: Ingredient = { name: 'Pieprz', amount: '1 łyżeczka' }
+      const result = scaleIngredient(ing, 1 / 3)
+      expect(result.amount).toBe('1/3 łyżeczki')
+    })
+
+    it('scales łyżka to 1/2 when result is 0.5', () => {
+      // 1 łyżka * 0.5 = 0.5 → "1/2 łyżki"
+      const ing: Ingredient = { name: 'Oliwa', amount: '1 łyżka' }
+      const result = scaleIngredient(ing, 0.5)
+      expect(result.amount).toBe('1/2 łyżki')
+    })
+
+    it('scales łyżeczki to 2/3 when result is ~2/3', () => {
+      // 2 łyżeczki * (1/3) ≈ 0.667 → "2/3 łyżeczki"
+      const ing: Ingredient = { name: 'Kumin', amount: '2 łyżeczki' }
+      const result = scaleIngredient(ing, 1 / 3)
+      expect(result.amount).toBe('2/3 łyżeczki')
+    })
+
+    it('scales łyżka to 3/4 when result is 0.75', () => {
+      // 3 łyżki * 0.25 = 0.75 → "3/4 łyżki"
+      const ing: Ingredient = { name: 'Sos sojowy', amount: '3 łyżki' }
+      const result = scaleIngredient(ing, 0.25)
+      expect(result.amount).toBe('3/4 łyżki')
     })
   })
 })

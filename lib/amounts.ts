@@ -135,6 +135,18 @@ export function parseAmount(amount: string): ParsedAmount | null {
 }
 
 export function formatNumber(n: number): string {
+  // Format common fractions for better readability
+  const FRACTIONS: Array<[number, string]> = [
+    [1 / 4, '1/4'],
+    [1 / 3, '1/3'],
+    [1 / 2, '1/2'],
+    [2 / 3, '2/3'],
+    [3 / 4, '3/4'],
+  ]
+  const TOLERANCE = 0.02
+  for (const [val, str] of FRACTIONS) {
+    if (Math.abs(n - val) <= TOLERANCE) return str
+  }
   if (Number.isInteger(n)) return n.toString()
   // Round to 1 decimal, remove trailing zero
   return n.toFixed(1).replace(/\.0$/, '')
