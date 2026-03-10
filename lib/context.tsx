@@ -38,6 +38,7 @@ interface AppContextValue {
   setSeenIds: (ids: string[]) => void
   settings: AppSettings
   updateSettings: (settings: AppSettings) => void
+  scaleFactor: number
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -46,7 +47,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { meals, loading: mealsLoading } = useMeals()
   const { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation } =
     useWeeklyPlan()
-  const { settings, updateSettings } = useSettings()
+  const { settings, updateSettings, scaleFactor } = useSettings()
   const {
     shuffledMeals,
     currentSwipeIndex,
@@ -134,6 +135,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setSeenIds,
         settings,
         updateSettings,
+        scaleFactor,
       }}
     >
       {children}

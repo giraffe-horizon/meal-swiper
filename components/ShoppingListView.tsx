@@ -13,7 +13,7 @@ interface ShoppingListViewProps {
 }
 
 export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingListViewProps) {
-  const { settings } = useAppContext()
+  const { scaleFactor } = useAppContext()
   const weekKey = getWeekKey(weekOffset)
 
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() =>
@@ -21,8 +21,8 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   )
 
   const items = useMemo(
-    () => generateShoppingList(weeklyPlan, settings.people),
-    [weeklyPlan, settings.people]
+    () => generateShoppingList(weeklyPlan, scaleFactor),
+    [weeklyPlan, scaleFactor]
   )
 
   const syncCheckedToServer = (newChecked: Record<string, boolean>) => {

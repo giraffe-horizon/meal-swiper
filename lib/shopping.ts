@@ -298,13 +298,13 @@ function capitalizeFirst(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
 }
 
-export function generateShoppingList(weeklyPlan: WeeklyPlan, people = 2): MergedIngredient[] {
+export function generateShoppingList(weeklyPlan: WeeklyPlan, scaleFactor = 1): MergedIngredient[] {
   const ingredientMap = new Map<string, { name: string; amount: string }>()
 
   const addIngredients = (ingredients: Ingredient[]) => {
     for (const rawIng of ingredients) {
       if (isPantryStaple(rawIng.name)) continue
-      const ing = scaleIngredient(rawIng, people)
+      const ing = scaleIngredient(rawIng, scaleFactor)
       const normalized = normalizeIngredientName(ing.name)
       const existing = ingredientMap.get(normalized)
       if (existing) {

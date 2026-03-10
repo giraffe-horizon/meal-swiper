@@ -1,5 +1,4 @@
 import type { Meal, Ingredient } from '@/types'
-import { scaleIngredient } from '@/lib/scaling'
 
 // ─── StepSegment ────────────────────────────────────────────────────────────
 
@@ -61,12 +60,7 @@ function isWordBoundaryBefore(text: string, idx: number): boolean {
 const AMOUNT_REGEX =
   /(\d+(?:[,.]\d+)?)\s*(g|kg|ml|l|szt|łyżk(?:a|i|ę|ą|eczka|eczki|eczką)?|szklan(?:ka|ki|kę|ką|ek|ce)?)/gi
 
-function enrichSingleStep(
-  step: string,
-  ingredients: Ingredient[],
-  people: number,
-  basePeople: number
-): StepSegment[] {
+function enrichSingleStep(step: string, ingredients: Ingredient[]): StepSegment[] {
   const stepLower = step.toLowerCase()
 
   interface Replacement {
@@ -114,7 +108,7 @@ function enrichSingleStep(
     }
 
     if (bestIng) {
-      const scaled = scaleIngredient(bestIng, people, basePeople)
+      // bestIng is already scaled by the caller
       coveredIngNames.add(bestIng.name)
       replacements.push({
         start: amStart,
@@ -122,7 +116,7 @@ function enrichSingleStep(
         seg: {
           type: 'amount',
           ingredient: bestIng.name,
-          amount: scaled.amount,
+          amount: bestIng.amount,
           originalAmount: step.slice(amStart, amEnd),
         },
       })
@@ -150,14 +144,14 @@ function enrichSingleStep(
         // Skip if another replacement already covers this area
         const overlaps = replacements.some((r) => r.start < wordEnd && r.end > idx)
         if (!overlaps) {
-          const scaled = scaleIngredient(ing, people, basePeople)
+          // ing is already scaled by the caller
           replacements.push({
             start: wordEnd,
             end: wordEnd, // zero-width insert
             seg: {
               type: 'amount',
               ingredient: ing.name,
-              amount: scaled.amount,
+              amount: ing.amount,
               originalAmount: ing.amount,
             },
           })
@@ -202,23 +196,17 @@ function enrichSingleStep(
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
-export function enrichStepsStructured(
-  steps: string[],
-  ingredients: Ingredient[],
-  people: number,
-  basePeople = 2
-): StepSegment[][] {
-  return steps.map((step) => enrichSingleStep(step, ingredients, people, basePeople))
+/**
+ * Enriches recipe steps with ingredient amounts.
+ * IMPORTANT: ingredients must be already scaled by the caller.
+ */
+export function enrichStepsStructured(steps: string[], ingredients: Ingredient[]): StepSegment[][] {
+  return steps.map((step) => enrichSingleStep(step, ingredients))
 }
 
 /** Backwards-compatible plain-string version (used in tests / legacy). */
-export function enrichStepsWithAmounts(
-  steps: string[],
-  ingredients: Ingredient[],
-  people = 2,
-  basePeople = 2
-): string[] {
-  return enrichStepsStructured(steps, ingredients, people, basePeople).map((segs) =>
+export function enrichStepsWithAmounts(steps: string[], ingredients: Ingredient[]): string[] {
+  return enrichStepsStructured(steps, ingredients).map((segs) =>
     segs.map((s) => (s.type === 'text' ? s.content : s.amount)).join('')
   )
 }

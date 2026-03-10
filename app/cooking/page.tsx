@@ -24,7 +24,7 @@ function getDefaultDay(weeklyPlan: ReturnType<typeof useAppContext>['weeklyPlan'
 }
 
 export default function CookingPage() {
-  const { weeklyPlan, weekOffset, settings } = useAppContext()
+  const { weeklyPlan, weekOffset, settings, scaleFactor } = useAppContext()
   const { weekDates } = useWeekDates(weekOffset)
 
   const defaultDay = useMemo(() => getDefaultDay(weeklyPlan), [weeklyPlan])
@@ -45,7 +45,12 @@ export default function CookingPage() {
       />
 
       {meal ? (
-        <CookingView key={effectiveDay} meal={meal} people={settings.people} />
+        <CookingView
+          key={effectiveDay}
+          meal={meal}
+          people={settings.people}
+          scaleFactor={scaleFactor}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center p-8">
           <div className="text-6xl mb-4">🍽️</div>

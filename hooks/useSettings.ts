@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import type { AppSettings } from '@/types'
+import { computeScaleFactor } from '@/lib/scaling'
 
 const STORAGE_KEY = 'meal_swiper_settings'
 const API_KEY = 'app_settings'
@@ -95,11 +96,16 @@ export function useSettings() {
       .reduce((sum, person) => sum + person.protein, 0)
   }, [settings])
 
+  const scaleFactor = useMemo(() => {
+    return computeScaleFactor(settings.persons.slice(0, settings.people))
+  }, [settings])
+
   return {
     settings,
     updateSettings,
     totalKcal,
     totalProtein,
+    scaleFactor,
     isLoaded,
   }
 }

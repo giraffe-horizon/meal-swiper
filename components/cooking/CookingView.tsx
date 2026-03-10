@@ -9,16 +9,17 @@ import RecipeSteps from '@/components/cooking/RecipeSteps'
 interface CookingViewProps {
   meal: Meal
   people: number
+  scaleFactor: number
 }
 
-export default function CookingView({ meal, people }: CookingViewProps) {
+export default function CookingView({ meal, people, scaleFactor }: CookingViewProps) {
   const [checkedSteps, setCheckedSteps] = useState<Record<number, boolean>>({})
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({})
 
   const { steps, tips, baseIngredients, meatIngredients } = parseRecipe(meal)
-  const scaledBase = baseIngredients.map((ing) => scaleIngredient(ing, people))
-  const scaledMeat = meatIngredients.map((ing) => scaleIngredient(ing, people))
-  const structuredSteps = enrichStepsStructured(steps, [...scaledBase, ...scaledMeat], people)
+  const scaledBase = baseIngredients.map((ing) => scaleIngredient(ing, scaleFactor))
+  const scaledMeat = meatIngredients.map((ing) => scaleIngredient(ing, scaleFactor))
+  const structuredSteps = enrichStepsStructured(steps, [...scaledBase, ...scaledMeat])
 
   const toggleStep = (i: number) => setCheckedSteps((prev) => ({ ...prev, [i]: !prev[i] }))
   const toggleIngredient = (key: string) =>
@@ -40,11 +41,11 @@ export default function CookingView({ meal, people }: CookingViewProps) {
             </span>
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
-              {scaleNutrition(meal.kcal_baza, people)} kcal
+              {scaleNutrition(meal.kcal_baza, scaleFactor)} kcal
             </span>
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-[16px]">fitness_center</span>
-              {scaleNutrition(meal.bialko_baza, people)}g białka
+              {scaleNutrition(meal.bialko_baza, scaleFactor)}g białka
             </span>
           </div>
         </div>

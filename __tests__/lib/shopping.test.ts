@@ -233,7 +233,8 @@ describe('shopping', () => {
         fri: null,
       }
 
-      const list = generateShoppingList(weeklyPlan, 2)
+      // scaleFactor = 1 (2 osoby / 2 osoby bazowe = 1)
+      const list = generateShoppingList(weeklyPlan, 1)
 
       // Find merged items
       const cebula = list.find((item) => item.normalizedName === 'cebula')
@@ -273,7 +274,7 @@ describe('shopping', () => {
         fri: null,
       }
 
-      const list = generateShoppingList(weeklyPlan, 2)
+      const list = generateShoppingList(weeklyPlan, 1)
 
       expect(list.find((item) => item.normalizedName === 'sol')).toBeUndefined()
       expect(list.find((item) => item.normalizedName === 'pieprz')).toBeUndefined()
@@ -317,14 +318,14 @@ describe('shopping', () => {
         fri: null,
       }
 
-      const list = generateShoppingList(weeklyPlan, 2)
+      const list = generateShoppingList(weeklyPlan, 1)
       const jajko = list.find((item) => item.normalizedName === 'jajko')
 
       expect(jajko).toBeDefined()
       expect(jajko?.amount).toBe('6 szt') // 2 + 3 + 1
     })
 
-    it('scales ingredients by people count', () => {
+    it('scales ingredients by scale factor', () => {
       const weeklyPlan: WeeklyPlan = {
         weekKey: '2024-03-01',
         mon: {
@@ -345,8 +346,8 @@ describe('shopping', () => {
         fri: null,
       }
 
-      // Test for 4 people (2x scaling)
-      const list = generateShoppingList(weeklyPlan, 4)
+      // Test for 4 people (scaleFactor = 4/2 = 2)
+      const list = generateShoppingList(weeklyPlan, 2)
       const pomidor = list.find((item) => item.normalizedName === 'pomidor')
 
       expect(pomidor).toBeDefined()
@@ -376,7 +377,7 @@ describe('shopping', () => {
         fri: null,
       }
 
-      const list = generateShoppingList(weeklyPlan, 2)
+      const list = generateShoppingList(weeklyPlan, 1)
       const names = list.map((item) => item.normalizedName)
 
       // Check if sorted
@@ -429,7 +430,7 @@ describe('shopping', () => {
         fri: null,
       }
 
-      const list = generateShoppingList(weeklyPlan, 2)
+      const list = generateShoppingList(weeklyPlan, 1)
       const czosnek = list.find((item) => item.normalizedName === 'czosnek')
 
       expect(czosnek).toBeDefined()
@@ -470,7 +471,7 @@ describe('shopping', () => {
         fri: null,
       }
 
-      const list = generateShoppingList(weeklyPlan, 2)
+      const list = generateShoppingList(weeklyPlan, 1)
       const pomidory = list.find((item) => item.normalizedName === 'pomidory pelati')
 
       expect(pomidory).toBeDefined()
@@ -511,7 +512,7 @@ describe('shopping', () => {
         fri: null,
       }
 
-      const list = generateShoppingList(weeklyPlan, 2)
+      const list = generateShoppingList(weeklyPlan, 1)
       const sos = list.find((item) => item.normalizedName === 'sos sojowy')
 
       expect(sos).toBeDefined()

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import type { Meal, Ingredient, RecipeStep } from '@/types'
-import { scaleIngredient, scaleNutrition } from '@/lib/scaling'
+import { scaleIngredient, scaleNutrition, computePersonRatio } from '@/lib/scaling'
 import { enrichStepsStructured } from '@/lib/recipe'
 import { useAppContext } from '@/lib/context'
 import AmountBadge from '@/components/ui/AmountBadge'
@@ -22,7 +22,7 @@ function parseJSON<T>(json: string, fallback: T): T {
 }
 
 export default function MealModal({ meal, onClose }: MealModalProps) {
-  const { settings } = useAppContext()
+  const { settings, scaleFactor } = useAppContext()
   const people = settings.people
   const [isVisible, setIsVisible] = useState(false)
   const [showMeat, setShowMeat] = useState(false)
@@ -63,13 +63,12 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
   const recipe: RecipeStep = parseJSON(meal.przepis, { kroki: [] })
   const hasMeat = meatIngredients.length > 0
 
-  const scaledBase = baseIngredients.map((ing) => scaleIngredient(ing, people))
-  const scaledMeat = meatIngredients.map((ing) => scaleIngredient(ing, people))
-  const structuredKroki = enrichStepsStructured(
-    recipe.kroki ?? [],
-    [...scaledBase, ...scaledMeat],
-    people
-  )
+  const scaledBase = baseIngredients.map((ing) => scaleIngredient(ing, scaleFactor))
+  const scaledMeat = meatIngredients.map((ing) => scaleIngredient(ing, scaleFactor))
+  const structuredKroki = enrichStepsStructured(recipe.kroki ?? [], [...scaledBase, ...scaledMeat])
+
+  const totalKcal = scaleNutrition(meal.kcal_baza, scaleFactor)
+  const totalProtein = scaleNutrition(meal.bialko_baza, scaleFactor)
 
   return (
     <div
@@ -121,17 +120,46 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
                     </div>
                   )}
                   {meal.kcal_baza > 0 && (
-                    <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                      <span className="material-symbols-outlined text-[18px]">
-                        local_fire_department
-                      </span>
-                      <span>{scaleNutrition(meal.kcal_baza, people)} kcal</span>
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
+                        <span className="material-symbols-outlined text-[18px]">
+                          local_fire_department
+                        </span>
+                        <span>{totalKcal} kcal</span>
+                      </div>
+                      <div className="text-xs text-slate-400 dark:text-slate-500 ml-6">
+                        {settings.persons.slice(0, people).map((person, i) => {
+                          const personKcal = Math.round(
+                            meal.kcal_baza * computePersonRatio(person.kcal)
+                          )
+                          return (
+                            <span key={i}>
+                              {person.name}: {personKcal} kcal
+                              {i < people - 1 ? ' | ' : ''}
+                            </span>
+                          )
+                        })}
+                      </div>
                     </div>
                   )}
                   {meal.bialko_baza > 0 && (
-                    <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                      <span className="material-symbols-outlined text-[18px]">bolt</span>
-                      <span>{scaleNutrition(meal.bialko_baza, people)}g białka</span>
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
+                        <span className="material-symbols-outlined text-[18px]">bolt</span>
+                        <span>{totalProtein}g białka</span>
+                      </div>
+                      <div className="text-xs text-slate-400 dark:text-slate-500 ml-6">
+                        {settings.persons.slice(0, people).map((person, i) => {
+                          const personProtein = Math.round(
+                            meal.bialko_baza * computePersonRatio(person.kcal)
+                          )
+                          return (
+                            <span key={i}>
+                              {person.name}: {personProtein}g{i < people - 1 ? ' | ' : ''}
+                            </span>
+                          )
+                        })}
+                      </div>
                     </div>
                   )}
                   {meal.trudnosc && (
