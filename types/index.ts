@@ -28,6 +28,7 @@ export interface Meal {
   bialko_z_miesem: number
   trudnosc: 'łatwe' | 'średnie' | 'trudne' | ''
   kuchnia: string
+  category: string
   skladniki_baza: string // JSON string: Ingredient[]
   skladniki_mieso: string // JSON string: Ingredient[]
   przepis: string // JSON string: RecipeStep

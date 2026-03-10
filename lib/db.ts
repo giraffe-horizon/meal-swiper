@@ -46,6 +46,7 @@ export async function fetchMealsFromD1(db: D1Database): Promise<Meal[]> {
     bialko_z_miesem: number
     trudnosc: string
     kuchnia: string
+    category: string
     skladniki_baza: string
     skladniki_mieso: string
     przepis: string
@@ -64,6 +65,7 @@ export async function fetchMealsFromD1(db: D1Database): Promise<Meal[]> {
     bialko_z_miesem: row.bialko_z_miesem || 0,
     trudnosc: (row.trudnosc as Meal['trudnosc']) || '',
     kuchnia: row.kuchnia || '',
+    category: row.category || '',
     skladniki_baza: row.skladniki_baza || '[]',
     skladniki_mieso: row.skladniki_mieso || '[]',
     przepis: row.przepis || '{}',

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS meals (
   bialko_z_miesem INTEGER DEFAULT 0,
   trudnosc TEXT DEFAULT '',
   kuchnia TEXT DEFAULT '',
+  category TEXT DEFAULT '',
   skladniki_baza TEXT DEFAULT '[]',
   skladniki_mieso TEXT DEFAULT '[]',
   przepis TEXT DEFAULT '{}',
@@ -42,3 +43,4 @@ CREATE TABLE IF NOT EXISTS settings (
 -- Index for quick lookups
 CREATE INDEX IF NOT EXISTS idx_meals_kuchnia ON meals(kuchnia);
 CREATE INDEX IF NOT EXISTS idx_meals_trudnosc ON meals(trudnosc);
+CREATE INDEX IF NOT EXISTS idx_meals_category ON meals(category);

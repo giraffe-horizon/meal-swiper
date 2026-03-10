@@ -105,7 +105,7 @@ async function main() {
   for (const m of meals) {
     const esc = (s) => (s || '').toString().replace(/'/g, "''")
     const id = Math.random().toString(36).substring(2, 15)
-    const query = `INSERT INTO meals (id, nazwa, opis, photo_url, prep_time, kcal_baza, kcal_z_miesem, bialko_baza, bialko_z_miesem, trudnosc, kuchnia, skladniki_baza, skladniki_mieso, przepis, tags) VALUES ('${id}', '${esc(m.nazwa)}', '${esc(m.opis)}', '${esc(m.photo_url)}', ${m.czas_przygotowania}, ${m.makro.baza.kcal}, ${m.makro.z_miesem.kcal}, ${m.makro.baza.bialko}, ${m.makro.z_miesem.bialko}, '${esc(m.trudnosc)}', '${esc(m.kuchnia)}', '${esc(JSON.stringify(m.skladniki_baza))}', '${esc(JSON.stringify(m.skladniki_mieso))}', '${esc(JSON.stringify(m.przepis))}', '${esc(JSON.stringify(m.tagi))}')`
+    const query = `INSERT INTO meals (id, nazwa, opis, photo_url, prep_time, kcal_baza, kcal_z_miesem, bialko_baza, bialko_z_miesem, trudnosc, kuchnia, category, skladniki_baza, skladniki_mieso, przepis, tags) VALUES ('${id}', '${esc(m.nazwa)}', '${esc(m.opis)}', '${esc(m.photo_url)}', ${m.czas_przygotowania}, ${m.makro.baza.kcal}, ${m.makro.z_miesem.kcal}, ${m.makro.baza.bialko}, ${m.makro.z_miesem.bialko}, '${esc(m.trudnosc)}', '${esc(m.kuchnia)}', '${esc(m.kategoria)}', '${esc(JSON.stringify(m.skladniki_baza))}', '${esc(JSON.stringify(m.skladniki_mieso))}', '${esc(JSON.stringify(m.przepis))}', '${esc(JSON.stringify(m.tagi))}')`
 
     try {
       runD1(query)

@@ -5,7 +5,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 const MEAL_SCHEMA = `{
   "nazwa": "string - krótka, apetyczna nazwa dania po polsku",
   "opis": "string - opis 2-3 zdania: czym jest, co wyróżnia, dlaczego warto",
-  "kuchnia": "string - włoska|koreańska|polska|azjatycka|meksykańska",
+  "kuchnia": "string - region: polska|włoska|azjatycka|meksykańska|indyjska|śródziemnomorska|koreańska",
+  "kategoria": "string - typ dania: makarony|ryż i kasze|jednogarnkowe|tortille i wrapi|zapiekanki|sałatki i bowle|ziemniaki|placki i naleśniki",
   "trudnosc": "string - łatwe|średnie|trudne",
   "czas_przygotowania": "number - minuty max 60",
   "tagi": ["string"],
@@ -17,36 +18,42 @@ const MEAL_SCHEMA = `{
     { "name": "string - nazwa składnika", "amount": "string - DOKŁADNA gramatura na 2 porcje, np. '200g', '2 łyżki (30ml)', '1 puszka (400g)', '3 szt (150g)'" }
   ],
   "skladniki_mieso": [
-    { "name": "string - nazwa mięsa/jaj/nabiału", "amount": "string - DOKŁADNA gramatura na 1 porcję, np. '150g', '2 szt (120g)'" }
+    { "name": "string - nazwa mięsa (kurczak|wołowina|indyk|wieprzowina)", "amount": "string - DOKŁADNA gramatura na 1 porcję, np. '150g', '2 szt (120g)'" }
   ],
   "przepis": {
     "kroki": ["string - krok z czasem i temperaturą"],
     "wskazowki": "string - tip kulinarny"
   },
-  "prompt_zdjecia": "string - English vivid food photography prompt"
+  "prompt_zdjecia": "string - English vivid food photography prompt WYŁĄCZNIE dla wersji wegetariańskiej (bez mięsa)"
 }`
 
 function buildPrompt({ count, cuisine, maxTime, existingMeals }) {
   const cuisineStr =
     cuisine === 'all'
-      ? 'różnorodna: włoska, koreańska, polska, azjatycka, meksykańska — każda kuchnia max 3 razy'
+      ? 'różnorodna: polska, włoska, azjatycka, meksykańska, indyjska, śródziemnomorska, koreańska — każda kuchnia maks. proporcjonalnie'
       : cuisine
 
   const existingList = existingMeals.length > 0 ? '\n- ' + existingMeals.join('\n- ') : '(brak)'
 
-  return `Jesteś doświadczonym szefem kuchni. Stwórz ${count} autentycznych propozycji obiadowych.
+  return `Jesteś doświadczonym szefem kuchni. Stwórz ${count} ŁATWYCH do przyrządzenia propozycji obiadowych.
+
+## KLUCZOWE: PROSTOTA I DOSTĘPNOŚĆ
+- Dania MUSZĄ być ŁATWE do zrobienia
+- Składniki WYŁĄCZNIE z POWSZECHNYCH produktów dostępnych w polskich sklepach (Biedronka, Lidl)
+- Max 10-12 składników w bazie wegetariańskiej
+- Kuchnia: ${cuisineStr} — zróżnicowana
 
 ## STRUKTURA każdego dania
-1. Baza wegetariańska (porcje x2, ~550 kcal, ~25g białka)
-2. Opcja mięsna (porcja x1, dodatkowe ~350 kcal, ~45g białka)
+1. Baza wegetariańska (porcje x2, ~550 kcal, ~25g białka) — MUSI być w pełni wegetariańska
+2. Opcja mięsna (porcja x1, dodatkowe ~350 kcal, ~45g białka) — jako ADD-ON (kurczak|wołowina|indyk|wieprzowina)
 
 ## WYMAGANIA
 - Autentyczne dania z prawdziwymi nazwami
-- Składniki dostępne w polskim sklepie
 - Max czas: ${maxTime} min
 - ZERO ryb, ZERO owoców morza, ZERO jabłek
 - ZERO zup, ZERO bulionów, ZERO żurku, ZERO rosołu — tylko dania główne (obiady/kolacje)
 - DOKŁADNE gramatury każdego składnika (gramy, ml, sztuki z gramami w nawiasie)
+- Kategorie: makarony, ryż i kasze, jednogarnkowe, tortille i wrapi, zapiekanki, sałatki i bowle, ziemniaki, placki i naleśniki
 
 ## ZAKAZ duplikatów:${existingList}
 
