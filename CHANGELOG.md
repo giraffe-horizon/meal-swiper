@@ -1,3 +1,9 @@
+# [1.7.0](https://github.com/giraffe-horizon/meal-swiper/compare/v1.6.0...v1.7.0) (2026-03-10)
+
+### Features
+
+- add category and cuisine filtering to swipe view ([#18](https://github.com/giraffe-horizon/meal-swiper/issues/18)) ([4519150](https://github.com/giraffe-horizon/meal-swiper/commit/4519150c13addda18ae52f3d5dc602829406d650)), closes [giraffe-horizon/meal-swiper#2](https://github.com/giraffe-horizon/meal-swiper/issues/2) [giraffe-horizon/meal-swiper#1](https://github.com/giraffe-horizon/meal-swiper/issues/1)
+
 # [1.6.0](https://github.com/giraffe-horizon/meal-swiper/compare/v1.5.3...v1.6.0) (2026-03-10)
 
 ### Features
