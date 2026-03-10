@@ -13,16 +13,8 @@ import type { Meal, DayKey, WeeklyPlan, AppSettings } from '@/types'
 import { useMeals } from '@/hooks/useMeals'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import { useSettings } from '@/hooks/useSettings'
+import { useSwipeState } from '@/hooks/useSwipeState'
 import { DAY_KEYS } from '@/lib/utils'
-
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-  return shuffled
-}
 
 interface AppContextValue {
   meals: Meal[]
@@ -55,6 +47,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation } =
     useWeeklyPlan()
   const { settings, updateSettings } = useSettings()
+  const {
+    shuffledMeals,
+    currentSwipeIndex,
+    seenIds,
+    setShuffledMeals,
+    setCurrentSwipeIndex,
+    setSeenIds,
+    shuffleMeals,
+  } = useSwipeState()
 
   const allDaysFilled = useMemo(
     () => DAY_KEYS.every((day) => weeklyPlan[day] || weeklyPlan[`${day}_free`]),
@@ -62,36 +63,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
   )
 
   const [currentSwipeDay, setCurrentSwipeDay] = useState<DayKey | null>(null)
-  const [shuffledMeals, setShuffledMeals] = useState<Meal[]>([])
-  const [currentSwipeIndex, setCurrentSwipeIndex] = useState(0)
-  const [seenIds, setSeenIds] = useState<string[]>([])
 
-  // Inicjalizuj shuffledMeals gdy meals się załadują (tylko raz)
+  // Initialize shuffledMeals when meals first load
   useEffect(() => {
     if (meals.length > 0 && shuffledMeals.length === 0) {
-      queueMicrotask(() => {
-        setShuffledMeals(shuffleArray(meals))
-        setCurrentSwipeIndex(0)
-        setSeenIds([])
-      })
+      queueMicrotask(() => shuffleMeals(meals))
     }
-  }, [meals, shuffledMeals.length])
+  }, [meals, shuffledMeals.length, shuffleMeals])
 
-  // Resetuj stan swipe przy zmianie tygodnia
+  // Reset swipe state on week change
   useEffect(() => {
     if (meals.length > 0) {
       queueMicrotask(() => {
-        setShuffledMeals(shuffleArray(meals))
-        setCurrentSwipeIndex(0)
-        setSeenIds([])
+        shuffleMeals(meals)
         setCurrentSwipeDay(null)
       })
     }
-  }, [weekOffset, meals])
+  }, [weekOffset, meals, shuffleMeals])
 
   const handleSwipeRight = useCallback(
     (meal: Meal) => {
-      // Jeśli wybrany dzień jest wolny lub już wypełniony → szukaj następnego
       const isDayValid = (d: DayKey) => !weeklyPlan[d] && !weeklyPlan[`${d}_free`]
       let targetDay: DayKey | null =
         currentSwipeDay && isDayValid(currentSwipeDay) ? currentSwipeDay : null
@@ -102,18 +93,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       if (targetDay) {
         setMeal(targetDay, meal)
-
         const nextEmptyDay =
           DAY_KEYS.find((d) => {
             if (d === targetDay) return false
             return !weeklyPlan[d] && !weeklyPlan[`${d}_free`]
           }) ?? null
-
-        if (nextEmptyDay) {
-          setCurrentSwipeDay(nextEmptyDay)
-        } else {
-          setCurrentSwipeDay(null)
-        }
+        setCurrentSwipeDay(nextEmptyDay)
       }
     },
     [currentSwipeDay, weeklyPlan, setMeal]

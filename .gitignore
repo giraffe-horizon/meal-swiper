@@ -37,3 +37,4 @@ dist-ssr
 wrangler.toml.bak
 scripts/.env
 scripts/generated-images/
+screenshots/
