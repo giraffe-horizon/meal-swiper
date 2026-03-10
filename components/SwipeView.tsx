@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
 import type { Meal, DayKey, WeeklyPlan } from '@/types'
-import { DAY_NAMES_MAP, getWeekDates } from '@/lib/utils'
+import { DAY_KEYS, DAY_NAMES_MAP, getWeekDates } from '@/lib/utils'
 import MealModal from '@/components/MealModal'
 import DaySelector from '@/components/ui/DaySelector'
 import SwipeStack from '@/components/swipe/SwipeStack'
@@ -86,6 +86,11 @@ export default function SwipeView({
   const weekDates = weekDatesProp ?? weekDatesComputed
   const currentMeal = shuffledMeals[currentIndex]
 
+  const usedMealIds = useMemo(
+    () => DAY_KEYS.map((d) => weeklyPlan[d]?.id).filter(Boolean) as string[],
+    [weeklyPlan]
+  )
+
   const shuffleArray = useCallback(<T,>(array: T[]): T[] => {
     const shuffled = [...array]
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -106,8 +111,10 @@ export default function SwipeView({
         const currentMealId = shuffledMeals[currentIndex]?.id
         const updatedSeen = currentMealId ? [...seenIds, currentMealId].slice(-maxSeen) : seenIds
         setSeenIdsInContext?.(updatedSeen)
-        const fresh = meals.filter((m) => !updatedSeen.includes(m.id))
-        const old = meals.filter((m) => updatedSeen.includes(m.id))
+        const fresh = meals.filter(
+          (m) => !updatedSeen.includes(m.id) && !usedMealIds.includes(m.id)
+        )
+        const old = meals.filter((m) => updatedSeen.includes(m.id) && !usedMealIds.includes(m.id))
         x.set(0)
         setShuffledMealsInContext?.([
           ...shuffledMeals,
@@ -131,6 +138,7 @@ export default function SwipeView({
     x,
     meals,
     seenIds,
+    usedMealIds,
     setSeenIdsInContext,
     setShuffledMealsInContext,
     setCurrentSwipeIndexInContext,

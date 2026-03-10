@@ -62,24 +62,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [weeklyPlan]
   )
 
+  const usedMealIds = useMemo(
+    () => DAY_KEYS.map((d) => weeklyPlan[d]?.id).filter(Boolean) as string[],
+    [weeklyPlan]
+  )
+
   const [currentSwipeDay, setCurrentSwipeDay] = useState<DayKey | null>(null)
 
   // Initialize shuffledMeals when meals first load
   useEffect(() => {
     if (meals.length > 0 && shuffledMeals.length === 0) {
-      queueMicrotask(() => shuffleMeals(meals))
+      const available = meals.filter((m) => !usedMealIds.includes(m.id))
+      queueMicrotask(() => shuffleMeals(available))
     }
-  }, [meals, shuffledMeals.length, shuffleMeals])
+  }, [meals, shuffledMeals.length, shuffleMeals, usedMealIds])
 
   // Reset swipe state on week change
   useEffect(() => {
     if (meals.length > 0) {
       queueMicrotask(() => {
-        shuffleMeals(meals)
+        const available = meals.filter((m) => !usedMealIds.includes(m.id))
+        shuffleMeals(available)
         setCurrentSwipeDay(null)
       })
     }
-  }, [weekOffset, meals, shuffleMeals])
+  }, [weekOffset, meals, shuffleMeals, usedMealIds])
 
   const handleSwipeRight = useCallback(
     (meal: Meal) => {
