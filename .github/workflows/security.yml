@@ -39,8 +39,4 @@ jobs:
 
       - name: Run npm audit
         run: npm audit --audit-level=high
-        continue-on-error: true  # Report but don't block
-
-      - name: Check for known vulnerabilities
-        run: npx audit-ci --high
-        continue-on-error: true
+        continue-on-error: false
