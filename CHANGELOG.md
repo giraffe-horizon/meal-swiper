@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/liskeee/meal-swiper/compare/v1.0.0...v1.1.0) (2026-03-10)
+
+### Features
+
+- persist settings in D1, remove desktop nav border ([02b2b16](https://github.com/liskeee/meal-swiper/commit/02b2b16393ff88de8ce8c42bffcb6aaba61a8309))
+
 # 1.0.0 (2026-03-10)
 
 ### Bug Fixes
