@@ -70,9 +70,6 @@ export default function Navigation({ activeView }: NavigationProps) {
                   : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full"></div>
-              )}
               <span
                 className="material-symbols-outlined text-2xl"
                 style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
@@ -100,9 +97,6 @@ export default function Navigation({ activeView }: NavigationProps) {
                 : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
-            {activeView === 'settings' && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full"></div>
-            )}
             <span
               className="material-symbols-outlined text-2xl"
               style={activeView === 'settings' ? { fontVariationSettings: "'FILL' 1" } : {}}
