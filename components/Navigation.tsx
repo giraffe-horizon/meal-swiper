@@ -54,7 +54,7 @@ export default function Navigation({ activeView }: NavigationProps) {
       </nav>
 
       {/* Desktop Sidebar Navigation */}
-      <nav className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col items-center py-6 gap-4 z-30">
+      <nav className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col items-center py-6 gap-1 z-30 px-2">
         <div className="mb-4">
           <span className="material-symbols-outlined text-primary text-3xl">restaurant</span>
         </div>
@@ -64,7 +64,7 @@ export default function Navigation({ activeView }: NavigationProps) {
             <Link
               key={id}
               href={href}
-              className={`flex flex-col items-center justify-center gap-2 transition-colors py-3 px-4 rounded-xl relative ${
+              className={`flex w-full flex-col items-center justify-center gap-1 transition-colors py-3 rounded-xl relative ${
                 isActive
                   ? 'text-primary bg-primary/10'
                   : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -94,7 +94,7 @@ export default function Navigation({ activeView }: NavigationProps) {
         <div className="mt-auto">
           <Link
             href="/settings"
-            className={`flex flex-col items-center justify-center gap-2 transition-colors py-3 px-4 rounded-xl relative ${
+            className={`flex w-full flex-col items-center justify-center gap-1 transition-colors py-3 rounded-xl relative ${
               activeView === 'settings'
                 ? 'text-primary bg-primary/10'
                 : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800'
