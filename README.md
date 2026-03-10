@@ -15,9 +15,9 @@ Aplikacja do planowania posiłków na tydzień w stylu Tinder — przesuń w pra
 - **Next.js 15** (App Router) + **TypeScript** (strict mode)
 - **Tailwind CSS 3**
 - **Framer Motion** (animacje swipe)
+- **Cloudflare D1** (SQLite database)
+- **Cloudflare R2** (Image storage)
 - **@cloudflare/next-on-pages** (edge runtime na Cloudflare Pages)
-- **Cloudflare KV** (persystencja planów tygodniowych)
-- **Notion API** (baza danych posiłków, czysty fetch bez SDK)
 
 ## Architektura
 
@@ -30,29 +30,28 @@ Aplikacja do planowania posiłków na tydzień w stylu Tinder — przesuń w pra
 │  │  /plan  /swipe  /shopping              │  │
 │  │  /cooking  /settings                   │  │
 │  │                                        │  │
-│  │  /api/meals     (edge, Notion)         │  │
-│  │  /api/plan      (edge, KV)             │  │
-│  │  /api/shopping-checked (edge, KV)      │  │
-│  │  /api/image-search (edge, Google CSE)  │  │
+│  │  /api/meals     (edge, D1)             │  │
+│  │  /api/plan      (edge, D1)             │  │
+│  │  /api/shopping-checked (edge, D1)      │  │
 │  └──────────────┬─────────────────────────┘  │
 │                 │                             │
-│  @cloudflare/next-on-pages + KV Namespace    │
+│  @cloudflare/next-on-pages + D1 + R2         │
 └─────────────────┼─────────────────────────────┘
                   │
     ┌─────────────┴─────────────┐
-    │        Notion API         │
-    │  (baza danych posiłków)   │
+    │       Cloudflare D1       │
+    │  (SQLite database)        │
     └───────────────────────────┘
 ```
 
 ## Env vars
 
-| Zmienna              | Opis                             |
-| -------------------- | -------------------------------- |
-| `NOTION_TOKEN`       | Bearer token do Notion API       |
-| `MEALS_DB_ID`        | ID bazy danych posiłków w Notion |
-| `GOOGLE_CSE_API_KEY` | Google Custom Search API key     |
-| `GOOGLE_CSE_CX`      | Google Custom Search Engine ID   |
+| Zmienna          | Opis                                  |
+| ---------------- | ------------------------------------- |
+| `DB`             | Cloudflare D1 binding                 |
+| `R2_BUCKET`      | Cloudflare R2 bucket binding          |
+| `GEMINI_API_KEY` | Google Gemini API key (dla przepisów) |
+| `CLOUDFLARE_ID`  | Account ID do operacji na R2          |
 
 ## Uruchomienie lokalne
 
@@ -83,4 +82,15 @@ Ustaw env vars w Cloudflare Pages Dashboard → Settings → Environment variabl
 | `npm run pages:build` | Build dla Cloudflare Pages   |
 | `npm run deploy`      | Build + deploy na Cloudflare |
 | `npm run type-check`  | Sprawdzenie typów TypeScript |
-| `npm test`            | Testy Vitest (63 testy)      |
+| `npm test`            | Testy Vitest (130+ testów)   |
+
+## Autor
+
+**Giraffe Horizon** — _Building the future, one byte at a time._
+
+- **Email**: contact@giraffehorizon.com
+- **Website**: [giraffehorizon.com](https://giraffehorizon.com)
+
+## Licencja
+
+Projekt jest udostępniony na licencji **MIT**.

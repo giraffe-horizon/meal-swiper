@@ -30,5 +30,4 @@
 
 - [ ] Kod przeszedł testy lokalne (`npm test`)
 - [ ] Zmiany są zgodne z `CLAUDE.md`
-- [ ] Brak bezpośrednich edycji kodu (użyto Claude Code / Agent)
 - [ ] Dokumentacja została zaktualizowana (jeśli dotyczy)

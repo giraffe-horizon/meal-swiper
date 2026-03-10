@@ -5,8 +5,7 @@ Dziękujemy, że chcesz pomóc w rozwoju projektu! Jako część wizji **Giraffe
 ## Zasady ogólne
 
 1.  **Issue First**: Zanim zaczniesz pracę, upewnij się, że istnieje odpowiednie Issue. Jeśli nie, stwórz je korzystając z [szablonów](https://github.com/liskeee/meal-swiper/issues/new/choose).
-2.  **Claude Code / Agents Only**: W tym projekcie obowiązuje żelazna zasada — **nie edytujemy kodu (.ts/.js) ręcznie**. Wszystkie zmiany muszą przechodzić przez agenta AI (Claude Code lub sesje ACP), aby zachować spójność i uniknąć trywialnych błędów.
-3.  **Spójność ze stylem**: Trzymaj się wytycznych zawartych w `CLAUDE.md`.
+2.  **Spójność ze stylem**: Trzymaj się wytycznych zawartych w `CLAUDE.md`.
 
 ## Tech Stack
 
@@ -14,7 +13,6 @@ Dziękujemy, że chcesz pomóc w rozwoju projektu! Jako część wizji **Giraffe
 - **Design**: Obsidian/Emerald palette (dark mode primary)
 - **Baza danych**: Cloudflare D1 (SQLite)
 - **Storage**: Cloudflare R2 (zdjęcia posiłków)
-- **AI**: Gemini Flash (generowanie przepisów i obrazków)
 - **Testy**: Vitest + Playwright
 
 ## Przygotowanie środowiska
@@ -27,10 +25,17 @@ Dziękujemy, że chcesz pomóc w rozwoju projektu! Jako część wizji **Giraffe
 ## Workflow Pull Requestów
 
 1.  Stwórz nową gałąź z opisową nazwą: `git checkout -b feat/shopping-list-ticktick`
-2.  Wprowadź zmiany za pomocą agenta AI.
+2.  Wprowadź zmiany i upewnij się, że kod jest zgodny ze standardami projektu.
 3.  Uruchom testy: `npm test`
 4.  Otwórz Pull Request, korzystając z szablonu.
-5.  Poczekaj na review od Jarvis-a (AI Assistant).
+5.  Poczekaj na review od maintainerów projektu.
+
+## Kontakt
+
+W razie pytań lub sugestii, zapraszamy do kontaktu:
+
+- **Email**: contact@giraffehorizon.com
+- **Strona WWW**: [giraffehorizon.com](https://giraffehorizon.com)
 
 ## Licencja
 
