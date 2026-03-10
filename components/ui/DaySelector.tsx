@@ -41,7 +41,7 @@ export default function DaySelector({
             } ${isFree ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             {showThumbnails && (
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-surface-dark shrink-0">
+              <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-surface-dark shrink-0">
                 {meal ? (
                   <div className="absolute inset-0 bg-slate-200 dark:bg-surface-dark flex items-center justify-center">
                     {meal.photo_url ? (
