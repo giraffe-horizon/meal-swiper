@@ -5,8 +5,7 @@
 - Next.js 15 (App Router) + TypeScript
 - Tailwind CSS
 - Cloudflare Pages + @cloudflare/next-on-pages
-- Cloudflare KV (weekly plans persistence)
-- Notion API (meals database, read-only)
+- Cloudflare D1 (SQLite — meals, weekly plans, shopping checked)
 - Framer Motion (swipe animations)
 
 ## Architektura
@@ -23,9 +22,9 @@ meal-swiper/
 │   ├── cooking/page.tsx     # Widok gotowania (DaySelector + CookingView)
 │   ├── settings/page.tsx    # Ustawienia (osoby, kcal, białko)
 │   └── api/
-│       ├── meals/route.ts           # GET — Notion
-│       ├── plan/route.ts            # GET/POST — KV
-│       ├── shopping-checked/route.ts # GET/POST — KV
+│       ├── meals/route.ts           # GET — D1
+│       ├── plan/route.ts            # GET/POST — D1
+│       ├── shopping-checked/route.ts # GET/POST — D1
 │       └── image-search/route.ts    # Google CSE
 ├── components/
 │   ├── AppShell.tsx         # Layout wrapper (header, nav, context)
@@ -48,13 +47,13 @@ meal-swiper/
 │       └── LoadingSpinner.tsx
 ├── hooks/
 │   ├── useMeals.ts          # Fetch posiłków z /api/meals
-│   ├── useWeeklyPlan.ts     # Stan planu + localStorage + KV sync
+│   ├── useWeeklyPlan.ts     # Stan planu + localStorage + D1 sync
 │   ├── useWeekDates.ts      # Obliczenia dat tygodnia
 │   ├── useSwipeState.ts     # Stan shufflowanych kart swipe
 │   └── useSettings.ts       # Ustawienia użytkownika
 ├── lib/
 │   ├── context.tsx          # AppContext (wiring hooków)
-│   ├── notion.ts            # Fetch wrapper dla Notion API
+│   ├── db.ts                # D1 abstraction layer (fetchMealsFromD1, plan, shopping)
 │   ├── storage.ts           # localStorage helpers (typowane)
 │   ├── shopping.ts          # Generowanie listy zakupów (merge + scaling)
 │   ├── scaling.ts           # Skalowanie składników na osoby
@@ -62,6 +61,7 @@ meal-swiper/
 │   └── utils.ts             # getWeekDates, formatWeekRange, DAY_KEYS, etc.
 ├── types/
 │   └── index.ts             # Meal, Ingredient, WeeklyPlan, DayKey, AppSettings
+├── schema.sql               # D1 schema (meals, weekly_plans, shopping_checked)
 ├── next.config.ts           # Security headers
 └── wrangler.toml            # Cloudflare Pages config
 ```
@@ -94,28 +94,26 @@ npm run deploy         # build + wrangler deploy
 
 ## Env vars (Cloudflare Pages Secrets)
 
-- `NOTION_TOKEN` — Notion integration token
-- `MEALS_DB_ID` — Notion database ID z posiłkami
 - `GOOGLE_CSE_API_KEY` — Google Custom Search (image fallback)
 - `GOOGLE_CSE_CX` — Google Search Engine ID
 
-## Notion — baza posiłków
+## D1 — baza danych
 
-Pola: Nazwa (title), Opis, Zdjecie (url, Imgur), Czas_przygotowania,
-Kcal_baza, Kcal_z_miesem, Bialko_baza, Bialko_z_miesem,
-Skladniki_baza (JSON), Skladniki_mieso (JSON), Przepis (JSON),
-Trudnosc, Kuchnia, Tagi
+Database name: `meal-swiper-db`
+Database ID: `c5e30a72-01c9-4ec8-ba0a-d286088c0016`
+Binding: `DB`
+
+Tabele: `meals`, `weekly_plans`, `shopping_checked`
+Schema: `schema.sql`
+
+Dostęp: `(process.env as unknown as { DB: D1Database }).DB`
+Abstraction layer: `lib/db.ts` — fetchMealsFromD1, getWeeklyPlan, saveWeeklyPlan, getShoppingChecked, saveShoppingChecked
 
 Przepisy bazowe są na 2 osoby. App skaluje dynamicznie przez `scaleIngredient`.
-
-## KV
-
-Namespace: `MEAL_PLANS`
-Keys: `plan:{weekKey}`, `shopping-checked:{weekKey}`
 
 ## Ważne
 
 - `@cloudflare/next-on-pages` max Next.js 15.5.2 (nie 16!)
-- Nie używaj `@notionhq/client` (Node.js only, nie działa w edge)
+- NIE importuj żadnych SDK — D1 dostępne przez binding (edge compatible)
 - Zdjęcia posiłków na Imgur (anonymous upload, client_id w `scripts/.env`)
-- 63 testy vitest muszą zawsze przechodzić przed commitem
+- 63+ testy vitest muszą zawsze przechodzić przed commitem
