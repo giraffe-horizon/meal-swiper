@@ -36,13 +36,9 @@ function buildPrompt({ count, cuisine, maxTime, existingMeals }) {
 
   return `Jesteś doświadczonym szefem kuchni. Stwórz ${count} autentycznych propozycji obiadowych.
 
-## PROFIL
-- Łukasz (mięsożerca, triatleta): cel ~900 kcal, ~70g białka z mięsem
-- Alicja (wegetarianka): cel ~550 kcal, ~25g białka z bazy
-
 ## STRUKTURA każdego dania
-1. Baza wegetariańska (dla obojga, porcje x2)
-2. Dokładka mięsna (tylko Łukasz, porcja x1)
+1. Baza wegetariańska (porcje x2, ~550 kcal, ~25g białka)
+2. Opcja mięsna (porcja x1, dodatkowe ~350 kcal, ~45g białka)
 
 ## WYMAGANIA
 - Autentyczne dania z prawdziwymi nazwami

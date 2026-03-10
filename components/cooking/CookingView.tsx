@@ -108,7 +108,7 @@ export default function CookingView({ meal, people, scaleFactor }: CookingViewPr
               <span className="material-symbols-outlined text-orange-500 text-[20px]">
                 set_meal
               </span>
-              Dokładka mięsna (Łukasz)
+              Opcja mięsna
             </h2>
             <div className="space-y-2">
               {scaledMeat.map((ing, i) => {

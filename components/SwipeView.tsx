@@ -281,17 +281,17 @@ export default function SwipeView({
     <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden relative">
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-[#2D6A4F] text-white px-6 py-3 rounded-full shadow-2xl z-50 animate-bounce flex items-center gap-2">
-          <span className="material-symbols-outlined">check_circle</span>
-          <span className="font-bold">{toastText}</span>
+        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-white px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
+          <span className="material-symbols-outlined text-[18px]">check_circle</span>
+          <span className="font-semibold truncate">{toastText}</span>
         </div>
       )}
 
       {/* Reshuffle Toast */}
       {reshuffleToast && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-slate-700 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-2">
+        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-slate-700 text-white px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
           <span>🔄</span>
-          <span className="font-bold">Nowe propozycje!</span>
+          <span className="font-semibold">Nowe propozycje!</span>
         </div>
       )}
 

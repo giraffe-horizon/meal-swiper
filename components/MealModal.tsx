@@ -81,7 +81,7 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
       {/* Modal */}
       <div className="absolute inset-0 flex items-end lg:items-center justify-center">
         <div
-          className={`relative w-full max-w-lg max-h-[90dvh] bg-surface-light dark:bg-surface-dark rounded-t-2xl lg:rounded-2xl overflow-hidden flex flex-col transition-transform duration-300 ease-out ${isVisible ? 'translate-y-0' : 'translate-y-full lg:translate-y-8'}`}
+          className={`relative w-full max-w-lg max-h-[92dvh] bg-surface-light dark:bg-surface-dark rounded-t-3xl lg:rounded-2xl overflow-hidden flex flex-col transition-transform duration-300 ease-out ${isVisible ? 'translate-y-0' : 'translate-y-full lg:translate-y-8'}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
@@ -96,25 +96,25 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
           <div className="overflow-y-auto flex-1">
             {/* Photo */}
             {meal.photo_url && (
-              <div className="relative w-full aspect-[16/10]">
+              <div className="relative w-full aspect-[16/9] sm:aspect-[16/10]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={meal.photo_url} alt={meal.nazwa} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
             )}
 
-            <div className="p-5 space-y-5">
+            <div className="p-4 sm:p-5 space-y-4 sm:space-y-5">
               {/* Title + meta */}
               <div>
-                <h2 className="text-xl font-bold text-text-primary-light dark:text-text-primary-dark">
+                <h2 className="text-lg sm:text-xl font-bold text-text-primary-light dark:text-text-primary-dark">
                   {meal.nazwa}
                 </h2>
                 {meal.opis && (
-                  <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">
+                  <p className="text-xs sm:text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1 leading-relaxed">
                     {meal.opis}
                   </p>
                 )}
-                <div className="flex items-center gap-4 mt-3 flex-wrap">
+                <div className="flex items-center gap-3 mt-3 flex-wrap">
                   {meal.prep_time > 0 && (
                     <div className="flex items-center gap-1 text-sm text-text-secondary-light dark:text-text-secondary-dark">
                       <span className="material-symbols-outlined text-[18px]">schedule</span>
@@ -211,7 +211,7 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
                     >
                       expand_more
                     </span>
-                    Dokładka mięsna (opcjonalnie)
+                    Opcja mięsna (opcjonalnie)
                   </button>
                   {showMeat && (
                     <ul className="space-y-1.5 mt-2">

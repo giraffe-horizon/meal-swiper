@@ -52,8 +52,8 @@ export default function SettingsPage() {
     <div className="flex-1 overflow-y-auto">
       <div className="container mx-auto max-w-2xl px-4 py-6 pb-32 space-y-6">
         {/* Motyw aplikacji */}
-        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+        <section className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-border-dark p-6">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-text-primary-dark mb-4 flex items-center gap-2">
             <span className="material-symbols-outlined text-slate-400">palette</span>
             Motyw aplikacji
           </h2>
@@ -72,7 +72,7 @@ export default function SettingsPage() {
                   className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
                     isActive
                       ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-slate-200 dark:hover:border-slate-700'
+                      : 'border-slate-100 dark:border-border-dark text-slate-500 dark:text-text-secondary-dark hover:border-slate-200 dark:hover:border-slate-700'
                   }`}
                 >
                   <span className="material-symbols-outlined text-2xl">{themeOption.icon}</span>
@@ -86,37 +86,37 @@ export default function SettingsPage() {
         </section>
 
         {/* Dla kogo gotujesz */}
-        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+        <section className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-border-dark p-6">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-text-primary-dark mb-4">
             Dla kogo gotujesz?
           </h2>
 
           {/* Stepper liczby osób */}
-          <div className="flex items-center justify-between mb-6 bg-slate-50 dark:bg-slate-800 rounded-xl p-4">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <div className="flex items-center justify-between mb-6 bg-slate-50 dark:bg-surface-dark/50 rounded-xl p-4">
+            <span className="text-sm font-medium text-slate-700 dark:text-text-secondary-dark">
               Liczba osób
             </span>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => handlePeopleChange(-1)}
                 disabled={settings.people <= 1}
-                className="w-10 h-10 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-surface-dark transition-colors"
                 aria-label="Zmniejsz liczbę osób"
               >
-                <span className="material-symbols-outlined text-slate-700 dark:text-slate-300">
+                <span className="material-symbols-outlined text-slate-700 dark:text-text-secondary-dark">
                   remove
                 </span>
               </button>
-              <span className="text-2xl font-bold text-slate-900 dark:text-white w-12 text-center">
+              <span className="text-2xl font-bold text-slate-900 dark:text-text-primary-dark w-12 text-center">
                 {settings.people}
               </span>
               <button
                 onClick={() => handlePeopleChange(1)}
                 disabled={settings.people >= 8}
-                className="w-10 h-10 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-surface-dark transition-colors"
                 aria-label="Zwiększ liczbę osób"
               >
-                <span className="material-symbols-outlined text-slate-700 dark:text-slate-300">
+                <span className="material-symbols-outlined text-slate-700 dark:text-text-secondary-dark">
                   add
                 </span>
               </button>
@@ -126,7 +126,10 @@ export default function SettingsPage() {
           {/* Ustawienia dla każdej osoby */}
           <div className="space-y-4">
             {settings.persons.slice(0, settings.people).map((person, index) => (
-              <div key={index} className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 space-y-3">
+              <div
+                key={index}
+                className="bg-slate-50 dark:bg-surface-dark/50 rounded-xl p-4 space-y-3"
+              >
                 {/* Imię */}
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-sm text-slate-400">person</span>
@@ -135,13 +138,13 @@ export default function SettingsPage() {
                     value={person.name || `Osoba ${index + 1}`}
                     onChange={(e) => handleNameChange(index, e.target.value)}
                     placeholder={`Osoba ${index + 1}`}
-                    className="flex-1 px-2 py-1 rounded-lg border-0 bg-transparent text-sm font-semibold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-slate-400"
+                    className="flex-1 px-2 py-1 rounded-lg border-0 bg-transparent text-sm font-semibold text-slate-700 dark:text-text-secondary-dark focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-slate-400"
                   />
                 </div>
 
                 {/* Kalorie */}
                 <div className="space-y-1">
-                  <label className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                  <label className="text-xs text-slate-600 dark:text-text-secondary-dark flex items-center gap-1">
                     <span className="material-symbols-outlined text-sm">local_fire_department</span>
                     Kalorie dzienne (kcal)
                   </label>
@@ -153,13 +156,13 @@ export default function SettingsPage() {
                     }
                     min="0"
                     step="100"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-slate-900 dark:text-text-primary-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
                 </div>
 
                 {/* Białko */}
                 <div className="space-y-1">
-                  <label className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                  <label className="text-xs text-slate-600 dark:text-text-secondary-dark flex items-center gap-1">
                     <span className="material-symbols-outlined text-sm">fitness_center</span>
                     Białko dzienne (g)
                   </label>
@@ -171,7 +174,7 @@ export default function SettingsPage() {
                     }
                     min="0"
                     step="10"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-slate-900 dark:text-text-primary-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
                 </div>
               </div>
@@ -179,29 +182,29 @@ export default function SettingsPage() {
           </div>
 
           {/* Podsumowanie */}
-          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-border-dark">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-text-secondary-dark mb-3">
               Łącznie dziennie
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4 text-center">
+              <div className="bg-orange-50 dark:bg-orange-500/10 rounded-xl p-4 text-center">
                 <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                   {totalKcal}
                 </div>
-                <div className="text-xs text-orange-700 dark:text-orange-500 mt-1">kcal</div>
+                <div className="text-xs text-orange-700 dark:text-orange-500/70 mt-1">kcal</div>
               </div>
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
+              <div className="bg-blue-50 dark:bg-blue-500/10 rounded-xl p-4 text-center">
                 <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {totalProtein}
                 </div>
-                <div className="text-xs text-blue-700 dark:text-blue-500 mt-1">g białka</div>
+                <div className="text-xs text-blue-700 dark:text-blue-500/70 mt-1">g białka</div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Info */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 flex gap-3">
+        <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 flex gap-3">
           <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl">
             info
           </span>

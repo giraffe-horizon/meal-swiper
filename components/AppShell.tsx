@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import type { ViewId } from '@/types'
 import { AppProvider, useAppContext } from '@/lib/context'
 import Navigation from '@/components/Navigation'
-import CongratulationsToast from '@/components/CongratulationsToast'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { getWeekDates, formatWeekRangeShort } from '@/lib/utils'
 
@@ -85,9 +84,6 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         <main className="flex-1 overflow-y-auto min-h-0">
           {mealsLoading ? <LoadingSpinner /> : children}
         </main>
-
-        {/* Congratulations Toast */}
-        <CongratulationsToast />
 
         {/* Navigation */}
         <div className="shrink-0">
