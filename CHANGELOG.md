@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/liskeee/meal-swiper/compare/v1.1.4...v1.2.0) (2026-03-10)
+
+### Features
+
+- calorie-based ingredient scaling instead of simple people count ([107a549](https://github.com/liskeee/meal-swiper/commit/107a549b0e5fd5454e92004ddb7b0867ced65861))
+
 ## [1.1.4](https://github.com/liskeee/meal-swiper/compare/v1.1.3...v1.1.4) (2026-03-10)
 
 ### Bug Fixes
