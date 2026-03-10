@@ -40,7 +40,7 @@ export default function SettingsPage() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="container mx-auto max-w-2xl px-4 py-6 space-y-6">
+      <div className="container mx-auto max-w-2xl px-4 py-6 pb-32 space-y-6">
         {/* Dla kogo gotujesz */}
         <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
