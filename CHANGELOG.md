@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/giraffe-horizon/meal-swiper/compare/v1.5.3...v1.6.0) (2026-03-10)
+
+### Features
+
+- add Cloudflare Web Analytics integration ([#15](https://github.com/giraffe-horizon/meal-swiper/issues/15)) ([80977c3](https://github.com/giraffe-horizon/meal-swiper/commit/80977c38b7276b95ee3b5ff524508fb86451b4a0)), closes [giraffe-horizon/meal-swiper#6](https://github.com/giraffe-horizon/meal-swiper/issues/6)
+- add cooking progress bar ([#14](https://github.com/giraffe-horizon/meal-swiper/issues/14)) ([8fb366d](https://github.com/giraffe-horizon/meal-swiper/commit/8fb366d2036056454192dd53d57e2414c4e4bb3a)), closes [giraffe-horizon/meal-swiper#4](https://github.com/giraffe-horizon/meal-swiper/issues/4)
+
 ## [1.5.3](https://github.com/giraffe-horizon/meal-swiper/compare/v1.5.2...v1.5.3) (2026-03-10)
 
 ### Bug Fixes
