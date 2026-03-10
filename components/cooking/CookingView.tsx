@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import type { Meal } from '@/types'
 import { scaleIngredient } from '@/lib/scaling'
-import { parseRecipe, enrichStepsWithAmounts } from '@/lib/recipe'
+import { parseRecipe, enrichStepsStructured } from '@/lib/recipe'
+import RecipeSteps from '@/components/cooking/RecipeSteps'
 
 interface CookingViewProps {
   meal: Meal
@@ -17,7 +18,7 @@ export default function CookingView({ meal, people }: CookingViewProps) {
   const { steps, tips, baseIngredients, meatIngredients } = parseRecipe(meal)
   const scaledBase = baseIngredients.map((ing) => scaleIngredient(ing, people))
   const scaledMeat = meatIngredients.map((ing) => scaleIngredient(ing, people))
-  const enrichedSteps = enrichStepsWithAmounts(steps, [...scaledBase, ...scaledMeat])
+  const structuredSteps = enrichStepsStructured(steps, [...scaledBase, ...scaledMeat], people)
 
   const toggleStep = (i: number) => setCheckedSteps((prev) => ({ ...prev, [i]: !prev[i] }))
   const toggleIngredient = (key: string) =>
@@ -159,35 +160,11 @@ export default function CookingView({ meal, people }: CookingViewProps) {
               </span>
               Przepis
             </h2>
-            <div className="space-y-3">
-              {enrichedSteps.map((step, i) => {
-                const done = checkedSteps[i] ?? false
-                return (
-                  <div
-                    key={i}
-                    onClick={() => toggleStep(i)}
-                    className={`flex gap-3 p-3 rounded-xl cursor-pointer transition-all ${
-                      done
-                        ? 'bg-green-50 dark:bg-green-900/20 opacity-60'
-                        : 'bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-sm font-bold transition-colors ${
-                        done ? 'bg-green-500 text-white' : 'bg-primary/10 text-primary'
-                      }`}
-                    >
-                      {done ? '✓' : i + 1}
-                    </div>
-                    <p
-                      className={`text-sm text-slate-700 dark:text-slate-300 leading-relaxed ${done ? 'line-through' : ''}`}
-                    >
-                      {step}
-                    </p>
-                  </div>
-                )
-              })}
-            </div>
+            <RecipeSteps
+              steps={structuredSteps}
+              checkedSteps={checkedSteps}
+              onToggleStep={toggleStep}
+            />
           </section>
         )}
 
