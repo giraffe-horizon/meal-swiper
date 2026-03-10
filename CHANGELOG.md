@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/liskeee/meal-swiper/compare/v1.1.0...v1.1.1) (2026-03-10)
+
+### Bug Fixes
+
+- remove hardcoded R2 credentials, use env vars ([ef01571](https://github.com/liskeee/meal-swiper/commit/ef01571521d3dfea2c16dca44ae58f7942457ed9))
+
 # [1.1.0](https://github.com/liskeee/meal-swiper/compare/v1.0.0...v1.1.0) (2026-03-10)
 
 ### Features
