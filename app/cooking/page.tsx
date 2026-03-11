@@ -47,7 +47,7 @@ export default function CookingPage() {
       {meal ? (
         <CookingView
           key={effectiveDay}
-          day={effectiveDay}
+          day={effectiveDay!}
           meal={meal}
           people={settings.people}
           scaleFactor={scaleFactor}

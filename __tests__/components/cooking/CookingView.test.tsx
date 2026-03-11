@@ -3,6 +3,14 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import CookingView from '@/components/cooking/CookingView'
 import type { Meal } from '@/types'
 
+vi.mock('@/lib/context', () => ({
+  useAppContext: () => ({
+    weeklyPlan: {},
+    toggleEaten: vi.fn(),
+    weekOffset: 0,
+  }),
+}))
+
 const mockMeal: Meal = {
   id: '1',
   nazwa: 'Makaron z pesto',
