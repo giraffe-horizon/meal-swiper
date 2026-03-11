@@ -10,6 +10,8 @@ import SwipeStack from '@/components/swipe/SwipeStack'
 import SwipeActions from '@/components/swipe/SwipeActions'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import CategoryFilter from '@/components/swipe/CategoryFilter' // kept for future UX redesign
+import FridgeModeFilter from '@/components/swipe/FridgeModeFilter'
+import type { IngredientWithCategory } from '@/lib/fridge'
 import { useAppContext } from '@/lib/context'
 
 interface SwipeViewProps {
@@ -30,6 +32,14 @@ interface SwipeViewProps {
   setCurrentSwipeIndexInContext?: (index: number) => void
   setShuffledMealsInContext?: (meals: Meal[]) => void
   setSeenIdsInContext?: (ids: string[]) => void
+  // Fridge mode props
+  fridgeModeEnabled?: boolean
+  fridgeAllIngredients?: IngredientWithCategory[]
+  fridgeSelectedIngredients?: string[]
+  fridgeMatchingMealsCount?: number
+  onToggleFridgeMode?: () => void
+  onToggleFridgeIngredient?: (name: string) => void
+  onClearFridgeIngredients?: () => void
 }
 
 const SWIPE_THRESHOLD = 120
@@ -51,6 +61,13 @@ export default function SwipeView({
   setCurrentSwipeIndexInContext,
   setShuffledMealsInContext,
   setSeenIdsInContext,
+  fridgeModeEnabled = false,
+  fridgeAllIngredients = [],
+  fridgeSelectedIngredients = [],
+  fridgeMatchingMealsCount = 0,
+  onToggleFridgeMode,
+  onToggleFridgeIngredient,
+  onClearFridgeIngredients,
 }: SwipeViewProps) {
   const { settings } = useAppContext()
 
@@ -280,9 +297,30 @@ export default function SwipeView({
           showThumbnails
         />
         {/* <CategoryFilter ... /> hidden for UX redesign */}
+
+        {/* Fridge Mode Filter */}
+        {onToggleFridgeMode && (
+          <FridgeModeFilter
+            enabled={fridgeModeEnabled}
+            allIngredients={fridgeAllIngredients}
+            selectedIngredients={fridgeSelectedIngredients}
+            matchingMealsCount={fridgeMatchingMealsCount}
+            onToggle={onToggleFridgeMode}
+            onToggleIngredient={onToggleFridgeIngredient ?? (() => {})}
+            onClear={onClearFridgeIngredients ?? (() => {})}
+          />
+        )}
+
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center text-slate-500 dark:text-text-secondary-dark px-6" data-testid="empty-state">
             <p className="text-lg">Brak więcej posiłków</p>
+            {fridgeModeEnabled && fridgeSelectedIngredients.length > 0 && (
+              <p className="text-sm mt-2">
+                Żadne danie nie pasuje do wybranych składników.
+                <br />
+                Spróbuj dodać więcej składników lub wyczyść filtr.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -320,6 +358,19 @@ export default function SwipeView({
 
       {/* Category & Cuisine Filter — hidden for UX redesign */}
       {/* <CategoryFilter ... /> */}
+
+      {/* Fridge Mode Filter */}
+      {onToggleFridgeMode && (
+        <FridgeModeFilter
+          enabled={fridgeModeEnabled}
+          allIngredients={fridgeAllIngredients}
+          selectedIngredients={fridgeSelectedIngredients}
+          matchingMealsCount={fridgeMatchingMealsCount}
+          onToggle={onToggleFridgeMode}
+          onToggleIngredient={onToggleFridgeIngredient ?? (() => {})}
+          onClear={onClearFridgeIngredients ?? (() => {})}
+        />
+      )}
 
       {/* Card Stack Area */}
       <div className="flex-1 flex flex-col items-center px-4 pb-2 relative min-h-0">
