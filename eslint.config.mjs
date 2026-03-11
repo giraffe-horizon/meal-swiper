@@ -15,6 +15,10 @@ const config = [
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': ['warn', { allow: ['error', 'warn'] }],
+      // App Router uses root layout.tsx, not pages/_document.js — rule is N/A
+      '@next/next/no-page-custom-font': 'off',
+      // display=block is correct for icon fonts (must render or nothing)
+      '@next/next/google-font-display': 'off',
     },
   },
   {
