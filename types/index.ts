@@ -41,6 +41,8 @@ export type WeeklyPlan = {
   [K in DayKey]: Meal | null
 } & {
   [K in `${DayKey}_free`]: boolean
+} & {
+  [K in `${DayKey}_eaten`]: boolean
 }
 
 export type ViewId = 'plan' | 'swipe' | 'shopping' | 'cooking' | 'settings'

@@ -11,6 +11,11 @@ const DEFAULT_PLAN: WeeklyPlan = {
   wed_free: false,
   thu_free: false,
   fri_free: false,
+  mon_eaten: false,
+  tue_eaten: false,
+  wed_eaten: false,
+  thu_eaten: false,
+  fri_eaten: false,
 }
 
 export function getWeeklyPlan(weekKey: string): WeeklyPlan {
