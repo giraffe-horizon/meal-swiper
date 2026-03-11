@@ -11,12 +11,15 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { browserName: 'chromium' },
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 390, height: 844 },
+      },
     },
   ],
   webServer: {
     command:
-      'npx wrangler dev .open-next/worker.js --port 3000 --local --persist-to .wrangler/state/e2e',
+      'npx wrangler dev .open-next/worker.js --assets .open-next/assets --port 3000 --local --persist-to .wrangler/state/e2e',
     port: 3000,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
