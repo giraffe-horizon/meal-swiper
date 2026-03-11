@@ -19,7 +19,7 @@
     "test:e2e": "playwright test",
     "test:all": "vitest run --coverage && playwright test",
     "prepare": "husky",
-    "pages:build": "opennextjs-cloudflare build",
+    "pages:build": "opennextjs-cloudflare build && cp .open-next/worker.js .open-next/assets/_worker.js",
     "release": "semantic-release"
   },
   "dependencies": {

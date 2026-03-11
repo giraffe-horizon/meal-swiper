@@ -35,6 +35,7 @@ dist-ssr
 # Wrangler
 .wrangler
 wrangler.toml.bak
+wrangler.jsonc
 
 # OpenNext
 .open-next
