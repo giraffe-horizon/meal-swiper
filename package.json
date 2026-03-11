@@ -19,7 +19,7 @@
     "test:e2e": "playwright test",
     "test:all": "vitest run --coverage && playwright test",
     "prepare": "husky",
-    "pages:build": "opennextjs-cloudflare build && npx wrangler deploy --dry-run --outdir .open-next/wrangler-bundle && cp .open-next/wrangler-bundle/worker.js .open-next/assets/_worker.js && cp .open-next/wrangler-bundle/*.wasm .open-next/assets/ 2>/dev/null || true",
+    "pages:build": "opennextjs-cloudflare build && npx wrangler deploy --config wrangler.workers.toml --dry-run --outdir .open-next/wrangler-bundle && cp .open-next/wrangler-bundle/worker.js .open-next/assets/_worker.js && cp .open-next/wrangler-bundle/*.wasm .open-next/assets/ 2>/dev/null || true",
     "release": "semantic-release"
   },
   "dependencies": {
