@@ -80,17 +80,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build for Cloudflare Pages
+      - name: Build for Cloudflare (OpenNext)
         run: npm run pages:build
 
       - name: Seed local D1 database
         run: |
-          npx wrangler d1 execute meal-swiper-db --local \
-            --file schema.sql \
-            --persist-to .wrangler/state/e2e
-          npx wrangler d1 execute meal-swiper-db --local \
-            --file e2e/fixtures/seed.sql \
-            --persist-to .wrangler/state/e2e
+          npx wrangler d1 execute meal-swiper-db --local --file schema.sql --persist-to .wrangler/state/e2e
+          npx wrangler d1 execute meal-swiper-db --local --file e2e/fixtures/seed.sql --persist-to .wrangler/state/e2e
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -99,3 +95,4 @@ jobs:
         run: npx playwright test
         env:
           CI: true
+          WRANGLER_LOG: warn

@@ -16,7 +16,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      'npx wrangler pages dev .vercel/output/static --port 3000 --local --persist-to .wrangler/state/e2e',
+      'npx wrangler dev .open-next/worker.js --port 3000 --local --persist-to .wrangler/state/e2e',
     port: 3000,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
