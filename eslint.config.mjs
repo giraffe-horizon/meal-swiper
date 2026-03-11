@@ -20,6 +20,12 @@ const config = [
   {
     ignores: ['.next/**', '.vercel/**', 'node_modules/**', 'public/meals/**'],
   },
+  {
+    files: ['**/__tests__/**', '**/*.test.ts', '**/*.test.tsx', '**/*.test.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ]
 
 export default config
