@@ -24,7 +24,11 @@ export function getMonday(weekOffset: number): Date {
 
 export function getWeekKey(weekOffset: number): string {
   const monday = getMonday(weekOffset)
-  return monday.toISOString().split('T')[0]
+  // Use local date components to avoid UTC shift causing wrong day (e.g. after midnight UTC+1)
+  const y = monday.getFullYear()
+  const m = String(monday.getMonth() + 1).padStart(2, '0')
+  const d = String(monday.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
 export function getWeekDates(weekOffset: number): Date[] {

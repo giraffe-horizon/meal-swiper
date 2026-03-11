@@ -4,6 +4,8 @@ test.describe('Image health check', () => {
   test('all meal photo_urls are non-empty and return 200 with image content-type', async ({
     request,
   }) => {
+    test.slow() // 181 meals × 10s timeout — mark as slow test
+
     // 1. Fetch meals from API
     const response = await request.get('/api/meals')
     expect(response.status()).toBe(200)
