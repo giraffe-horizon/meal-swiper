@@ -25,7 +25,8 @@ meal-swiper/
 │       ├── meals/route.ts           # GET — D1
 │       ├── plan/route.ts            # GET/POST — D1
 │       ├── shopping-checked/route.ts # GET/POST — D1
-│       └── image-search/route.ts    # Google CSE
+│       ├── image-search/route.ts    # Google CSE
+│       └── ticktick-export/route.ts # POST — eksport do TickTick
 ├── components/
 │   ├── AppShell.tsx         # Layout wrapper (header, nav, context)
 │   ├── Navigation.tsx       # Mobile bottom nav (4 tabs) + desktop sidebar
@@ -96,6 +97,7 @@ npm run deploy         # build + wrangler deploy
 
 - `GOOGLE_CSE_API_KEY` — Google Custom Search (image fallback)
 - `GOOGLE_CSE_CX` — Google Search Engine ID
+- `TICKTICK_ACCESS_TOKEN` — TickTick Open API OAuth2 access token (eksport listy zakupów)
 
 ## D1 — baza danych
 

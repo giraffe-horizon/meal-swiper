@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import type { WeeklyPlan } from '@/types'
-import { getWeekKey } from '@/lib/utils'
+import { getWeekKey, getWeekDates, formatWeekRangeShort } from '@/lib/utils'
 import { getCheckedItems, saveCheckedItems, removeCheckedItems } from '@/lib/storage'
 import { generateShoppingList } from '@/lib/shopping'
 import { useAppContext } from '@/lib/context'
@@ -93,6 +93,35 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
     alert('✅ Lista skopiowana do schowka!')
   }
 
+  const [tickTickExporting, setTickTickExporting] = useState(false)
+
+  const exportToTickTick = async () => {
+    if (tickTickExporting) return
+    setTickTickExporting(true)
+    try {
+      const weekDates = getWeekDates(weekOffset)
+      const weekLabel = formatWeekRangeShort(weekDates)
+      const res = await fetch('/api/ticktick-export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map((item) => ({ name: item.name, amount: item.amount })),
+          weekLabel,
+        }),
+      })
+      if (res.ok) {
+        alert('✅ Lista zakupów wyeksportowana do TickTick!')
+      } else {
+        const data = (await res.json()) as { error?: string }
+        alert(`❌ Błąd eksportu: ${data.error ?? res.statusText}`)
+      }
+    } catch {
+      alert('❌ Nie udało się połączyć z TickTick.')
+    } finally {
+      setTickTickExporting(false)
+    }
+  }
+
   return (
     <div className="flex flex-col flex-1 min-h-0 bg-background-light dark:bg-background-dark">
       {/* Toolbar */}
@@ -117,6 +146,16 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
             >
               <span className="material-symbols-outlined text-[16px]">share</span>
               Udostępnij
+            </button>
+            <button
+              onClick={exportToTickTick}
+              disabled={tickTickExporting}
+              className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="material-symbols-outlined text-[16px]">
+                {tickTickExporting ? 'hourglass_empty' : 'checklist'}
+              </span>
+              {tickTickExporting ? 'Eksportuję…' : 'TickTick'}
             </button>
           </div>
         </div>

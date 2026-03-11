@@ -1,0 +1,10 @@
+# Copy to .dev.vars and fill in your values for local development.
+# These are Cloudflare Pages secrets (not committed to git).
+
+# Google Custom Search — image fallback for meals
+GOOGLE_CSE_API_KEY=
+GOOGLE_CSE_CX=
+
+# TickTick Open API OAuth2 access token — for shopping list export
+# Get it from https://developer.ticktick.com/manage
+TICKTICK_ACCESS_TOKEN=

@@ -168,6 +168,73 @@ describe('ShoppingListView', () => {
     expect(writeText).toHaveBeenCalled()
   })
 
+  it('renders TickTick export button when items exist', async () => {
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+
+    await waitFor(() => {
+      expect(screen.getByText(/Makaron/)).toBeInTheDocument()
+    })
+
+    expect(screen.getByText('TickTick')).toBeInTheDocument()
+  })
+
+  it('TickTick export button calls /api/ticktick-export and shows success alert', async () => {
+    window.alert = vi.fn()
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (String(url).includes('ticktick-export')) {
+        return Promise.resolve({ ok: true, json: async () => ({ ok: true }) })
+      }
+      return Promise.resolve({ ok: true, json: async () => null })
+    })
+
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+
+    await waitFor(() => {
+      expect(screen.getByText('TickTick')).toBeInTheDocument()
+    })
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('TickTick'))
+    })
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/ticktick-export',
+        expect.objectContaining({ method: 'POST' })
+      )
+      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('TickTick'))
+    })
+  })
+
+  it('TickTick export button shows error alert on API failure', async () => {
+    window.alert = vi.fn()
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (String(url).includes('ticktick-export')) {
+        return Promise.resolve({
+          ok: false,
+          status: 503,
+          statusText: 'Service Unavailable',
+          json: async () => ({ error: 'TickTick not configured' }),
+        })
+      }
+      return Promise.resolve({ ok: true, json: async () => null })
+    })
+
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+
+    await waitFor(() => {
+      expect(screen.getByText('TickTick')).toBeInTheDocument()
+    })
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('TickTick'))
+    })
+
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('TickTick not configured'))
+    })
+  })
+
   it('reset list with confirm=true clears all items', async () => {
     window.confirm = vi.fn(() => true)
     const { removeCheckedItems } = await import('@/lib/storage')
