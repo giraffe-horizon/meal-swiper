@@ -14,12 +14,12 @@ vi.mock('@/lib/context', () => ({
 }))
 
 vi.mock('@/lib/storage', () => ({
-  getCheckedItems: () => ({}),
+  getCheckedItems: vi.fn(() => ({})),
   saveCheckedItems: vi.fn(),
 }))
 
-// Mock fetch for the shopping-checked API call
-global.fetch = vi.fn().mockResolvedValue({ ok: true })
+// Spy on fetch to avoid real network calls without mutating global permanently
+let fetchSpy: ReturnType<typeof vi.spyOn>
 
 const mockMeal: Meal = {
   id: '1',
@@ -61,6 +61,11 @@ const mealNoRecipe: Meal = {
 describe('CookingView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('{}', { status: 200 }))
+  })
+
+  afterEach(() => {
+    fetchSpy.mockRestore()
   })
 
   it('renders meal title', () => {
