@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { motion, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Meal } from '@/types'
+import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface SwipeCardProps {
   meal: Meal
@@ -30,6 +32,9 @@ export default function SwipeCard({
   currentIndex,
   totalCards,
 }: SwipeCardProps) {
+  const [imgError, setImgError] = useState(false)
+  const showPlaceholder = !meal.photo_url || imgError
+
   return (
     <motion.div
       key={`card-${currentIndex}`}
@@ -43,20 +48,22 @@ export default function SwipeCard({
       onPointerUp={onPointerUp}
     >
       {/* Full image background */}
-      <div className="absolute inset-0 bg-slate-200 dark:bg-surface-dark flex items-center justify-center">
-        {meal.photo_url ? (
+      <div className="absolute inset-0">
+        {showPlaceholder ? (
+          <MealImagePlaceholder
+            category={meal.category}
+            className="absolute inset-0 w-full h-full"
+            iconSize="text-7xl"
+          />
+        ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             alt={meal.nazwa}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             src={meal.photo_url}
             draggable="false"
-            onError={(e) => {
-              ;(e.target as HTMLImageElement).style.display = 'none'
-            }}
+            onError={() => setImgError(true)}
           />
-        ) : (
-          <span className="material-symbols-outlined text-slate-400 text-6xl">restaurant</span>
         )}
       </div>
 

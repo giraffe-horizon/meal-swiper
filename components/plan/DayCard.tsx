@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Meal, DayKey } from '@/types'
+import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface DayCardProps {
   day: DayKey
@@ -29,6 +30,7 @@ export default function DayCard({
   onMealClick,
 }: DayCardProps) {
   const [activeMenu, setActiveMenu] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -110,10 +112,23 @@ export default function DayCard({
           onClick={() => onMealClick(meal)}
           className="flex items-center gap-4 min-w-0 flex-1 text-left cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <div
-            className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-cover bg-center shadow-sm shrink-0"
-            style={{ backgroundImage: `url(${meal.photo_url})` }}
-          />
+          <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-sm shrink-0 overflow-hidden">
+            {meal.photo_url && !imgError ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={meal.photo_url}
+                alt={meal.nazwa}
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <MealImagePlaceholder
+                category={meal.category}
+                className="w-full h-full"
+                iconSize="text-2xl"
+              />
+            )}
+          </div>
           <div className="flex flex-col min-w-0 flex-1">
             <p className="text-sm font-medium text-slate-500 dark:text-text-secondary-dark truncate">
               {dayName}, {dateStr}

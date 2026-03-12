@@ -77,9 +77,9 @@ describe('SwipeCard', () => {
     expect(img.getAttribute('src')).toBe('https://example.com/photo.jpg')
   })
 
-  it('renders restaurant icon when no photo', () => {
-    render(<SwipeCard {...defaultProps} meal={mealNoPhoto} />)
-    expect(screen.getByText('restaurant')).toBeInTheDocument()
+  it('renders placeholder when no photo', () => {
+    const { container } = render(<SwipeCard {...defaultProps} meal={mealNoPhoto} />)
+    expect(container.querySelector('[aria-label="Makaron"]')).toBeInTheDocument()
   })
 
   it('shows kcal info (per person avg)', () => {
@@ -110,5 +110,14 @@ describe('SwipeCard', () => {
     render(<SwipeCard {...defaultProps} onPointerDown={onPointerDown} />)
     const card = screen.getByText('Test Pasta').closest('div')!.closest('div')!
     fireEvent.pointerDown(card.closest('.absolute') ?? card)
+  })
+
+  it('shows placeholder when image fails to load', () => {
+    const { container } = render(<SwipeCard {...defaultProps} />)
+    const img = container.querySelector('img')
+    expect(img).not.toBeNull()
+    // Trigger error → imgError=true → MealImagePlaceholder replaces the img
+    fireEvent.error(img!)
+    expect(container.querySelector('img')).toBeNull()
   })
 })

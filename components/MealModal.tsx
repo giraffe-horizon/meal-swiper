@@ -6,6 +6,7 @@ import { scaleIngredient, scaleNutrition, computePersonRatio } from '@/lib/scali
 import { enrichStepsStructured } from '@/lib/recipe'
 import { useAppContext } from '@/lib/context'
 import AmountBadge from '@/components/ui/AmountBadge'
+import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface MealModalProps {
   meal: Meal | null
@@ -26,6 +27,7 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
   const people = settings.people
   const [isVisible, setIsVisible] = useState(false)
   const [showMeat, setShowMeat] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
   useEffect(() => {
     if (meal) {
@@ -95,13 +97,24 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
           {/* Scrollable content */}
           <div className="overflow-y-auto flex-1">
             {/* Photo */}
-            {meal.photo_url && (
-              <div className="relative w-full aspect-[16/9] sm:aspect-[16/10]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={meal.photo_url} alt={meal.nazwa} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-            )}
+            <div className="relative w-full aspect-[16/9] sm:aspect-[16/10]">
+              {meal.photo_url && !imgError ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={meal.photo_url}
+                  alt={meal.nazwa}
+                  className="w-full h-full object-cover"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <MealImagePlaceholder
+                  category={meal.category}
+                  className="w-full h-full"
+                  iconSize="text-6xl"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+            </div>
 
             <div className="p-4 sm:p-5 space-y-4 sm:space-y-5">
               {/* Title + meta */}

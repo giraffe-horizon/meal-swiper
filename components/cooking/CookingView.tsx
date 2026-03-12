@@ -6,6 +6,7 @@ import { scaleIngredient, scaleNutrition } from '@/lib/scaling'
 import { parseRecipe, enrichStepsStructured } from '@/lib/recipe'
 import RecipeSteps from '@/components/cooking/RecipeSteps'
 import CookingProgressBar from '@/components/cooking/CookingProgressBar'
+import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface CookingViewProps {
   meal: Meal
@@ -16,6 +17,7 @@ interface CookingViewProps {
 export default function CookingView({ meal, people, scaleFactor }: CookingViewProps) {
   const [checkedSteps, setCheckedSteps] = useState<Record<number, boolean>>({})
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({})
+  const [imgError, setImgError] = useState(false)
 
   const { steps, tips, baseIngredients, meatIngredients } = parseRecipe(meal)
   const scaledBase = baseIngredients.map((ing) => scaleIngredient(ing, scaleFactor))
@@ -30,9 +32,22 @@ export default function CookingView({ meal, people, scaleFactor }: CookingViewPr
     <div>
       {/* Hero image */}
       <div className="relative w-full" style={{ height: 'clamp(160px, 30vh, 280px)' }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={meal.photo_url} alt={meal.nazwa} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        {meal.photo_url && !imgError ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={meal.photo_url}
+            alt={meal.nazwa}
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <MealImagePlaceholder
+            category={meal.category}
+            className="w-full h-full"
+            iconSize="text-7xl"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
         <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
           <h1 className="text-2xl font-bold leading-tight">{meal.nazwa}</h1>
           <div className="flex items-center gap-4 mt-2 text-sm text-white/80">
