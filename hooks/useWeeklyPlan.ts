@@ -51,15 +51,19 @@ export function useWeeklyPlan() {
 
   const setMeal = useCallback(
     (day: DayKey, meal: Meal) => {
-      // Zawsze czyść flagę urlopu gdy przypisujesz danie
+      // Zawsze czyść flagę urlopu i status zjedzenia gdy przypisujesz danie
       const freeKey = `${day}_free` as `${DayKey}_free`
-      updatePlan({ ...weeklyPlan, [day]: meal, [freeKey]: false })
+      const eatenKey = `${day}_eaten` as `${DayKey}_eaten`
+      updatePlan({ ...weeklyPlan, [day]: meal, [freeKey]: false, [eatenKey]: false })
     },
     [weeklyPlan, updatePlan]
   )
 
   const removeMeal = useCallback(
-    (day: DayKey) => updatePlan({ ...weeklyPlan, [day]: null }),
+    (day: DayKey) => {
+      const eatenKey = `${day}_eaten` as `${DayKey}_eaten`
+      updatePlan({ ...weeklyPlan, [day]: null, [eatenKey]: false })
+    },
     [weeklyPlan, updatePlan]
   )
 
@@ -67,11 +71,31 @@ export function useWeeklyPlan() {
     (day: DayKey) => {
       const freeKey = `${day}_free` as `${DayKey}_free`
       const newPlan = { ...weeklyPlan, [freeKey]: !weeklyPlan[freeKey] }
-      if (newPlan[freeKey]) newPlan[day] = null
+      if (newPlan[freeKey]) {
+        newPlan[day] = null
+        newPlan[`${day}_eaten`] = false
+      }
       updatePlan(newPlan)
     },
     [weeklyPlan, updatePlan]
   )
 
-  return { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation }
+  const toggleEaten = useCallback(
+    (day: DayKey) => {
+      const eatenKey = `${day}_eaten` as `${DayKey}_eaten`
+      updatePlan({ ...weeklyPlan, [eatenKey]: !weeklyPlan[eatenKey] })
+    },
+    [weeklyPlan, updatePlan]
+  )
+
+  return {
+    weeklyPlan,
+    weekOffset,
+    weekKey,
+    setWeekOffset,
+    setMeal,
+    removeMeal,
+    toggleVacation,
+    toggleEaten,
+  }
 }

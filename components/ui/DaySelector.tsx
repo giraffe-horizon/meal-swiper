@@ -25,6 +25,7 @@ export default function DaySelector({
       {DAY_KEYS.map((day, idx) => {
         const meal = weeklyPlan[day]
         const isFree = weeklyPlan[`${day}_free`]
+        const isEaten = weeklyPlan[`${day}_eaten`]
         const isActive = selectedDay === day
         const shortName = shortNames[idx]
         const dateLabel = weekDates[idx] ? formatDateShort(weekDates[idx]) : ''
@@ -59,6 +60,13 @@ export default function DaySelector({
                         restaurant
                       </span>
                     )}
+                    {isEaten && (
+                      <div className="absolute inset-0 bg-green-500/40 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-white text-[20px] font-bold">
+                          check
+                        </span>
+                      </div>
+                    )}
                   </div>
                 ) : isFree ? (
                   <span className="text-lg">✈️</span>
@@ -70,11 +78,16 @@ export default function DaySelector({
               </div>
             )}
             <span
-              className={`text-xs font-semibold ${
+              className={`text-xs font-semibold flex items-center gap-1 ${
                 isActive ? 'text-primary' : 'text-slate-600 dark:text-text-secondary-dark'
               }`}
             >
               {shortName}
+              {isEaten && !showThumbnails && (
+                <span className="material-symbols-outlined text-[14px] text-green-500 font-bold">
+                  check_circle
+                </span>
+              )}
             </span>
             {dateLabel && (
               <span className="text-[10px] text-slate-400 hidden sm:block">{dateLabel}</span>

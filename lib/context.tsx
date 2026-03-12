@@ -27,6 +27,7 @@ interface AppContextValue {
   setMeal: (day: DayKey, meal: Meal) => void
   removeMeal: (day: DayKey) => void
   toggleVacation: (day: DayKey) => void
+  toggleEaten: (day: DayKey) => void
   currentSwipeDay: DayKey | null
   setCurrentSwipeDay: (day: DayKey | null) => void
   handleSwipeRight: (meal: Meal) => void
@@ -45,8 +46,16 @@ const AppContext = createContext<AppContextValue | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const { meals, loading: mealsLoading } = useMeals()
-  const { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation } =
-    useWeeklyPlan()
+  const {
+    weeklyPlan,
+    weekOffset,
+    weekKey,
+    setWeekOffset,
+    setMeal,
+    removeMeal,
+    toggleVacation,
+    toggleEaten,
+  } = useWeeklyPlan()
   const { settings, updateSettings, scaleFactor } = useSettings()
 
   useEffect(() => {
@@ -153,6 +162,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setMeal,
         removeMeal,
         toggleVacation,
+        toggleEaten,
         currentSwipeDay,
         setCurrentSwipeDay,
         handleSwipeRight,

@@ -1,19 +1,27 @@
 'use client'
 
 import { useState } from 'react'
-import type { Meal } from '@/types'
+import type { Meal, DayKey } from '@/types'
 import { scaleIngredient, scaleNutrition } from '@/lib/scaling'
 import { parseRecipe, enrichStepsStructured } from '@/lib/recipe'
 import RecipeSteps from '@/components/cooking/RecipeSteps'
 import CookingProgressBar from '@/components/cooking/CookingProgressBar'
+import { useAppContext } from '@/lib/context'
+import { getWeekKey } from '@/lib/utils'
+import { getCheckedItems, saveCheckedItems } from '@/lib/storage'
+import { normalizeIngredientName } from '@/lib/shopping'
 
 interface CookingViewProps {
+  day: DayKey
   meal: Meal
   people: number
   scaleFactor: number
 }
 
-export default function CookingView({ meal, people, scaleFactor }: CookingViewProps) {
+export default function CookingView({ day, meal, people, scaleFactor }: CookingViewProps) {
+  const { weeklyPlan, toggleEaten, weekOffset } = useAppContext()
+  const isEaten = weeklyPlan[`${day}_eaten`]
+
   const [checkedSteps, setCheckedSteps] = useState<Record<number, boolean>>({})
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({})
 
@@ -26,6 +34,39 @@ export default function CookingView({ meal, people, scaleFactor }: CookingViewPr
   const toggleIngredient = (key: string) =>
     setCheckedIngredients((prev) => ({ ...prev, [key]: !prev[key] }))
 
+  const handleToggleEaten = () => {
+    const nextEaten = !isEaten
+    toggleEaten(day)
+
+    if (nextEaten) {
+      // Opcjonalnie: zaznacz składniki na liście zakupów
+      const weekKey = getWeekKey(weekOffset)
+      const checked = getCheckedItems(weekKey)
+      const { baseIngredients, meatIngredients } = parseRecipe(meal)
+
+      const allIngs = [...baseIngredients, ...meatIngredients]
+      let changed = false
+
+      allIngs.forEach((ing) => {
+        const norm = normalizeIngredientName(ing.name)
+        if (!checked[norm]) {
+          checked[norm] = true
+          changed = true
+        }
+      })
+
+      if (changed) {
+        saveCheckedItems(weekKey, checked)
+        // Sync to server
+        fetch('/api/shopping-checked', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ week: weekKey, checked }),
+        }).catch(() => {})
+      }
+    }
+  }
+
   return (
     <div>
       {/* Hero image */}
@@ -33,22 +74,37 @@ export default function CookingView({ meal, people, scaleFactor }: CookingViewPr
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={meal.photo_url} alt={meal.nazwa} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-          <h1 className="text-2xl font-bold leading-tight">{meal.nazwa}</h1>
-          <div className="flex items-center gap-4 mt-2 text-sm text-white/80">
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">schedule</span>
-              {meal.prep_time} min
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
-              {scaleNutrition(meal.kcal_baza, scaleFactor)} kcal
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">fitness_center</span>
-              {scaleNutrition(meal.bialko_baza, scaleFactor)}g białka
-            </span>
+        <div className="absolute bottom-0 left-0 right-0 p-5 text-white flex items-end justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold leading-tight truncate">{meal.nazwa}</h1>
+            <div className="flex items-center gap-4 mt-2 text-sm text-white/80">
+              <span className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px]">schedule</span>
+                {meal.prep_time} min
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
+                {scaleNutrition(meal.kcal_baza, scaleFactor)} kcal
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-[16px]">fitness_center</span>
+                {scaleNutrition(meal.bialko_baza, scaleFactor)}g białka
+              </span>
+            </div>
           </div>
+          <button
+            onClick={handleToggleEaten}
+            className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all ${
+              isEaten
+                ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
+                : 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border border-white/30'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              {isEaten ? 'task_alt' : 'restaurant'}
+            </span>
+            <span className="text-sm">{isEaten ? 'Zjedzone' : 'Zjedzone?'}</span>
+          </button>
         </div>
       </div>
 
