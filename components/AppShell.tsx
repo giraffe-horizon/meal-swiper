@@ -9,14 +9,6 @@ import Navigation from '@/components/Navigation'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { getWeekDates, formatWeekRangeShort } from '@/lib/utils'
 
-const VIEW_TITLES: Record<ViewId, string> = {
-  plan: 'Plan',
-  swipe: 'Propozycje',
-  shopping: 'Lista zakupów',
-  cooking: 'Gotowanie',
-  settings: 'Ustawienia',
-}
-
 function pathToViewId(pathname: string): ViewId {
   if (pathname.startsWith('/swipe')) return 'swipe'
   if (pathname.startsWith('/shopping')) return 'shopping'
@@ -40,9 +32,6 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         <header className="shrink-0 flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark z-10">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-2xl">restaurant</span>
-            <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-text-primary-dark">
-              {VIEW_TITLES[activeView]}
-            </h1>
           </div>
 
           <div className="flex items-center gap-1">
