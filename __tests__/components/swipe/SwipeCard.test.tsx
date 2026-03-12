@@ -111,4 +111,13 @@ describe('SwipeCard', () => {
     const card = screen.getByText('Test Pasta').closest('div')!.closest('div')!
     fireEvent.pointerDown(card.closest('.absolute') ?? card)
   })
+
+  it('shows placeholder when image fails to load', () => {
+    render(<SwipeCard {...defaultProps} />)
+    const img = document.querySelector('img')
+    expect(img).toBeTruthy()
+    fireEvent.error(img!)
+    // After error, img is gone and placeholder renders
+    expect(document.querySelector('img')).toBeNull()
+  })
 })

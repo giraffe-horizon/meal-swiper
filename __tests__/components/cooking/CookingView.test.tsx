@@ -115,4 +115,21 @@ describe('CookingView', () => {
     render(<CookingView meal={mockMeal} people={1} scaleFactor={1} />)
     expect(screen.getByText(/1 osoby/)).toBeInTheDocument()
   })
+
+  it('shows placeholder when image fails to load', () => {
+    render(<CookingView meal={mockMeal} people={2} scaleFactor={1} />)
+    const img = document.querySelector('img')
+    expect(img).toBeTruthy()
+    // Fire error event to trigger placeholder fallback
+    fireEvent.error(img!)
+    // After error, placeholder should appear (img gone, placeholder div visible)
+    expect(document.querySelector('img')).toBeNull()
+  })
+
+  it('shows placeholder when photo_url is null', () => {
+    const mealNoPhoto = { ...mockMeal, photo_url: null }
+    render(<CookingView meal={mealNoPhoto as never} people={2} scaleFactor={1} />)
+    // No img element, placeholder div should be present
+    expect(document.querySelector('img')).toBeNull()
+  })
 })
