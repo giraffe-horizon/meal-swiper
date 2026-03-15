@@ -5,6 +5,7 @@ import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 vi.mock('@/lib/context', () => ({
   useAppContext: () => ({
     scaleFactor: 1,
+    tenantToken: 'test-token',
   }),
 }))
 
@@ -182,6 +183,26 @@ describe('ShoppingListView', () => {
     fireEvent.click(screen.getByText('Zaznacz wszystkie'))
     await waitFor(() => {
       expect(screen.getByText(/Zakupy zrobione/)).toBeInTheDocument()
+    })
+
+    // Now click reset
+    fireEvent.click(screen.getByText('Resetuj listę'))
+    expect(window.confirm).toHaveBeenCalled()
+    expect(removeCheckedItems).toHaveBeenCalled()
+  })
+
+  it('syncs checked items from server when available', async () => {
+    const serverChecked = { makaron: true }
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => serverChecked,
+    })
+    const { saveCheckedItems } = await import('@/lib/storage')
+
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+
+    await waitFor(() => {
+      expect(saveCheckedItems).toHaveBeenCalled()
     })
   })
 })

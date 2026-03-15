@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test'
 
+// Block service worker to prevent networkidle timeout
+test.beforeEach(async ({ context }) => {
+  await context.route('**/sw.js', (route) => route.abort())
+  await context.route('**/*.worker.js', (route) => route.abort())
+  await context.route('**/workbox-*', (route) => route.abort())
+})
+
 test.describe('Swipe flow', () => {
   test('swipe view loads with meal cards or empty state', async ({ page }) => {
     await page.goto('/swipe')
@@ -9,6 +16,7 @@ test.describe('Swipe flow', () => {
     await page
       .waitForSelector('h2, [data-testid="empty-state"]', { timeout: 15000 })
       .catch(() => null)
+
 
     const hasMealCard = (await page.locator('h2').count()) > 0
     const hasEmptyState = await page
@@ -38,7 +46,8 @@ test.describe('Swipe flow', () => {
 
     // The meal must now appear in /plan
     await page.goto('/plan')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
+    await page.waitForTimeout(1000)
     if (mealName) {
       await expect(page.getByText(mealName)).toBeVisible({ timeout: 5000 })
     }
