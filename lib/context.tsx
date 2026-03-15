@@ -14,6 +14,7 @@ import { useMeals } from '@/hooks/useMeals'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import { useSettings } from '@/hooks/useSettings'
 import { useSwipeState } from '@/hooks/useSwipeState'
+import { useTenant } from '@/hooks/useTenant'
 import { DAY_KEYS } from '@/lib/utils'
 
 interface AppContextValue {
@@ -39,15 +40,17 @@ interface AppContextValue {
   settings: AppSettings
   updateSettings: (settings: AppSettings) => void
   scaleFactor: number
+  tenantToken: string | null
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const { token: tenantToken, isReady: tenantReady } = useTenant()
   const { meals, loading: mealsLoading } = useMeals()
   const { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation } =
-    useWeeklyPlan()
-  const { settings, updateSettings, scaleFactor } = useSettings()
+    useWeeklyPlan(tenantToken)
+  const { settings, updateSettings, scaleFactor } = useSettings(tenantToken)
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -144,7 +147,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider
       value={{
         meals,
-        mealsLoading,
+        mealsLoading: mealsLoading || !tenantReady,
         weeklyPlan,
         weekOffset,
         weekKey,
@@ -165,6 +168,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         settings,
         updateSettings,
         scaleFactor,
+        tenantToken,
       }}
     >
       {children}

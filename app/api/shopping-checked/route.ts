@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import type { NextRequest } from 'next/server'
 import { getShoppingChecked, saveShoppingChecked, type D1Database } from '@/lib/db'
+import { resolveTenantId, extractTenantToken } from '@/lib/tenant'
 
 export async function GET(request: NextRequest) {
   const { env } = await getCloudflareContext()
@@ -11,7 +12,8 @@ export async function GET(request: NextRequest) {
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   try {
-    const data = await getShoppingChecked(db, week)
+    const tenantId = await resolveTenantId(db, extractTenantToken(request))
+    const data = await getShoppingChecked(db, week, tenantId)
     return Response.json(data ? JSON.parse(data) : null)
   } catch (error) {
     console.error('Error reading shopping checked from D1:', error)
@@ -30,7 +32,8 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'week and checked required' }, { status: 400 })
 
   try {
-    await saveShoppingChecked(db, week, JSON.stringify(checked))
+    const tenantId = await resolveTenantId(db, extractTenantToken(request))
+    await saveShoppingChecked(db, week, JSON.stringify(checked), tenantId)
     return Response.json({ ok: true })
   } catch (error) {
     console.error('Error saving shopping checked to D1:', error)

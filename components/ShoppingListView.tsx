@@ -13,7 +13,7 @@ interface ShoppingListViewProps {
 }
 
 export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingListViewProps) {
-  const { scaleFactor } = useAppContext()
+  const { scaleFactor, tenantToken } = useAppContext()
   const weekKey = getWeekKey(weekOffset)
 
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() =>
@@ -26,9 +26,11 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   )
 
   const syncCheckedToServer = (newChecked: Record<string, boolean>) => {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+    if (tenantToken) headers['X-Tenant-Token'] = tenantToken
     fetch('/api/shopping-checked', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ week: weekKey, checked: newChecked }),
     }).catch(() => {})
   }
@@ -40,7 +42,9 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
 
   useEffect(() => {
     let cancelled = false
-    fetch(`/api/shopping-checked?week=${encodeURIComponent(weekKey)}`)
+    const headers: Record<string, string> = {}
+    if (tenantToken) headers['X-Tenant-Token'] = tenantToken
+    fetch(`/api/shopping-checked?week=${encodeURIComponent(weekKey)}`, { headers })
       .then((r) => r.json())
       .then((serverChecked: Record<string, boolean> | null) => {
         if (!cancelled && serverChecked) {
@@ -52,7 +56,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
     return () => {
       cancelled = true
     }
-  }, [weekKey])
+  }, [weekKey, tenantToken])
 
   const toggleItem = (normalizedName: string) => {
     const newChecked = { ...checkedItems, [normalizedName]: !checkedItems[normalizedName] }

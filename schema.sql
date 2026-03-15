@@ -1,4 +1,13 @@
--- Meals table
+-- Tenants table
+CREATE TABLE IF NOT EXISTS tenants (
+  id TEXT PRIMARY KEY,
+  token TEXT NOT NULL UNIQUE,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_tenants_token ON tenants(token);
+
+-- Meals table (shared across all tenants)
 CREATE TABLE IF NOT EXISTS meals (
   id TEXT PRIMARY KEY,
   nazwa TEXT NOT NULL,
@@ -19,25 +28,34 @@ CREATE TABLE IF NOT EXISTS meals (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
--- Weekly plans table (replaces KV)
+-- Weekly plans table (tenant-scoped)
 CREATE TABLE IF NOT EXISTS weekly_plans (
-  week_key TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL DEFAULT 'default',
+  week_key TEXT NOT NULL,
   plan_data TEXT NOT NULL,
-  updated_at TEXT DEFAULT (datetime('now'))
+  updated_at TEXT DEFAULT (datetime('now')),
+  PRIMARY KEY (tenant_id, week_key),
+  FOREIGN KEY (tenant_id) REFERENCES tenants(id)
 );
 
--- Shopping checked items (replaces KV)
+-- Shopping checked items (tenant-scoped)
 CREATE TABLE IF NOT EXISTS shopping_checked (
-  week_key TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL DEFAULT 'default',
+  week_key TEXT NOT NULL,
   checked_data TEXT NOT NULL DEFAULT '{}',
-  updated_at TEXT DEFAULT (datetime('now'))
+  updated_at TEXT DEFAULT (datetime('now')),
+  PRIMARY KEY (tenant_id, week_key),
+  FOREIGN KEY (tenant_id) REFERENCES tenants(id)
 );
 
--- Settings table (replaces localStorage)
+-- Settings table (tenant-scoped)
 CREATE TABLE IF NOT EXISTS settings (
-  key TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL DEFAULT 'default',
+  key TEXT NOT NULL,
   value TEXT NOT NULL,
-  updated_at TEXT DEFAULT (datetime('now'))
+  updated_at TEXT DEFAULT (datetime('now')),
+  PRIMARY KEY (tenant_id, key),
+  FOREIGN KEY (tenant_id) REFERENCES tenants(id)
 );
 
 -- Index for quick lookups

@@ -32,7 +32,7 @@ interface D1ExecResult {
   duration: number
 }
 
-// Fetch all meals from D1
+// Fetch all meals from D1 (shared across all tenants)
 export async function fetchMealsFromD1(db: D1Database): Promise<Meal[]> {
   const result = await db.prepare('SELECT * FROM meals ORDER BY nazwa').all<{
     id: string
@@ -73,11 +73,34 @@ export async function fetchMealsFromD1(db: D1Database): Promise<Meal[]> {
   }))
 }
 
-// Weekly plans
-export async function getWeeklyPlan(db: D1Database, weekKey: string): Promise<string | null> {
+// Tenant management
+export async function getTenantByToken(
+  db: D1Database,
+  token: string
+): Promise<{ id: string; token: string } | null> {
   const row = await db
-    .prepare('SELECT plan_data FROM weekly_plans WHERE week_key = ?')
-    .bind(weekKey)
+    .prepare('SELECT id, token FROM tenants WHERE token = ?')
+    .bind(token)
+    .first<{ id: string; token: string }>()
+  return row ?? null
+}
+
+export async function createTenant(db: D1Database, id: string, token: string): Promise<void> {
+  await db
+    .prepare("INSERT INTO tenants (id, token, created_at) VALUES (?, ?, datetime('now'))")
+    .bind(id, token)
+    .run()
+}
+
+// Weekly plans (tenant-scoped)
+export async function getWeeklyPlan(
+  db: D1Database,
+  weekKey: string,
+  tenantId: string = 'default'
+): Promise<string | null> {
+  const row = await db
+    .prepare('SELECT plan_data FROM weekly_plans WHERE tenant_id = ? AND week_key = ?')
+    .bind(tenantId, weekKey)
     .first<{ plan_data: string }>()
   return row?.plan_data ?? null
 }
@@ -85,39 +108,53 @@ export async function getWeeklyPlan(db: D1Database, weekKey: string): Promise<st
 export async function saveWeeklyPlan(
   db: D1Database,
   weekKey: string,
-  planData: string
+  planData: string,
+  tenantId: string = 'default'
 ): Promise<void> {
   await db
     .prepare(
-      "INSERT OR REPLACE INTO weekly_plans (week_key, plan_data, updated_at) VALUES (?, ?, datetime('now'))"
+      "INSERT OR REPLACE INTO weekly_plans (tenant_id, week_key, plan_data, updated_at) VALUES (?, ?, ?, datetime('now'))"
     )
-    .bind(weekKey, planData)
+    .bind(tenantId, weekKey, planData)
     .run()
 }
 
-// Settings
-export async function getSettings(db: D1Database, key: string): Promise<string | null> {
+// Settings (tenant-scoped)
+export async function getSettings(
+  db: D1Database,
+  key: string,
+  tenantId: string = 'default'
+): Promise<string | null> {
   const row = await db
-    .prepare('SELECT value FROM settings WHERE key = ?')
-    .bind(key)
+    .prepare('SELECT value FROM settings WHERE tenant_id = ? AND key = ?')
+    .bind(tenantId, key)
     .first<{ value: string }>()
   return row?.value ?? null
 }
 
-export async function saveSettings(db: D1Database, key: string, value: string): Promise<void> {
+export async function saveSettings(
+  db: D1Database,
+  key: string,
+  value: string,
+  tenantId: string = 'default'
+): Promise<void> {
   await db
     .prepare(
-      "INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES (?, ?, datetime('now'))"
+      "INSERT OR REPLACE INTO settings (tenant_id, key, value, updated_at) VALUES (?, ?, ?, datetime('now'))"
     )
-    .bind(key, value)
+    .bind(tenantId, key, value)
     .run()
 }
 
-// Shopping checked
-export async function getShoppingChecked(db: D1Database, weekKey: string): Promise<string | null> {
+// Shopping checked (tenant-scoped)
+export async function getShoppingChecked(
+  db: D1Database,
+  weekKey: string,
+  tenantId: string = 'default'
+): Promise<string | null> {
   const row = await db
-    .prepare('SELECT checked_data FROM shopping_checked WHERE week_key = ?')
-    .bind(weekKey)
+    .prepare('SELECT checked_data FROM shopping_checked WHERE tenant_id = ? AND week_key = ?')
+    .bind(tenantId, weekKey)
     .first<{ checked_data: string }>()
   return row?.checked_data ?? null
 }
@@ -125,12 +162,13 @@ export async function getShoppingChecked(db: D1Database, weekKey: string): Promi
 export async function saveShoppingChecked(
   db: D1Database,
   weekKey: string,
-  checkedData: string
+  checkedData: string,
+  tenantId: string = 'default'
 ): Promise<void> {
   await db
     .prepare(
-      "INSERT OR REPLACE INTO shopping_checked (week_key, checked_data, updated_at) VALUES (?, ?, datetime('now'))"
+      "INSERT OR REPLACE INTO shopping_checked (tenant_id, week_key, checked_data, updated_at) VALUES (?, ?, ?, datetime('now'))"
     )
-    .bind(weekKey, checkedData)
+    .bind(tenantId, weekKey, checkedData)
     .run()
 }

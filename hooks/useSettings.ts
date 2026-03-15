@@ -16,10 +16,18 @@ export const DEFAULT_SETTINGS: AppSettings = {
   theme: 'system',
 }
 
-export function useSettings() {
+function tenantHeaders(token: string | null): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (token) headers['X-Tenant-Token'] = token
+  return headers
+}
+
+export function useSettings(tenantToken: string | null = null) {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS)
   const [isLoaded, setIsLoaded] = useState(false)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const tenantTokenRef = useRef(tenantToken)
+  tenantTokenRef.current = tenantToken
 
   // Load settings: try D1 first, fallback to localStorage
   useEffect(() => {
@@ -39,7 +47,10 @@ export function useSettings() {
 
       // Then fetch from D1 (source of truth)
       try {
-        const res = await fetch(`/api/settings?key=${API_KEY}`)
+        const headers: Record<string, string> = {}
+        if (tenantToken) headers['X-Tenant-Token'] = tenantToken
+
+        const res = await fetch(`/api/settings?key=${API_KEY}`, { headers })
         if (res.ok) {
           const data = await res.json()
           if (data && !cancelled) {
@@ -62,7 +73,7 @@ export function useSettings() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [tenantToken])
 
   // Save to D1 (debounced) + localStorage (immediate)
   const updateSettings = useCallback((newSettings: AppSettings) => {
@@ -81,7 +92,7 @@ export function useSettings() {
       try {
         await fetch('/api/settings', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: tenantHeaders(tenantTokenRef.current),
           body: JSON.stringify({ key: API_KEY, value: newSettings }),
         })
       } catch {

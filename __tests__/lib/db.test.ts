@@ -5,6 +5,10 @@ import {
   saveWeeklyPlan,
   getShoppingChecked,
   saveShoppingChecked,
+  getSettings,
+  saveSettings,
+  getTenantByToken,
+  createTenant,
 } from '@/lib/db'
 import type { D1Database } from '@/lib/db'
 
@@ -122,8 +126,9 @@ describe('getWeeklyPlan', () => {
     }
     const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
 
-    const result = await getWeeklyPlan(db, '2026-W10')
+    const result = await getWeeklyPlan(db, '2026-W10', 'tenant-1')
     expect(result).toBe('{"mon":"pasta"}')
+    expect(stmt.bind).toHaveBeenCalledWith('tenant-1', '2026-W10')
   })
 
   it('returns null when not found', async () => {
@@ -136,25 +141,68 @@ describe('getWeeklyPlan', () => {
     }
     const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
 
-    const result = await getWeeklyPlan(db, '2026-W99')
+    const result = await getWeeklyPlan(db, '2026-W99', 'default')
     expect(result).toBeNull()
+  })
+
+  it('defaults to "default" tenant when no tenantId provided', async () => {
+    const stmt = {
+      bind: vi.fn().mockReturnThis(),
+      first: vi.fn().mockResolvedValue(null),
+      run: vi.fn(),
+      all: vi.fn(),
+      raw: vi.fn(),
+    }
+    const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
+
+    await getWeeklyPlan(db, '2026-W10')
+    expect(stmt.bind).toHaveBeenCalledWith('default', '2026-W10')
   })
 })
 
 describe('saveWeeklyPlan', () => {
-  it('calls INSERT OR REPLACE with correct values', async () => {
+  it('calls INSERT OR REPLACE with tenant_id', async () => {
     const run = vi.fn().mockResolvedValue({ success: true })
     const stmt = { bind: vi.fn().mockReturnThis(), first: vi.fn(), run, all: vi.fn(), raw: vi.fn() }
     const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
 
-    await saveWeeklyPlan(db, '2026-W10', '{"mon":"pasta"}')
-    expect(stmt.bind).toHaveBeenCalledWith('2026-W10', '{"mon":"pasta"}')
+    await saveWeeklyPlan(db, '2026-W10', '{"mon":"pasta"}', 'tenant-1')
+    expect(stmt.bind).toHaveBeenCalledWith('tenant-1', '2026-W10', '{"mon":"pasta"}')
+    expect(run).toHaveBeenCalled()
+  })
+})
+
+describe('getSettings', () => {
+  it('returns value when found with tenant_id', async () => {
+    const stmt = {
+      bind: vi.fn().mockReturnThis(),
+      first: vi.fn().mockResolvedValue({ value: '{"people":3}' }),
+      run: vi.fn(),
+      all: vi.fn(),
+      raw: vi.fn(),
+    }
+    const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
+
+    const result = await getSettings(db, 'app_settings', 'tenant-1')
+    expect(result).toBe('{"people":3}')
+    expect(stmt.bind).toHaveBeenCalledWith('tenant-1', 'app_settings')
+  })
+})
+
+describe('saveSettings', () => {
+  it('calls INSERT OR REPLACE with tenant_id', async () => {
+    const run = vi.fn().mockResolvedValue({ success: true })
+    const stmt = { bind: vi.fn().mockReturnThis(), first: vi.fn(), run, all: vi.fn(), raw: vi.fn() }
+    const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
+
+    await saveSettings(db, 'app_settings', '{"people":3}', 'tenant-1')
+    expect(stmt.bind).toHaveBeenCalledWith('tenant-1', 'app_settings', '{"people":3}')
     expect(run).toHaveBeenCalled()
   })
 })
 
 describe('getShoppingChecked', () => {
-  it('returns checked_data when found', async () => {
+  it('returns checked_data when found with tenant_id', async () => {
     const stmt = {
       bind: vi.fn().mockReturnThis(),
       first: vi.fn().mockResolvedValue({ checked_data: '{"item1":true}' }),
@@ -164,19 +212,62 @@ describe('getShoppingChecked', () => {
     }
     const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
 
-    const result = await getShoppingChecked(db, '2026-W10')
+    const result = await getShoppingChecked(db, '2026-W10', 'tenant-1')
     expect(result).toBe('{"item1":true}')
+    expect(stmt.bind).toHaveBeenCalledWith('tenant-1', '2026-W10')
   })
 })
 
 describe('saveShoppingChecked', () => {
-  it('calls INSERT OR REPLACE with correct values', async () => {
+  it('calls INSERT OR REPLACE with tenant_id', async () => {
     const run = vi.fn().mockResolvedValue({ success: true })
     const stmt = { bind: vi.fn().mockReturnThis(), first: vi.fn(), run, all: vi.fn(), raw: vi.fn() }
     const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
 
-    await saveShoppingChecked(db, '2026-W10', '{"item1":true}')
-    expect(stmt.bind).toHaveBeenCalledWith('2026-W10', '{"item1":true}')
+    await saveShoppingChecked(db, '2026-W10', '{"item1":true}', 'tenant-1')
+    expect(stmt.bind).toHaveBeenCalledWith('tenant-1', '2026-W10', '{"item1":true}')
+    expect(run).toHaveBeenCalled()
+  })
+})
+
+describe('getTenantByToken', () => {
+  it('returns tenant when found', async () => {
+    const stmt = {
+      bind: vi.fn().mockReturnThis(),
+      first: vi.fn().mockResolvedValue({ id: 'tenant-1', token: 'abc-123' }),
+      run: vi.fn(),
+      all: vi.fn(),
+      raw: vi.fn(),
+    }
+    const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
+
+    const result = await getTenantByToken(db, 'abc-123')
+    expect(result).toEqual({ id: 'tenant-1', token: 'abc-123' })
+  })
+
+  it('returns null when not found', async () => {
+    const stmt = {
+      bind: vi.fn().mockReturnThis(),
+      first: vi.fn().mockResolvedValue(null),
+      run: vi.fn(),
+      all: vi.fn(),
+      raw: vi.fn(),
+    }
+    const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
+
+    const result = await getTenantByToken(db, 'nonexistent')
+    expect(result).toBeNull()
+  })
+})
+
+describe('createTenant', () => {
+  it('inserts a new tenant', async () => {
+    const run = vi.fn().mockResolvedValue({ success: true })
+    const stmt = { bind: vi.fn().mockReturnThis(), first: vi.fn(), run, all: vi.fn(), raw: vi.fn() }
+    const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
+
+    await createTenant(db, 'new-id', 'new-token')
+    expect(stmt.bind).toHaveBeenCalledWith('new-id', 'new-token')
     expect(run).toHaveBeenCalled()
   })
 })
