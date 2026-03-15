@@ -10,8 +10,8 @@ test.describe('Shopping list view', () => {
     await expect(page).toHaveURL(/\/shopping/)
   })
 
-  test('shows "Lista zakupów" title in header', async ({ page }) => {
-    await expect(page.getByText('Lista zakupów').first()).toBeVisible()
+  test('shopping nav link is visible', async ({ page }) => {
+    await expect(page.locator('a[href="/shopping"]').first()).toBeVisible({ timeout: 5000 })
   })
 
   test('shows empty state when no meals planned', async ({ page }) => {

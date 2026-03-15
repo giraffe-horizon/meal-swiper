@@ -281,7 +281,7 @@ export default function SwipeView({
         />
         {/* <CategoryFilter ... /> hidden for UX redesign */}
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center text-slate-500 dark:text-text-secondary-dark px-6">
+          <div className="text-center text-slate-500 dark:text-text-secondary-dark px-6" data-testid="empty-state">
             <p className="text-lg">Brak więcej posiłków</p>
           </div>
         </div>

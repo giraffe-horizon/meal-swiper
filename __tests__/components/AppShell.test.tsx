@@ -75,13 +75,16 @@ describe('AppShell', () => {
     mockSetWeekOffset.mockClear()
   })
 
-  it('renders the header with title', () => {
+  it('renders the header with logo icon', () => {
     render(
       <AppShell>
         <div>Content</div>
       </AppShell>
     )
-    expect(screen.getByText('Plan')).toBeInTheDocument()
+    // Title was removed — only the restaurant logo icon remains in the header
+    expect(screen.queryByRole('heading')).toBeNull()
+    const logo = document.querySelector('.material-symbols-outlined')
+    expect(logo).toBeTruthy()
   })
 
   it('renders children when not loading', () => {
@@ -165,43 +168,47 @@ describe('AppShell', () => {
     expect(screen.queryByTestId('child')).toBeNull()
   })
 
-  it('shows "Propozycje" title for /swipe path', () => {
+  it('shows correct active nav for /swipe path', () => {
     mockPathname.mockReturnValue('/swipe')
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    expect(screen.getByText('Propozycje')).toBeInTheDocument()
+    const nav = screen.getByTestId('navigation')
+    expect(nav.getAttribute('data-active')).toBe('swipe')
   })
 
-  it('shows "Gotowanie" title for /cooking path', () => {
+  it('shows correct active nav for /cooking path', () => {
     mockPathname.mockReturnValue('/cooking')
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    expect(screen.getByText('Gotowanie')).toBeInTheDocument()
+    const nav = screen.getByTestId('navigation')
+    expect(nav.getAttribute('data-active')).toBe('cooking')
   })
 
-  it('shows "Lista zakupów" title for /shopping path', () => {
+  it('shows correct active nav for /shopping path', () => {
     mockPathname.mockReturnValue('/shopping')
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    expect(screen.getByText('Lista zakupów')).toBeInTheDocument()
+    const nav = screen.getByTestId('navigation')
+    expect(nav.getAttribute('data-active')).toBe('shopping')
   })
 
-  it('shows "Ustawienia" title for /settings path', () => {
+  it('shows correct active nav for /settings path', () => {
     mockPathname.mockReturnValue('/settings')
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    expect(screen.getByText('Ustawienia')).toBeInTheDocument()
+    const nav = screen.getByTestId('navigation')
+    expect(nav.getAttribute('data-active')).toBe('settings')
   })
 })

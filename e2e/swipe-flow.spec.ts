@@ -3,15 +3,16 @@ import { test, expect } from '@playwright/test'
 test.describe('Swipe flow', () => {
   test('swipe view loads with meal cards or empty state', async ({ page }) => {
     await page.goto('/swipe')
-    // SwipeView loads dynamically — wait for meal card or empty state
+    // Wait for the swipe UI to be ready — nav appears immediately, then meal cards load
+    await page.waitForLoadState('domcontentloaded')
+    // Wait for either a meal card (h2 inside swipe card), empty state, or "all filled" view
     await page
-      .waitForSelector('h2, [data-testid="empty-state"]', { timeout: 30000 })
+      .waitForSelector('h2, [data-testid="empty-state"]', { timeout: 15000 })
       .catch(() => null)
-    await page.waitForLoadState('networkidle')
 
     const hasMealCard = (await page.locator('h2').count()) > 0
     const hasEmptyState = await page
-      .getByText('Brak więcej posiłków')
+      .getByText(/Brak więcej posiłków|Tydzień wypełniony/)
       .isVisible()
       .catch(() => false)
     expect(hasMealCard || hasEmptyState, 'Swipe view shows neither meal card nor empty state').toBe(
@@ -21,7 +22,8 @@ test.describe('Swipe flow', () => {
 
   test('happy path: swipe right adds meal to plan', async ({ page }) => {
     await page.goto('/swipe')
-    await page.waitForSelector('h2', { timeout: 30000 })
+    await page.waitForLoadState('domcontentloaded')
+    await page.waitForSelector('h2', { timeout: 15000 })
 
     const mealName = await page.locator('h2').first().textContent()
     expect(mealName, 'Meal card has no title').toBeTruthy()
@@ -44,7 +46,8 @@ test.describe('Swipe flow', () => {
 
   test('skip button skips to next meal or day', async ({ page }) => {
     await page.goto('/swipe')
-    await page.waitForSelector('h2', { timeout: 30000 })
+    await page.waitForLoadState('domcontentloaded')
+    await page.waitForSelector('h2', { timeout: 15000 })
 
     const firstMeal = await page.locator('h2').first().textContent()
 
@@ -82,7 +85,8 @@ test.describe('Swipe flow', () => {
 test.describe('Shopping list flow', () => {
   test('plan meals and check shopping list persistence', async ({ page }) => {
     await page.goto('/swipe')
-    await page.waitForSelector('h2', { timeout: 30000 })
+    await page.waitForLoadState('domcontentloaded')
+    await page.waitForSelector('h2', { timeout: 15000 })
 
     // Swipe right twice — wait for toast (Dodano:) instead of networkidle
     for (let i = 0; i < 2; i++) {

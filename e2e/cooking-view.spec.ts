@@ -14,8 +14,8 @@ test.describe('Cooking view', () => {
     await expect(page.locator('nav').first()).toBeVisible()
   })
 
-  test('shows "Gotowanie" title in header', async ({ page }) => {
-    await expect(page.getByText('Gotowanie').first()).toBeVisible({ timeout: 5000 })
+  test('shows cooking link in navigation', async ({ page }) => {
+    await expect(page.locator('a[href="/cooking"]').first()).toBeVisible({ timeout: 5000 })
   })
 
   test('shows day selector or empty state message — not a blank page', async ({ page }) => {
@@ -23,10 +23,9 @@ test.describe('Cooking view', () => {
     // A blank body / loading spinner stuck forever would fail this.
     const daySelector = page.locator('[data-testid="day-selector"], .day-selector')
     const emptyMsg = page.getByText(/Brak dań|Wybierz dzień|Zaplanuj posiłki/i)
-    const cookingHeading = page.getByText('Gotowanie')
 
-    // At minimum, the page heading must be visible
-    await expect(cookingHeading.first()).toBeVisible({ timeout: 5000 })
+    // Check that navigation is visible (replaces header title check)
+    await expect(page.locator('a[href="/cooking"]').first()).toBeVisible({ timeout: 5000 })
 
     // And we must have EITHER a day selector OR an empty state (not both missing)
     const hasDaySelector = await daySelector.count().then((n) => n > 0)
