@@ -95,3 +95,36 @@ describe('resolveTenantId', () => {
     expect(run).toHaveBeenCalled()
   })
 })
+
+describe('requireTenantId', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('throws "Tenant token required" when token is null', async () => {
+    const db = makeMockDb()
+    await expect(requireTenantId(db, null)).rejects.toThrow('Tenant token required')
+  })
+
+  it('throws "Tenant token required" when token is empty string', async () => {
+    const db = makeMockDb()
+    await expect(requireTenantId(db, '')).rejects.toThrow('Tenant token required')
+  })
+
+  it('throws "Invalid tenant token" when token not found in DB', async () => {
+    const db = makeMockDb()
+    await expect(requireTenantId(db, 'unknown-token')).rejects.toThrow('Invalid tenant token')
+  })
+
+  it('returns tenant id when token exists in DB', async () => {
+    const stmt = {
+      bind: vi.fn().mockReturnThis(),
+      first: vi.fn().mockResolvedValue({ id: 'tenant-1', token: 'abc-123' }),
+      run: vi.fn(),
+      all: vi.fn(),
+      raw: vi.fn(),
+    }
+    const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
+
+    const result = await requireTenantId(db, 'abc-123')
+    expect(result).toBe('tenant-1')
+  })
+})
