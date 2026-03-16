@@ -4,7 +4,11 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import type { AppSettings } from '@/types'
 import { computeScaleFactor } from '@/lib/scaling'
 
-const STORAGE_KEY = 'meal_swiper_settings'
+function getStorageKey(): string {
+  if (typeof window === 'undefined') return 'meal_swiper_settings'
+  const token = localStorage.getItem('meal_swiper_tenant_token') || ''
+  return token ? `${token}_meal_swiper_settings` : 'meal_swiper_settings'
+}
 const API_KEY = 'app_settings'
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -36,7 +40,7 @@ export function useSettings(tenantToken: string | null = null) {
     async function load() {
       // Immediately show localStorage data for fast UX
       try {
-        const stored = localStorage.getItem(STORAGE_KEY)
+        const stored = localStorage.getItem(getStorageKey())
         if (stored) {
           const parsed = JSON.parse(stored) as AppSettings
           if (!cancelled) setSettings((prev) => ({ ...prev, ...parsed }))
@@ -57,7 +61,7 @@ export function useSettings(tenantToken: string | null = null) {
             setSettings((prev) => {
               const next = { ...prev, ...data }
               // Sync to localStorage
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+              localStorage.setItem(getStorageKey(), JSON.stringify(next))
               return next
             })
           }
@@ -81,7 +85,7 @@ export function useSettings(tenantToken: string | null = null) {
 
     // Immediate localStorage save
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings))
+      localStorage.setItem(getStorageKey(), JSON.stringify(newSettings))
     } catch {
       // ignore
     }
