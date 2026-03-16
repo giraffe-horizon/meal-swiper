@@ -10,7 +10,7 @@ test.describe('Settings page', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(`/${token}/settings`)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
   })
 
   test('settings page loads', async ({ page }) => {
@@ -71,7 +71,7 @@ test.describe('Settings - dark mode', () => {
 
   test('toggle dark mode applies dark class to html element', async ({ page }) => {
     await page.goto(`/${token}/settings`)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     const darkBtn = page.getByText(/ciemny/i).first()
     await expect(darkBtn).toBeVisible({ timeout: 5000 })

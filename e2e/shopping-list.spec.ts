@@ -10,7 +10,7 @@ test.describe('Shopping list view', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(`/${token}/shopping`)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
   })
 
   test('shopping page loads', async ({ page }) => {
@@ -73,7 +73,7 @@ test.describe('Shopping list - with planned meals', () => {
     })
 
     await page.goto(`/${token}/shopping`)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(500)
 
     const checkboxes = page.locator('[type="checkbox"]')

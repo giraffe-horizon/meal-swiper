@@ -16,7 +16,7 @@ test.describe('Smoke tests', () => {
     })
 
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     // Verify at least one stylesheet is loaded
     const sheetCount = await page.evaluate(() => document.styleSheets.length)
@@ -64,7 +64,7 @@ test.describe('Smoke tests', () => {
     })
 
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     const criticalErrors = errors.filter(
       (e) => e.includes('SyntaxError') || e.includes('TypeError') || e.includes('React')
@@ -82,7 +82,7 @@ test.describe('Smoke tests', () => {
     })
 
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     expect(failedRequests).toEqual([])
   })

@@ -10,7 +10,7 @@ test.describe('Cooking view', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(`/${token}/cooking`)
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
   })
 
   test('cooking page loads', async ({ page }) => {
