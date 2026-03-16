@@ -72,7 +72,7 @@ export default function SwipeCard({
         className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
         style={{ opacity: likeOpacity }}
       >
-        <div className="border-[6px] border-green-400 text-green-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[-20deg] bg-black/20 backdrop-blur-sm">
+        <div className="border-[6px] border-green-400 text-green-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[-20deg] bg-black">
           DODAJ DO PLANU
         </div>
       </motion.div>
@@ -80,21 +80,21 @@ export default function SwipeCard({
         className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
         style={{ opacity: nopeOpacity }}
       >
-        <div className="border-[6px] border-red-400 text-red-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[20deg] bg-black/20 backdrop-blur-sm">
+        <div className="border-[6px] border-red-400 text-red-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[20deg] bg-black">
           POMIJAM
         </div>
       </motion.div>
 
-      {/* Gradient overlay at bottom */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+      {/* Solid overlay at bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
 
       {/* Content at bottom */}
       <div className="absolute bottom-0 left-0 right-0 p-5 pb-6 text-white pointer-events-none">
         <div className="flex justify-between items-end">
           <div className="flex-1 min-w-0 mr-3">
             <h2 className="text-2xl font-bold leading-tight drop-shadow-lg">{meal.nazwa}</h2>
-            <p className="text-white/80 text-sm mt-1 line-clamp-2 drop-shadow">{meal.opis}</p>
-            <div className="flex items-center gap-4 mt-3 text-sm font-medium text-white/90">
+            <p className="text-slate-200 text-sm mt-1 line-clamp-2 drop-shadow">{meal.opis}</p>
+            <div className="flex items-center gap-4 mt-3 text-sm font-medium text-slate-100">
               <div className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">schedule</span>
                 <span>{meal.prep_time} min</span>
@@ -102,11 +102,11 @@ export default function SwipeCard({
               <div className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
                 <span>{Math.round((meal.kcal_baza * people) / 2)} kcal</span>
-                <span className="text-white/60 text-xs">dla {people} os.</span>
+                <span className="text-slate-300 text-xs">dla {people} os.</span>
               </div>
             </div>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold shrink-0">
+          <div className="bg-slate-800 rounded-full px-3 py-1 text-xs font-bold shrink-0">
             {currentIndex + 1}/{totalCards}
           </div>
         </div>
