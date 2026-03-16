@@ -267,7 +267,7 @@ describe('createTenant', () => {
     const db = makeMockDb({ prepare: vi.fn().mockReturnValue(stmt) })
 
     await createTenant(db, 'new-id', 'new-token')
-    expect(stmt.bind).toHaveBeenCalledWith('new-id', 'new-token')
+    expect(stmt.bind).toHaveBeenCalledWith('new-id', 'new-token', '')
     expect(run).toHaveBeenCalled()
   })
 })

@@ -85,10 +85,15 @@ export async function getTenantByToken(
   return row ?? null
 }
 
-export async function createTenant(db: D1Database, id: string, token: string): Promise<void> {
+export async function createTenant(
+  db: D1Database,
+  id: string,
+  token: string,
+  name: string = ''
+): Promise<void> {
   await db
-    .prepare("INSERT INTO tenants (id, token, created_at) VALUES (?, ?, datetime('now'))")
-    .bind(id, token)
+    .prepare("INSERT INTO tenants (id, token, name, created_at) VALUES (?, ?, ?, datetime('now'))")
+    .bind(id, token, name)
     .run()
 }
 

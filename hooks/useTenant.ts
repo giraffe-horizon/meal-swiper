@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 
 const STORAGE_KEY = 'meal_swiper_tenant_token'
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 function generateToken(): string {
   return crypto.randomUUID()
@@ -10,9 +11,9 @@ function generateToken(): string {
 
 /**
  * Manages tenant token lifecycle:
- * 1. Check URL for ?t=<token>
+ * 1. Check URL path first segment for /<uuid>/...
  * 2. If found, store it in localStorage and use it
- * 3. If not in URL, check localStorage
+ * 3. If not in path, check localStorage
  * 4. If not in localStorage either, generate a new token
  * 5. Register the token with the server
  */
@@ -24,11 +25,14 @@ export function useTenant() {
     let cancelled = false
 
     async function init() {
-      // 1. Check URL param
-      const urlParams = new URLSearchParams(window.location.search)
-      let t = urlParams.get('t')
+      // 1. Extract token from URL path (e.g. /abc-uuid/plan -> abc-uuid)
+      const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
+      const pathParts = pathname.split('/').filter(Boolean)
+      const pathToken = pathParts[0] && UUID_REGEX.test(pathParts[0]) ? pathParts[0] : null
 
-      // 2. Check localStorage
+      let t = pathToken
+
+      // 2. Fall back to localStorage
       if (!t) {
         t = localStorage.getItem(STORAGE_KEY)
       }
@@ -41,14 +45,7 @@ export function useTenant() {
       // 4. Save to localStorage
       localStorage.setItem(STORAGE_KEY, t)
 
-      // 5. Update URL without reload (add ?t= if not present)
-      if (!urlParams.has('t')) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('t', t)
-        window.history.replaceState({}, '', url.toString())
-      }
-
-      // 6. Register with server (fire and forget — app works offline too)
+      // 5. Register with server (fire and forget — app works offline too)
       try {
         await fetch('/api/tenant', {
           method: 'POST',

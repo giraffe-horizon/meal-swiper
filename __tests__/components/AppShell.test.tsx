@@ -42,6 +42,7 @@ const mockUseAppContext = vi.fn(() => ({
   mealsLoading: false,
   weekOffset: 0,
   setWeekOffset: mockSetWeekOffset,
+  tenantToken: 'test-token',
 }))
 
 vi.mock('@/lib/context', () => ({
@@ -71,6 +72,7 @@ describe('AppShell', () => {
       mealsLoading: false,
       weekOffset: 0,
       setWeekOffset: mockSetWeekOffset,
+      tenantToken: 'test-token',
     })
     mockSetWeekOffset.mockClear()
   })
@@ -123,7 +125,7 @@ describe('AppShell', () => {
     )
     const settingsLink = screen.getByTitle('Ustawienia')
     expect(settingsLink).toBeInTheDocument()
-    expect(settingsLink.getAttribute('href')).toBe('/settings')
+    expect(settingsLink.getAttribute('href')).toBe('/test-token/settings')
   })
 
   it('clicking prev week button decrements weekOffset', () => {
@@ -158,6 +160,7 @@ describe('AppShell', () => {
       mealsLoading: true,
       weekOffset: 0,
       setWeekOffset: mockSetWeekOffset,
+      tenantToken: 'test-token',
     })
     render(
       <AppShell>

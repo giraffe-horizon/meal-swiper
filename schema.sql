@@ -2,6 +2,7 @@
 CREATE TABLE IF NOT EXISTS tenants (
   id TEXT PRIMARY KEY,
   token TEXT NOT NULL UNIQUE,
+  name TEXT DEFAULT '',
   created_at TEXT DEFAULT (datetime('now'))
 );
 

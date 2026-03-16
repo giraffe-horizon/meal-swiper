@@ -10,20 +10,24 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { getWeekDates, formatWeekRangeShort } from '@/lib/utils'
 
 function pathToViewId(pathname: string): ViewId {
-  if (pathname.startsWith('/swipe')) return 'swipe'
-  if (pathname.startsWith('/shopping')) return 'shopping'
-  if (pathname.startsWith('/cooking')) return 'cooking'
-  if (pathname.startsWith('/settings')) return 'settings'
+  const parts = pathname.split('/').filter(Boolean)
+  const last = parts[parts.length - 1]
+  if (last === 'swipe') return 'swipe'
+  if (last === 'shopping') return 'shopping'
+  if (last === 'cooking') return 'cooking'
+  if (last === 'settings') return 'settings'
   return 'plan'
 }
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const { mealsLoading, weekOffset, setWeekOffset } = useAppContext()
+  const { mealsLoading, weekOffset, setWeekOffset, tenantToken } = useAppContext()
   const activeView = pathToViewId(pathname)
 
   const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
   const weekRangeShort = useMemo(() => formatWeekRangeShort(weekDates), [weekDates])
+
+  const settingsHref = tenantToken ? `/${tenantToken}/settings` : '/settings'
 
   return (
     <div className="h-dvh bg-background-light dark:bg-background-dark flex text-text-primary-light dark:text-text-primary-dark transition-colors duration-300">
@@ -55,7 +59,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
               </span>
             </button>
             <Link
-              href="/settings"
+              href={settingsHref}
               className="ml-1 p-1 sm:p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors lg:hidden"
               title="Ustawienia"
             >
@@ -76,7 +80,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
         {/* Navigation */}
         <div className="shrink-0">
-          <Navigation activeView={activeView} />
+          <Navigation activeView={activeView} token={tenantToken ?? undefined} />
         </div>
       </div>
     </div>
