@@ -96,7 +96,7 @@ export default function SwipeStack({
               )}
 
               {/* Gradient overlay at bottom */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
               {/* Content at bottom — matching SwipeCard layout */}
               <div className="absolute bottom-0 left-0 right-0 p-5 pb-6 text-white">
@@ -105,10 +105,10 @@ export default function SwipeStack({
                     <h2 className="text-2xl font-bold leading-tight drop-shadow-lg">
                       {meal.nazwa}
                     </h2>
-                    <p className="text-white/80 text-sm mt-1 line-clamp-2 drop-shadow">
+                    <p className="text-slate-200 text-sm mt-1 line-clamp-2 drop-shadow">
                       {meal.opis}
                     </p>
-                    <div className="flex items-center gap-4 mt-3 text-sm font-medium text-white/90">
+                    <div className="flex items-center gap-4 mt-3 text-sm font-medium text-slate-100">
                       <div className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-[18px]">schedule</span>
                         <span>{meal.prep_time} min</span>
@@ -118,11 +118,11 @@ export default function SwipeStack({
                           local_fire_department
                         </span>
                         <span>{Math.round((meal.kcal_baza * people) / 2)} kcal</span>
-                        <span className="text-white/60 text-xs">dla {people} os.</span>
+                        <span className="text-slate-300 text-xs">dla {people} os.</span>
                       </div>
                     </div>
                   </div>
-                  <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold shrink-0">
+                  <div className="bg-slate-800 rounded-full px-3 py-1 text-xs font-bold shrink-0">
                     {actualIndex + 1}/{totalCards}
                   </div>
                 </div>

@@ -4,7 +4,11 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import type { AppSettings } from '@/types'
 import { computeScaleFactor } from '@/lib/scaling'
 
-const STORAGE_KEY = 'meal_swiper_settings'
+function getStorageKey(): string {
+  if (typeof window === 'undefined') return 'meal_swiper_settings'
+  const token = localStorage.getItem('meal_swiper_tenant_token') || ''
+  return token ? `${token}_meal_swiper_settings` : 'meal_swiper_settings'
+}
 const API_KEY = 'app_settings'
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -16,10 +20,18 @@ export const DEFAULT_SETTINGS: AppSettings = {
   theme: 'system',
 }
 
-export function useSettings() {
+function tenantHeaders(token: string | null): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (token) headers['X-Tenant-Token'] = token
+  return headers
+}
+
+export function useSettings(tenantToken: string | null = null) {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS)
   const [isLoaded, setIsLoaded] = useState(false)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const tenantTokenRef = useRef(tenantToken)
+  tenantTokenRef.current = tenantToken
 
   // Load settings: try D1 first, fallback to localStorage
   useEffect(() => {
@@ -28,7 +40,7 @@ export function useSettings() {
     async function load() {
       // Immediately show localStorage data for fast UX
       try {
-        const stored = localStorage.getItem(STORAGE_KEY)
+        const stored = localStorage.getItem(getStorageKey())
         if (stored) {
           const parsed = JSON.parse(stored) as AppSettings
           if (!cancelled) setSettings((prev) => ({ ...prev, ...parsed }))
@@ -39,14 +51,17 @@ export function useSettings() {
 
       // Then fetch from D1 (source of truth)
       try {
-        const res = await fetch(`/api/settings?key=${API_KEY}`)
+        const headers: Record<string, string> = {}
+        if (tenantToken) headers['X-Tenant-Token'] = tenantToken
+
+        const res = await fetch(`/api/settings?key=${API_KEY}`, { headers })
         if (res.ok) {
           const data = await res.json()
           if (data && !cancelled) {
             setSettings((prev) => {
               const next = { ...prev, ...data }
               // Sync to localStorage
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+              localStorage.setItem(getStorageKey(), JSON.stringify(next))
               return next
             })
           }
@@ -62,7 +77,7 @@ export function useSettings() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [tenantToken])
 
   // Save to D1 (debounced) + localStorage (immediate)
   const updateSettings = useCallback((newSettings: AppSettings) => {
@@ -70,7 +85,7 @@ export function useSettings() {
 
     // Immediate localStorage save
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings))
+      localStorage.setItem(getStorageKey(), JSON.stringify(newSettings))
     } catch {
       // ignore
     }
@@ -81,7 +96,7 @@ export function useSettings() {
       try {
         await fetch('/api/settings', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: tenantHeaders(tenantTokenRef.current),
           body: JSON.stringify({ key: API_KEY, value: newSettings }),
         })
       } catch {

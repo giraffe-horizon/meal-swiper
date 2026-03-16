@@ -1,9 +1,16 @@
 import { test, expect } from '@playwright/test'
+import { createTestTenant } from './helpers'
 
 test.describe('Plan view - weekly calendar', () => {
+  let token: string
+
+  test.beforeAll(async ({ baseURL }) => {
+    token = await createTestTenant(baseURL!)
+  })
+
   test('shows all 5 week days', async ({ page }) => {
-    await page.goto('/plan')
-    await page.waitForLoadState('networkidle')
+    await page.goto(`/${token}/plan`)
+    await page.waitForLoadState('domcontentloaded')
 
     const pn = page.getByText(/Poniedziałek|^Pn$/).first()
     const pt = page.getByText(/Piątek|^Pt$/).first()
@@ -12,8 +19,8 @@ test.describe('Plan view - weekly calendar', () => {
   })
 
   test('navigate to next week and back', async ({ page }) => {
-    await page.goto('/plan')
-    await page.waitForLoadState('networkidle')
+    await page.goto(`/${token}/plan`)
+    await page.waitForLoadState('domcontentloaded')
 
     const dateSpan = page
       .locator('span')
@@ -45,28 +52,28 @@ test.describe('Plan view - weekly calendar', () => {
   })
 
   test('empty day shows "Brak planu"', async ({ page }) => {
-    await page.goto('/plan')
-    await page.waitForLoadState('networkidle')
+    await page.goto(`/${token}/plan`)
+    await page.waitForLoadState('domcontentloaded')
 
     await expect(page.getByText('Brak planu').first()).toBeVisible({ timeout: 10000 })
   })
 
   test('settings link is visible in header', async ({ page }) => {
-    await page.goto('/plan')
-    await page.waitForLoadState('networkidle')
+    await page.goto(`/${token}/plan`)
+    await page.waitForLoadState('domcontentloaded')
 
-    const settingsLink = page.locator('a[href="/settings"]').first()
+    const settingsLink = page.locator('a[href*="/settings"]').first()
     await expect(settingsLink).toBeVisible()
   })
 
   test('navigates to swipe view from nav', async ({ page }) => {
-    await page.goto('/plan')
-    await page.waitForLoadState('networkidle')
+    await page.goto(`/${token}/plan`)
+    await page.waitForLoadState('domcontentloaded')
 
     // Mobile nav: "Swipe", Desktop sidebar: "Propozycje" — click whichever is visible
-    const mobileSwipe = page.locator('nav a[href="/swipe"]').first()
+    const mobileSwipe = page.locator('nav a[href*="/swipe"]').first()
     await mobileSwipe.click()
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('domcontentloaded')
 
     await expect(page).toHaveURL(/\/swipe/)
   })

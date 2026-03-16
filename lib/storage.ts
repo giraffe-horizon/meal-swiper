@@ -13,9 +13,16 @@ const DEFAULT_PLAN: WeeklyPlan = {
   fri_free: false,
 }
 
+function tenantPrefix(): string {
+  if (typeof window === 'undefined') return ''
+  const token = localStorage.getItem('meal_swiper_tenant_token') || ''
+  return token ? `${token}_` : ''
+}
+
 export function getWeeklyPlan(weekKey: string): WeeklyPlan {
   if (typeof window === 'undefined') return createDefaultPlan()
-  const saved = localStorage.getItem(`weeklyPlan_${weekKey}`)
+  const prefix = tenantPrefix()
+  const saved = localStorage.getItem(`${prefix}weeklyPlan_${weekKey}`)
   if (saved) {
     return JSON.parse(saved) as WeeklyPlan
   }
@@ -23,11 +30,13 @@ export function getWeeklyPlan(weekKey: string): WeeklyPlan {
 }
 
 export function saveWeeklyPlan(weekKey: string, plan: WeeklyPlan): void {
-  localStorage.setItem(`weeklyPlan_${weekKey}`, JSON.stringify(plan))
+  const prefix = tenantPrefix()
+  localStorage.setItem(`${prefix}weeklyPlan_${weekKey}`, JSON.stringify(plan))
 }
 
 export function getCheckedItems(weekKey: string): Record<string, boolean> {
-  const saved = localStorage.getItem(`checkedItems_${weekKey}`)
+  const prefix = tenantPrefix()
+  const saved = localStorage.getItem(`${prefix}checkedItems_${weekKey}`)
   if (saved) {
     return JSON.parse(saved) as Record<string, boolean>
   }
@@ -35,11 +44,13 @@ export function getCheckedItems(weekKey: string): Record<string, boolean> {
 }
 
 export function saveCheckedItems(weekKey: string, items: Record<string, boolean>): void {
-  localStorage.setItem(`checkedItems_${weekKey}`, JSON.stringify(items))
+  const prefix = tenantPrefix()
+  localStorage.setItem(`${prefix}checkedItems_${weekKey}`, JSON.stringify(items))
 }
 
 export function removeCheckedItems(weekKey: string): void {
-  localStorage.removeItem(`checkedItems_${weekKey}`)
+  const prefix = tenantPrefix()
+  localStorage.removeItem(`${prefix}checkedItems_${weekKey}`)
 }
 
 export function createDefaultPlan(): WeeklyPlan {

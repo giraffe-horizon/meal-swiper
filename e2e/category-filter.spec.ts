@@ -1,8 +1,15 @@
 import { test, expect } from '@playwright/test'
+import { createTestTenant } from './helpers'
 
 test.describe('Category filter in swipe view', () => {
+  let token: string
+
+  test.beforeAll(async ({ baseURL }) => {
+    token = await createTestTenant(baseURL!)
+  })
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/swipe')
+    await page.goto(`/${token}/swipe`)
     // SwipeView is dynamic({ ssr:false }) — wait for render (up to 30s)
     await page
       .waitForSelector('button:has-text("Pn"), text="Brak więcej posiłków"', { timeout: 30000 })

@@ -5,15 +5,21 @@ import type { Meal, DayKey, WeeklyPlan } from '@/types'
 import { getWeeklyPlan, saveWeeklyPlan, createDefaultPlan } from '@/lib/storage'
 import { getWeekKey } from '@/lib/utils'
 
-function syncPlanToServer(weekKey: string, plan: WeeklyPlan): void {
+function tenantHeaders(token: string | null): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (token) headers['X-Tenant-Token'] = token
+  return headers
+}
+
+function syncPlanToServer(weekKey: string, plan: WeeklyPlan, token: string | null): void {
   fetch('/api/plan', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: tenantHeaders(token),
     body: JSON.stringify({ week: weekKey, plan }),
   }).catch(() => {})
 }
 
-export function useWeeklyPlan() {
+export function useWeeklyPlan(tenantToken: string | null = null) {
   const [weekOffset, setWeekOffset] = useState(0)
   const weekKey = useMemo(() => getWeekKey(weekOffset), [weekOffset])
 
@@ -29,7 +35,10 @@ export function useWeeklyPlan() {
     setWeeklyPlan(localPlan)
 
     // Sync z serwera (async, nadpisuje jeśli serwer ma nowsze dane)
-    fetch(`/api/plan?week=${encodeURIComponent(weekKey)}`)
+    const headers: Record<string, string> = {}
+    if (tenantToken) headers['X-Tenant-Token'] = tenantToken
+
+    fetch(`/api/plan?week=${encodeURIComponent(weekKey)}`, { headers })
       .then((r) => (r.ok ? r.json() : null))
       .then((serverPlan: WeeklyPlan | null) => {
         if (serverPlan) {
@@ -38,15 +47,15 @@ export function useWeeklyPlan() {
         }
       })
       .catch(() => {}) // graceful degradation — zostaw lokalny plan
-  }, [weekKey])
+  }, [weekKey, tenantToken])
 
   const updatePlan = useCallback(
     (newPlan: WeeklyPlan) => {
       setWeeklyPlan(newPlan)
       saveWeeklyPlan(weekKey, newPlan)
-      syncPlanToServer(weekKey, newPlan)
+      syncPlanToServer(weekKey, newPlan, tenantToken)
     },
-    [weekKey]
+    [weekKey, tenantToken]
   )
 
   const setMeal = useCallback(

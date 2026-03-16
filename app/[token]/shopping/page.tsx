@@ -6,10 +6,5 @@ import ShoppingListView from '@/components/ShoppingListView'
 export default function ShoppingPage() {
   const { weeklyPlan, weekOffset } = useAppContext()
 
-  return (
-    <ShoppingListView
-      weeklyPlan={weeklyPlan}
-      weekOffset={weekOffset}
-    />
-  )
+  return <ShoppingListView weeklyPlan={weeklyPlan} weekOffset={weekOffset} />
 }

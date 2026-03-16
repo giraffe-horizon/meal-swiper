@@ -28,6 +28,7 @@ export default function SwipePage() {
     setCurrentSwipeIndex,
     setShuffledMeals,
     setSeenIds,
+    tenantToken,
   } = useAppContext()
   const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
 
@@ -41,8 +42,8 @@ export default function SwipePage() {
 
   const handleComplete = useCallback(() => {
     setCurrentSwipeDay(null)
-    router.push('/plan')
-  }, [setCurrentSwipeDay, router])
+    router.push(`/${tenantToken}/plan`)
+  }, [setCurrentSwipeDay, router, tenantToken])
 
   const handleSkipDay = useCallback(() => {
     // Find the next empty day after the current one
@@ -76,7 +77,7 @@ export default function SwipePage() {
             planu lub przejść do listy zakupów.
           </p>
           <button
-            onClick={() => router.push('/plan')}
+            onClick={() => router.push(`/${tenantToken}/plan`)}
             className="px-6 py-3 bg-primary text-white rounded-full font-bold shadow-lg hover:bg-primary/90 transition-colors"
           >
             Wróć do planu

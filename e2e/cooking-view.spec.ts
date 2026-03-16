@@ -1,9 +1,16 @@
 import { test, expect } from '@playwright/test'
+import { createTestTenant } from './helpers'
 
 test.describe('Cooking view', () => {
+  let token: string
+
+  test.beforeAll(async ({ baseURL }) => {
+    token = await createTestTenant(baseURL!)
+  })
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/cooking')
-    await page.waitForLoadState('networkidle')
+    await page.goto(`/${token}/cooking`)
+    await page.waitForLoadState('domcontentloaded')
   })
 
   test('cooking page loads', async ({ page }) => {
@@ -15,7 +22,7 @@ test.describe('Cooking view', () => {
   })
 
   test('shows cooking link in navigation', async ({ page }) => {
-    await expect(page.locator('a[href="/cooking"]').first()).toBeVisible({ timeout: 5000 })
+    await expect(page.locator('a[href*="/cooking"]').first()).toBeVisible({ timeout: 5000 })
   })
 
   test('shows day selector or empty state message — not a blank page', async ({ page }) => {
@@ -25,7 +32,7 @@ test.describe('Cooking view', () => {
     const emptyMsg = page.getByText(/Brak dań|Wybierz dzień|Zaplanuj posiłki/i)
 
     // Check that navigation is visible (replaces header title check)
-    await expect(page.locator('a[href="/cooking"]').first()).toBeVisible({ timeout: 5000 })
+    await expect(page.locator('a[href*="/cooking"]').first()).toBeVisible({ timeout: 5000 })
 
     // And we must have EITHER a day selector OR an empty state (not both missing)
     const hasDaySelector = await daySelector.count().then((n) => n > 0)
@@ -43,7 +50,7 @@ test.describe('Cooking view', () => {
 
   test('navigation links are functional', async ({ page }) => {
     // Clicking "Plan" nav link should navigate to /plan
-    const planLink = page.locator('a[href="/plan"]').first()
+    const planLink = page.locator('a[href*="/plan"]').first()
     await expect(planLink).toBeVisible()
     await planLink.click()
     await expect(page).toHaveURL(/\/plan/)

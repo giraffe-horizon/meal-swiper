@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, act } from '@testing-library/react'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import SwipeView from '@/components/SwipeView'
 import type { Meal, WeeklyPlan } from '@/types'
 
@@ -233,5 +233,83 @@ describe('SwipeView - onComplete fallback', () => {
     render(<SwipeView {...defaultProps} onComplete={onComplete} onSkipDay={undefined} />)
     fireEvent.click(screen.getByText(/Pomiń ten dzień/))
     expect(onComplete).toHaveBeenCalled()
+  })
+})
+
+describe('SwipeView - reshuffle at end of stack', () => {
+  it('reshuffles when reaching end of stack with empty days remaining', async () => {
+    const setShuffledMeals = vi.fn()
+    const setCurrentSwipeIndex = vi.fn()
+    const setSeenIds = vi.fn()
+
+    // Single meal at last index — triggers reshuffle branch
+    render(
+      <SwipeView
+        {...defaultProps}
+        meals={meals}
+        shuffledMealsFromContext={[makeMeal('only')]}
+        currentSwipeIndexFromContext={0}
+        allDaysFilled={false}
+        setShuffledMealsInContext={setShuffledMeals}
+        setCurrentSwipeIndexInContext={setCurrentSwipeIndex}
+        setSeenIdsInContext={setSeenIds}
+      />
+    )
+
+    // Click the close (skip) button to advance past last card
+    const closeBtn = screen
+      .getAllByRole('button')
+      .find((b) => b.querySelector('.material-symbols-outlined')?.textContent === 'close')
+
+    if (closeBtn) {
+      await act(async () => {
+        fireEvent.click(closeBtn)
+      })
+
+      // Should reshuffle and advance index
+      expect(setShuffledMeals).toHaveBeenCalled()
+      expect(setCurrentSwipeIndex).toHaveBeenCalledWith(1)
+      expect(setSeenIds).toHaveBeenCalled()
+    }
+  })
+
+  it('shows success state and reshuffle button when allDaysFilled', async () => {
+    const onComplete = vi.fn()
+    const setCurrentSwipeIndex = vi.fn()
+
+    render(
+      <SwipeView
+        {...defaultProps}
+        weeklyPlan={allFilledPlan}
+        allDaysFilled={true}
+        shuffledMealsFromContext={[makeMeal('last')]}
+        currentSwipeIndexFromContext={0}
+        onComplete={onComplete}
+        setCurrentSwipeIndexInContext={setCurrentSwipeIndex}
+      />
+    )
+
+    // Click heart to trigger completion
+    const heartBtn = screen
+      .getAllByRole('button')
+      .find((b) => b.querySelector('.material-symbols-outlined')?.textContent === 'favorite')
+
+    if (heartBtn) {
+      await act(async () => {
+        fireEvent.click(heartBtn)
+      })
+
+      // Success screen should render with reshuffle button
+      await waitFor(() => {
+        expect(screen.getByText('Wszystkie propozycje przejrzane!')).toBeInTheDocument()
+      })
+
+      // Click "Losuj ponownie" reshuffle button
+      const reshuffleBtn = screen.getByText('Losuj ponownie')
+      await act(async () => {
+        fireEvent.click(reshuffleBtn)
+      })
+      expect(setCurrentSwipeIndex).toHaveBeenCalledWith(0)
+    }
   })
 })

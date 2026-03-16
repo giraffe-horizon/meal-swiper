@@ -20,7 +20,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      'npx wrangler pages dev .open-next/assets --port 3000 --persist-to .wrangler/state/e2e',
+      'npx wrangler d1 execute meal-swiper-db --local --file schema.sql --persist-to .wrangler/state/e2e && npx wrangler d1 execute meal-swiper-db --local --file e2e/fixtures/seed.sql --persist-to .wrangler/state/e2e && npx wrangler pages dev .open-next/assets --port 3000 --persist-to .wrangler/state/e2e',
     port: 3000,
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
