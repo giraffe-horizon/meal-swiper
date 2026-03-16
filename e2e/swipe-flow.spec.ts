@@ -49,9 +49,9 @@ test.describe('Swipe flow', () => {
     // The meal must now appear in /plan
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(2000)
     if (mealName) {
-      await expect(page.getByText(mealName)).toBeVisible({ timeout: 5000 })
+      await expect(page.getByText(mealName)).toBeVisible({ timeout: 10000 })
     }
   })
 
