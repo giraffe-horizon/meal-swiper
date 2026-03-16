@@ -1,7 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import type { NextRequest } from 'next/server'
 import { getShoppingChecked, saveShoppingChecked, type D1Database } from '@/lib/db'
-import { resolveTenantId, extractTenantToken } from '@/lib/tenant'
+import { requireTenantId, extractTenantToken } from '@/lib/tenant'
 
 export async function GET(request: NextRequest) {
   const { env } = await getCloudflareContext()
@@ -12,10 +12,14 @@ export async function GET(request: NextRequest) {
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   try {
-    const tenantId = await resolveTenantId(db, extractTenantToken(request))
+    const tenantId = await requireTenantId(db, extractTenantToken(request))
     const data = await getShoppingChecked(db, week, tenantId)
     return Response.json(data ? JSON.parse(data) : null)
   } catch (error) {
+    const msg = error instanceof Error ? error.message : ''
+    if (msg === 'Tenant token required' || msg === 'Invalid tenant token') {
+      return Response.json({ error: msg }, { status: 401 })
+    }
     console.error('Error reading shopping checked from D1:', error)
     return Response.json(null)
   }
@@ -32,10 +36,14 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'week and checked required' }, { status: 400 })
 
   try {
-    const tenantId = await resolveTenantId(db, extractTenantToken(request))
+    const tenantId = await requireTenantId(db, extractTenantToken(request))
     await saveShoppingChecked(db, week, JSON.stringify(checked), tenantId)
     return Response.json({ ok: true })
   } catch (error) {
+    const msg = error instanceof Error ? error.message : ''
+    if (msg === 'Tenant token required' || msg === 'Invalid tenant token') {
+      return Response.json({ error: msg }, { status: 401 })
+    }
     console.error('Error saving shopping checked to D1:', error)
     return Response.json({ error: 'Failed to save' }, { status: 500 })
   }

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { resolveTenantId, extractTenantToken } from '@/lib/tenant'
+import { resolveTenantId, requireTenantId, extractTenantToken } from '@/lib/tenant'
 import type { D1Database } from '@/lib/db'
 
 const makeMockDb = (overrides: Partial<D1Database> = {}): D1Database => ({
@@ -44,10 +44,10 @@ describe('extractTenantToken', () => {
 describe('resolveTenantId', () => {
   beforeEach(() => vi.restoreAllMocks())
 
-  it('returns "default" when token is null', async () => {
+  it('returns null when token is null', async () => {
     const db = makeMockDb()
     const result = await resolveTenantId(db, null)
-    expect(result).toBe('default')
+    expect(result).toBeNull()
   })
 
   it('returns tenant id when token exists in DB', async () => {

@@ -5,10 +5,10 @@ import { getTenantByToken, createTenant } from '@/lib/db'
  * Resolve a tenant token to a tenant ID.
  * If the token exists in DB, return the tenant ID.
  * If the token is new, create a new tenant and return the new ID.
- * If no token is provided, return 'default'.
+ * If no token is provided, returns null.
  */
-export async function resolveTenantId(db: D1Database, token: string | null): Promise<string> {
-  if (!token) return 'default'
+export async function resolveTenantId(db: D1Database, token: string | null): Promise<string | null> {
+  if (!token) return null
 
   const tenant = await getTenantByToken(db, token)
   if (tenant) return tenant.id
@@ -16,6 +16,19 @@ export async function resolveTenantId(db: D1Database, token: string | null): Pro
   // Token not found — create new tenant with token as both id and token
   await createTenant(db, token, token)
   return token
+}
+
+/**
+ * Require a valid tenant token, throwing if missing or not found in DB.
+ * Use this for all tenant-scoped API endpoints.
+ */
+export async function requireTenantId(db: D1Database, token: string | null): Promise<string> {
+  if (!token) throw new Error('Tenant token required')
+
+  const tenant = await getTenantByToken(db, token)
+  if (!tenant) throw new Error('Invalid tenant token')
+
+  return tenant.id
 }
 
 /**
