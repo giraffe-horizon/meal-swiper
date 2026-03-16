@@ -1,8 +1,15 @@
 import { test, expect } from '@playwright/test'
+import { createTestTenant } from './helpers'
 
 test.describe('Settings page', () => {
+  let token: string
+
+  test.beforeAll(async ({ baseURL }) => {
+    token = await createTestTenant(baseURL!)
+  })
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/settings')
+    await page.goto(`/${token}/settings`)
     await page.waitForLoadState('networkidle')
   })
 
@@ -50,14 +57,20 @@ test.describe('Settings page', () => {
   })
 
   test('can navigate back to plan from settings', async ({ page }) => {
-    await page.locator('a[href="/plan"], a[href="/"]').first().click()
+    await page.locator('a[href*="/plan"], a[href="/"]').first().click()
     await expect(page).toHaveURL(/\/plan|^\/$/)
   })
 })
 
 test.describe('Settings - dark mode', () => {
+  let token: string
+
+  test.beforeAll(async ({ baseURL }) => {
+    token = await createTestTenant(baseURL!)
+  })
+
   test('toggle dark mode applies dark class to html element', async ({ page }) => {
-    await page.goto('/settings')
+    await page.goto(`/${token}/settings`)
     await page.waitForLoadState('networkidle')
 
     const darkBtn = page.getByText(/ciemny/i).first()

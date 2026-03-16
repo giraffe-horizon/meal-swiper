@@ -1,8 +1,15 @@
 import { test, expect } from '@playwright/test'
+import { createTestTenant } from './helpers'
 
 test.describe('Shopping list view', () => {
+  let token: string
+
+  test.beforeAll(async ({ baseURL }) => {
+    token = await createTestTenant(baseURL!)
+  })
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/shopping')
+    await page.goto(`/${token}/shopping`)
     await page.waitForLoadState('networkidle')
   })
 
@@ -11,7 +18,7 @@ test.describe('Shopping list view', () => {
   })
 
   test('shopping nav link is visible', async ({ page }) => {
-    await expect(page.locator('a[href="/shopping"]').first()).toBeVisible({ timeout: 5000 })
+    await expect(page.locator('a[href*="/shopping"]').first()).toBeVisible({ timeout: 5000 })
   })
 
   test('shows empty state when no meals planned', async ({ page }) => {
@@ -26,13 +33,15 @@ test.describe('Shopping list view', () => {
 
   test('shopping navigation link is active', async ({ page }) => {
     // Check nav exists (use href-based check — robust on mobile/desktop)
-    const shoppingLink = page.locator('a[href="/shopping"]').first()
+    const shoppingLink = page.locator('a[href*="/shopping"]').first()
     await expect(shoppingLink).toBeVisible()
   })
 })
 
 test.describe('Shopping list - with planned meals', () => {
-  test('check off items works when meals are in plan', async ({ page, context }) => {
+  test('check off items works when meals are in plan', async ({ page, context, baseURL }) => {
+    const token = await createTestTenant(baseURL!)
+
     await context.addInitScript(() => {
       const today = new Date()
       const day = today.getDay()
@@ -63,7 +72,7 @@ test.describe('Shopping list - with planned meals', () => {
       localStorage.setItem(`meal_swiper_plan_${weekKey}`, JSON.stringify(plan))
     })
 
-    await page.goto('/shopping')
+    await page.goto(`/${token}/shopping`)
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(500)
 

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { createTestTenant } from './helpers'
 
 // Block service worker to prevent networkidle timeout
 test.beforeEach(async ({ context }) => {
@@ -6,21 +7,6 @@ test.beforeEach(async ({ context }) => {
   await context.route('**/*.worker.js', (route) => route.abort())
   await context.route('**/workbox-*', (route) => route.abort())
 })
-
-async function createTestTenant(baseURL: string): Promise<string> {
-  const token = crypto.randomUUID()
-  const res = await fetch(`${baseURL}/api/tenant`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      token,
-      name: 'Test Tenant',
-      persons: [{ name: 'Osoba 1', kcal: 2000, protein: 120 }],
-    }),
-  })
-  if (!res.ok) throw new Error(`Failed to create test tenant: ${res.status}`)
-  return token
-}
 
 test.describe('Swipe flow', () => {
   test('swipe view loads with meal cards or empty state', async ({ page, baseURL }) => {
