@@ -42,3 +42,4 @@ wrangler.jsonc
 scripts/.env
 scripts/generated-images/
 screenshots/
+test-results/
