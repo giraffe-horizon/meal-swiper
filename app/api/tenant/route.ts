@@ -9,8 +9,6 @@ import {
   type D1Database,
 } from '@/lib/db'
 
-export const runtime = 'edge'
-
 // GET /api/tenant?token=<token> — return tenant info
 export async function GET(request: NextRequest) {
   const { env } = await getCloudflareContext()
