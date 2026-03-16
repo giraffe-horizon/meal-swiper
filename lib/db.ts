@@ -85,6 +85,21 @@ export async function getTenantByToken(
   return row ?? null
 }
 
+export async function getTenantInfo(
+  db: D1Database,
+  token: string
+): Promise<{ id: string; token: string; name: string; created_at: string } | null> {
+  const row = await db
+    .prepare('SELECT id, token, name, created_at FROM tenants WHERE token = ?')
+    .bind(token)
+    .first<{ id: string; token: string; name: string; created_at: string }>()
+  return row ?? null
+}
+
+export async function updateTenantName(db: D1Database, token: string, name: string): Promise<void> {
+  await db.prepare('UPDATE tenants SET name = ? WHERE token = ?').bind(name, token).run()
+}
+
 export async function createTenant(
   db: D1Database,
   id: string,

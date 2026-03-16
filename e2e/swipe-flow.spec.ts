@@ -7,16 +7,31 @@ test.beforeEach(async ({ context }) => {
   await context.route('**/workbox-*', (route) => route.abort())
 })
 
+async function createTestTenant(baseURL: string): Promise<string> {
+  const token = crypto.randomUUID()
+  const res = await fetch(`${baseURL}/api/tenant`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      token,
+      name: 'Test Tenant',
+      persons: [{ name: 'Osoba 1', kcal: 2000, protein: 120 }],
+    }),
+  })
+  if (!res.ok) throw new Error(`Failed to create test tenant: ${res.status}`)
+  return token
+}
+
 test.describe('Swipe flow', () => {
-  test('swipe view loads with meal cards or empty state', async ({ page }) => {
-    await page.goto('/swipe')
+  test('swipe view loads with meal cards or empty state', async ({ page, baseURL }) => {
+    const token = await createTestTenant(baseURL!)
+    await page.goto(`/${token}/swipe`)
     // Wait for the swipe UI to be ready — nav appears immediately, then meal cards load
     await page.waitForLoadState('domcontentloaded')
     // Wait for either a meal card (h2 inside swipe card), empty state, or "all filled" view
     await page
       .waitForSelector('h2, [data-testid="empty-state"]', { timeout: 15000 })
       .catch(() => null)
-
 
     const hasMealCard = (await page.locator('h2').count()) > 0
     const hasEmptyState = await page
@@ -28,8 +43,9 @@ test.describe('Swipe flow', () => {
     )
   })
 
-  test('happy path: swipe right adds meal to plan', async ({ page }) => {
-    await page.goto('/swipe')
+  test('happy path: swipe right adds meal to plan', async ({ page, baseURL }) => {
+    const token = await createTestTenant(baseURL!)
+    await page.goto(`/${token}/swipe`)
     await page.waitForLoadState('domcontentloaded')
     await page.waitForSelector('h2', { timeout: 15000 })
 
@@ -45,7 +61,7 @@ test.describe('Swipe flow', () => {
     await expect(page.getByText(/Dodano:/)).toBeVisible({ timeout: 8000 })
 
     // The meal must now appear in /plan
-    await page.goto('/plan')
+    await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(1000)
     if (mealName) {
@@ -53,8 +69,9 @@ test.describe('Swipe flow', () => {
     }
   })
 
-  test('skip button skips to next meal or day', async ({ page }) => {
-    await page.goto('/swipe')
+  test('skip button skips to next meal or day', async ({ page, baseURL }) => {
+    const token = await createTestTenant(baseURL!)
+    await page.goto(`/${token}/swipe`)
     await page.waitForLoadState('domcontentloaded')
     await page.waitForSelector('h2', { timeout: 15000 })
 
@@ -92,8 +109,9 @@ test.describe('Swipe flow', () => {
 })
 
 test.describe('Shopping list flow', () => {
-  test('plan meals and check shopping list persistence', async ({ page }) => {
-    await page.goto('/swipe')
+  test('plan meals and check shopping list persistence', async ({ page, baseURL }) => {
+    const token = await createTestTenant(baseURL!)
+    await page.goto(`/${token}/swipe`)
     await page.waitForLoadState('domcontentloaded')
     await page.waitForSelector('h2', { timeout: 15000 })
 
@@ -110,7 +128,7 @@ test.describe('Shopping list flow', () => {
         .catch(() => {})
     }
 
-    await page.goto('/shopping')
+    await page.goto(`/${token}/shopping`)
     // Use domcontentloaded — networkidle can timeout if background requests keep firing
     await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(1000)
@@ -127,7 +145,7 @@ test.describe('Shopping list flow', () => {
       })
       .catch(() => page.waitForTimeout(800))
 
-    await page.goto('/shopping')
+    await page.goto(`/${token}/shopping`)
     await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(500)
 
