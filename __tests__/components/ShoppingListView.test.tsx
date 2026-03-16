@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React from 'react'
 
 // Mock useAppContext
 vi.mock('@/lib/context', () => ({
@@ -27,6 +29,16 @@ beforeEach(() => {
 const { default: ShoppingListView } = await import('@/components/ShoppingListView')
 
 import type { WeeklyPlan, Meal } from '@/types'
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
+  })
+  return ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+}
 
 const mockMeal: Meal = {
   id: '1',
@@ -70,19 +82,25 @@ const planWithMeal: WeeklyPlan = {
 
 describe('ShoppingListView', () => {
   it('shows empty state when no meals in plan', () => {
-    render(<ShoppingListView weeklyPlan={emptyPlan} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={emptyPlan} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
     expect(screen.getByText(/Brak/i)).toBeInTheDocument()
   })
 
   it('renders shopping list items when meals are in plan', async () => {
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
     await waitFor(() => {
       expect(screen.getByText(/Makaron/i)).toBeInTheDocument()
     })
   })
 
   it('renders toolbar with action buttons when items exist', async () => {
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
     await waitFor(() => {
       // Toolbar should appear when there are items
       expect(screen.getByText(/Makaron/i)).toBeInTheDocument()
@@ -90,7 +108,9 @@ describe('ShoppingListView', () => {
   })
 
   it('toggles item checked state on click', async () => {
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => {
       expect(screen.getByText(/Makaron/i)).toBeInTheDocument()
@@ -104,7 +124,9 @@ describe('ShoppingListView', () => {
   })
 
   it('shows progress indicator with counts', async () => {
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
     await waitFor(() => {
       // Shows "0/2 produktów"
       expect(screen.getByText(/produktów/)).toBeInTheDocument()
@@ -113,7 +135,9 @@ describe('ShoppingListView', () => {
 
   it('reset list button calls confirm', async () => {
     window.confirm = vi.fn(() => false)
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => {
       expect(screen.getByText(/Makaron/)).toBeInTheDocument()
@@ -134,7 +158,9 @@ describe('ShoppingListView', () => {
   })
 
   it('check all items button sets all items as checked', async () => {
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => {
       expect(screen.getByText(/Makaron/)).toBeInTheDocument()
@@ -158,7 +184,9 @@ describe('ShoppingListView', () => {
     })
     window.alert = vi.fn()
 
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => {
       expect(screen.getByText(/Makaron/)).toBeInTheDocument()
@@ -173,7 +201,9 @@ describe('ShoppingListView', () => {
     window.confirm = vi.fn(() => true)
     const { removeCheckedItems } = await import('@/lib/storage')
 
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => {
       expect(screen.getByText(/Makaron/)).toBeInTheDocument()
@@ -199,7 +229,9 @@ describe('ShoppingListView', () => {
     })
     const { saveCheckedItems } = await import('@/lib/storage')
 
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />)
+    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
+      wrapper: createWrapper(),
+    })
 
     await waitFor(() => {
       expect(saveCheckedItems).toHaveBeenCalled()

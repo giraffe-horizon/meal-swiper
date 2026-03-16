@@ -6,6 +6,10 @@ import { getWeekKey } from '@/lib/utils'
 import { getCheckedItems, saveCheckedItems, removeCheckedItems } from '@/lib/storage'
 import { generateShoppingList } from '@/lib/shopping'
 import { useAppContext } from '@/lib/context'
+import {
+  useShoppingCheckedQuery,
+  useShoppingCheckedMutation,
+} from '@/hooks/queries/useShoppingCheckedQuery'
 
 interface ShoppingListViewProps {
   weeklyPlan: WeeklyPlan
@@ -25,51 +29,34 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
     [weeklyPlan, scaleFactor]
   )
 
-  const syncCheckedToServer = (newChecked: Record<string, boolean>) => {
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-    if (tenantToken) headers['X-Tenant-Token'] = tenantToken
-    fetch('/api/shopping-checked', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ week: weekKey, checked: newChecked }),
-    }).catch(() => {})
-  }
+  const { data: serverChecked } = useShoppingCheckedQuery(weekKey, tenantToken)
+  const { mutate: syncCheckedToServer } = useShoppingCheckedMutation(tenantToken)
 
   useEffect(() => {
     // Reload from localStorage when week changes (initializer only runs once)
     setCheckedItems(getCheckedItems(weekKey))
   }, [weekKey])
 
+  // When server data arrives: sync to state + localStorage
   useEffect(() => {
-    let cancelled = false
-    const headers: Record<string, string> = {}
-    if (tenantToken) headers['X-Tenant-Token'] = tenantToken
-    fetch(`/api/shopping-checked?week=${encodeURIComponent(weekKey)}`, { headers })
-      .then((r) => r.json())
-      .then((serverChecked: Record<string, boolean> | null) => {
-        if (!cancelled && serverChecked) {
-          setCheckedItems(serverChecked)
-          saveCheckedItems(weekKey, serverChecked)
-        }
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
+    if (serverChecked) {
+      setCheckedItems(serverChecked)
+      saveCheckedItems(weekKey, serverChecked)
     }
-  }, [weekKey, tenantToken])
+  }, [serverChecked, weekKey])
 
   const toggleItem = (normalizedName: string) => {
     const newChecked = { ...checkedItems, [normalizedName]: !checkedItems[normalizedName] }
     setCheckedItems(newChecked)
     saveCheckedItems(weekKey, newChecked)
-    syncCheckedToServer(newChecked)
+    syncCheckedToServer({ weekKey, checked: newChecked })
   }
 
   const resetList = () => {
     if (window.confirm('Czy na pewno chcesz zresetować listę?')) {
       setCheckedItems({})
       removeCheckedItems(weekKey)
-      syncCheckedToServer({})
+      syncCheckedToServer({ weekKey, checked: {} })
     }
   }
 
@@ -85,7 +72,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
     })
     setCheckedItems(newChecked)
     saveCheckedItems(weekKey, newChecked)
-    syncCheckedToServer(newChecked)
+    syncCheckedToServer({ weekKey, checked: newChecked })
   }
 
   const shareList = () => {

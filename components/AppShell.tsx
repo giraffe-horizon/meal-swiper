@@ -3,11 +3,22 @@
 import { useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ViewId } from '@/types'
 import { AppProvider, useAppContext } from '@/lib/context'
 import Navigation from '@/components/Navigation'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { getWeekDates, formatWeekRangeShort } from '@/lib/utils'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minute
+      gcTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+})
 
 function pathToViewId(pathname: string): ViewId {
   const parts = pathname.split('/').filter(Boolean)
@@ -89,8 +100,10 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <AppProvider>
-      <AppShellInner>{children}</AppShellInner>
-    </AppProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppProvider>
+        <AppShellInner>{children}</AppShellInner>
+      </AppProvider>
+    </QueryClientProvider>
   )
 }
