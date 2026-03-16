@@ -67,16 +67,12 @@ export default function SwipeStack({
             )
           }
 
-          // Background stack cards — same look as top card
-          const scale = 1 - stackIdx * 0.05
-          const translateY = stackIdx * 8
-
+          // Background stack cards — identical to top card
           return (
             <div
               key={`stack-${actualIndex}`}
               className="absolute inset-0 rounded-2xl shadow-xl overflow-hidden pointer-events-none"
               style={{
-                transform: `scale(${scale}) translateY(${translateY}px)`,
                 zIndex: 10 - stackIdx,
               }}
             >
