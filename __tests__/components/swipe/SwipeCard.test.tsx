@@ -79,7 +79,8 @@ describe('SwipeCard', () => {
 
   it('renders placeholder when no photo', () => {
     const { container } = render(<SwipeCard {...defaultProps} meal={mealNoPhoto} />)
-    expect(container.querySelector('[aria-label="Makaron"]')).toBeInTheDocument()
+    // Placeholder is a plain grey div with aria-hidden
+    expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
   })
 
   it('shows kcal info (per person avg)', () => {
