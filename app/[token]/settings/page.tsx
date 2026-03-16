@@ -12,7 +12,9 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState<'token' | 'link' | null>(null)
   const saveNameTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const shareLink = tenantToken ? `https://meal-swiper.liske.workers.dev/${tenantToken}/plan` : ''
+  const shareLink = tenantToken && typeof window !== 'undefined'
+    ? `${window.location.origin}/${tenantToken}/plan`
+    : ''
 
   useEffect(() => {
     if (!tenantToken) return
