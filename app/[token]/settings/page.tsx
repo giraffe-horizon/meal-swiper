@@ -50,7 +50,6 @@ export default function SettingsPage() {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text)
       } else {
-        // Fallback for non-HTTPS contexts
         const textarea = document.createElement('textarea')
         textarea.value = text
         textarea.style.position = 'fixed'
@@ -63,8 +62,24 @@ export default function SettingsPage() {
       setCopied(type)
       setTimeout(() => setCopied(null), 2000)
     } catch {
-      // Last resort: prompt user to copy manually
       window.prompt('Skopiuj:', text)
+    }
+  }
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Meal Swiper',
+          text: tenantName ? `Dołącz do "${tenantName}" w Meal Swiper` : 'Dołącz do Meal Swiper',
+          url: shareLink,
+        })
+      } catch {
+        // User cancelled share dialog
+      }
+    } else {
+      // Fallback: copy link
+      await copyToClipboard(shareLink, 'link')
     }
   }
 
@@ -156,8 +171,8 @@ export default function SettingsPage() {
                     {shareLink}
                   </span>
                   <button
-                    onClick={() => copyToClipboard(shareLink, 'link')}
-                    title="Kopiuj link"
+                    onClick={handleShare}
+                    title="Udostępnij link"
                     className="flex-shrink-0 w-9 h-9 rounded-xl border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-dark/50 flex items-center justify-center text-slate-500 dark:text-text-secondary-dark hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors"
                   >
                     <span className="material-symbols-outlined text-base">
