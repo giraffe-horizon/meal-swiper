@@ -3,6 +3,7 @@
 import type { MotionValue, PanInfo } from 'framer-motion'
 import type { Meal } from '@/types'
 import SwipeCard from './SwipeCard'
+import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface SwipeStackProps {
   stackCards: Meal[]
@@ -66,23 +67,17 @@ export default function SwipeStack({
             )
           }
 
-          // Background stack cards
-          const scale = 1 - stackIdx * 0.05
-          const translateY = stackIdx * 8
-          const cardOpacity = stackIdx === 1 ? 0.7 : 0.4
-
+          // Background stack cards — identical to top card
           return (
             <div
               key={`stack-${actualIndex}`}
-              className="absolute inset-0 rounded-2xl shadow-xl overflow-hidden pointer-events-none bg-slate-200 dark:bg-surface-dark"
+              className="absolute inset-0 rounded-2xl shadow-xl overflow-hidden pointer-events-none"
               style={{
-                transform: `scale(${scale}) translateY(${translateY}px)`,
-                opacity: cardOpacity,
                 zIndex: 10 - stackIdx,
               }}
             >
-              {/* Full image background */}
-              {meal.photo_url && (
+              {/* Full image background or placeholder */}
+              {meal.photo_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   alt={meal.nazwa}
@@ -93,6 +88,8 @@ export default function SwipeStack({
                     ;(e.target as HTMLImageElement).style.display = 'none'
                   }}
                 />
+              ) : (
+                <MealImagePlaceholder className="absolute inset-0 w-full h-full" />
               )}
 
               {/* Gradient overlay at bottom */}
