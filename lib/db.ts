@@ -342,6 +342,16 @@ export async function fetchAllMealsWithVariants(db: D1Database): Promise<MealWit
     }
   }
 
+  // Attach ingredients to variants
+  for (const [variantId, ingredients] of Object.entries(ingredientsByVariantId)) {
+    for (const mealVariants of Object.values(variantsByMealId)) {
+      const variant = mealVariants.find((v) => v.id === variantId)
+      if (variant) {
+        variant.ingredients = ingredients
+      }
+    }
+  }
+
   // Combine meals with their variants
   return mealsResult.results.map(
     (meal): MealWithVariants => ({

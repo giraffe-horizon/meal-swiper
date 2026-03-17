@@ -53,6 +53,7 @@ export interface MealVariant {
   fat?: number
   dietary_flags: DietaryFlag[]
   is_default: boolean
+  ingredients?: MealVariantIngredient[]
   created_at?: string
 }
 
