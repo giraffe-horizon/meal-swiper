@@ -10,6 +10,7 @@ export function useShoppingCheckedQuery(weekKey: string, token: string | null) {
   return useQuery({
     queryKey: shoppingCheckedQueryKey(weekKey, token),
     queryFn: () => fetchShoppingChecked(weekKey, token),
+    // Shopping works with or without token (global fallback)
   })
 }
 

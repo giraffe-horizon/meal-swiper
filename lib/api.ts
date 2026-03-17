@@ -1,4 +1,4 @@
-import type { Meal, WeeklyPlan, AppSettings } from '@/types'
+import type { Meal, WeeklyPlan, AppSettings, TenantInfo } from '@/types'
 
 function tenantHeaders(token: string | null): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
@@ -73,7 +73,7 @@ export async function saveShoppingChecked(
   })
 }
 
-export async function fetchTenantInfo(token: string): Promise<unknown> {
+export async function fetchTenantInfo(token: string): Promise<TenantInfo | null> {
   const res = await fetch(`/api/tenant?token=${encodeURIComponent(token)}`)
   if (!res.ok) return null
   return res.json()
@@ -90,7 +90,7 @@ export async function createTenant(data: { token: string }): Promise<void> {
 export async function updateTenantName(token: string, name: string): Promise<void> {
   await fetch('/api/tenant', {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', 'X-Tenant-Token': token },
-    body: JSON.stringify({ name }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, name }),
   })
 }

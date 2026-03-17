@@ -10,6 +10,8 @@ export function useSettingsQuery(token: string | null) {
   return useQuery({
     queryKey: settingsQueryKey(token),
     queryFn: () => fetchSettings(token),
+    // Settings work with or without token (global fallback)
+    refetchOnWindowFocus: false,
   })
 }
 

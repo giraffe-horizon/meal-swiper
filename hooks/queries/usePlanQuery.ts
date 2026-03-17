@@ -11,6 +11,8 @@ export function usePlanQuery(weekKey: string, token: string | null) {
   return useQuery({
     queryKey: planQueryKey(weekKey, token),
     queryFn: () => fetchPlan(weekKey, token),
+    // Plan works with or without token (global fallback)
+    refetchOnWindowFocus: false,
   })
 }
 
