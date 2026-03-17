@@ -4,6 +4,7 @@ import type {
   CatalogIngredient,
   MealVariant,
   MealVariantIngredient,
+  IngredientCategory,
 } from '@/types'
 
 // D1 binding type
@@ -331,7 +332,7 @@ export async function fetchAllMealsWithVariants(db: D1Database): Promise<MealWit
         ingredient: {
           id: row.ingredient_id,
           name: row.ingredient_name!,
-          category: row.ingredient_category! as any,
+          category: row.ingredient_category! as IngredientCategory,
           flags: JSON.parse(row.ingredient_flags || '[]'),
           is_seasoning: Boolean(row.is_seasoning),
           created_at: row.ingredient_created_at,
@@ -349,7 +350,7 @@ export async function fetchAllMealsWithVariants(db: D1Database): Promise<MealWit
       opis: meal.opis || '',
       photo_url: meal.photo_url || '',
       prep_time: meal.prep_time || 0,
-      trudnosc: (meal.trudnosc as any) || '',
+      trudnosc: (meal.trudnosc as Meal['trudnosc']) || '',
       kuchnia: meal.kuchnia || '',
       category: meal.category || '',
       przepis: meal.przepis || '{}',
@@ -382,7 +383,7 @@ export async function fetchAllIngredientsCatalog(db: D1Database): Promise<Catalo
     (row): CatalogIngredient => ({
       id: row.id,
       name: row.name,
-      category: row.category as any,
+      category: row.category as IngredientCategory,
       flags: JSON.parse(row.flags || '[]'),
       is_seasoning: Boolean(row.is_seasoning),
       created_at: row.created_at,
