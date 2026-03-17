@@ -29,6 +29,14 @@ vi.mock('@/hooks/useMeals', () => ({
   useMeals: () => ({
     meals: [],
     loading: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
+  useMealsWithVariants: () => ({
+    meals: [],
+    loading: false,
+    error: null,
+    refetch: vi.fn(),
   }),
 }))
 
@@ -80,6 +88,9 @@ vi.mock('@/hooks/useSwipeState', () => ({
     setCurrentSwipeIndex: vi.fn(),
     setSeenIds: vi.fn(),
     shuffleMeals: mockShuffleMeals,
+    shuffleFilteredMeals: vi.fn(),
+    getVariantAssignment: () => null,
+    filteredMeals: [],
     advanceIndex: vi.fn(),
     resetSwipe: vi.fn(),
   }),

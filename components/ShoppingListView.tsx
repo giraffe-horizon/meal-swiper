@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import type { WeeklyPlan } from '@/types'
+import type { WeeklyPlan, MealWithVariants } from '@/types'
 import { getWeekKey } from '@/lib/utils'
 import { getCheckedItems, saveCheckedItems, removeCheckedItems } from '@/lib/storage'
 import { generateShoppingList } from '@/lib/shopping'
+import { aggregateShoppingList, calculatePersonScale } from '@/lib/scaling'
 import { useAppContext } from '@/lib/context'
 import {
   useShoppingCheckedQuery,
@@ -17,17 +18,90 @@ interface ShoppingListViewProps {
 }
 
 export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingListViewProps) {
-  const { scaleFactor, tenantToken } = useAppContext()
+  const { scaleFactor, tenantToken, settings, getVariantAssignment } = useAppContext()
   const weekKey = getWeekKey(weekOffset)
 
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() =>
     typeof window !== 'undefined' ? getCheckedItems(weekKey) : {}
   )
 
-  const items = useMemo(
-    () => generateShoppingList(weeklyPlan, scaleFactor),
-    [weeklyPlan, scaleFactor]
-  )
+  const { items, itemsByCategory, isVariantBased } = useMemo(() => {
+    // Check if we have any variant assignments available
+    const weekPlanValues = Object.values(weeklyPlan).filter(
+      (meal) => meal && typeof meal === 'object' && 'id' in meal
+    ) as Array<{ id: string }>
+    const hasVariants = weekPlanValues.some((meal) => {
+      const variantAssignment = getVariantAssignment(meal.id)
+      return variantAssignment && Object.keys(variantAssignment).length > 0
+    })
+
+    if (hasVariants && settings.persons.length > 0) {
+      // Use variant-based aggregation
+      const weekPlanEntries = weekPlanValues
+        .map((meal) => {
+          const variantAssignment = getVariantAssignment(meal.id) || {}
+          const personScales: Record<string, number> = {}
+
+          // Calculate scales for each person
+          for (const person of settings.persons) {
+            const variant = variantAssignment[person.name]
+            if (variant) {
+              const { scale } = calculatePersonScale(variant, person)
+              personScales[person.name] = scale
+            }
+          }
+
+          // Note: We're casting to MealWithVariants here assuming the meal has variants
+          // since we confirmed hasVariants is true
+          return {
+            meal: meal as unknown as MealWithVariants,
+            variantAssignment,
+            personScales,
+          }
+        })
+        .filter(
+          (entry) => entry.variantAssignment && Object.keys(entry.variantAssignment).length > 0
+        )
+
+      const variantShoppingList = aggregateShoppingList(weekPlanEntries)
+
+      // Group by category for variant-based shopping
+      const grouped = variantShoppingList.reduce(
+        (acc, item) => {
+          const category = item.ingredient.category
+          if (!acc[category]) acc[category] = []
+          acc[category].push({
+            name: item.ingredient.name,
+            amount: item.display,
+            normalizedName: item.ingredient.id,
+          })
+          return acc
+        },
+        {} as Record<string, Array<{ name: string; amount: string; normalizedName: string }>>
+      )
+
+      // Convert to flat list for backward compatibility
+      const flatItems = variantShoppingList.map((item) => ({
+        name: item.ingredient.name,
+        amount: item.display,
+        normalizedName: item.ingredient.id,
+      }))
+
+      return {
+        items: flatItems,
+        itemsByCategory: grouped,
+        isVariantBased: true,
+      }
+    } else {
+      // Fallback to legacy shopping list generation
+      const legacyItems = generateShoppingList(weeklyPlan, scaleFactor)
+      return {
+        items: legacyItems,
+        itemsByCategory: {},
+        isVariantBased: false,
+      }
+    }
+  }, [weeklyPlan, scaleFactor, settings, getVariantAssignment])
 
   const { data: serverChecked } = useShoppingCheckedQuery(weekKey, tenantToken)
   const { mutate: syncCheckedToServer } = useShoppingCheckedMutation(tenantToken)
@@ -138,44 +212,100 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
                 </p>
               </div>
             )}
-            <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
-              <div className="divide-y divide-border-light dark:divide-border-dark">
-                {items.map((item) => {
-                  const isChecked = checkedItems[item.normalizedName] || false
 
-                  return (
-                    <label
-                      key={item.normalizedName}
-                      className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
-                        isChecked ? 'opacity-60' : ''
-                      }`}
-                    >
-                      <div className="flex size-6 items-center justify-center shrink-0">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => toggleItem(item.normalizedName)}
-                          className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
-                        />
-                      </div>
-                      <span
-                        className={`text-base font-medium flex-1 text-text-primary-light dark:text-text-primary-dark ${
-                          isChecked ? 'line-through' : ''
+            {/* Variant-based categorized display */}
+            {isVariantBased && Object.keys(itemsByCategory).length > 0 ? (
+              <div className="space-y-4">
+                {Object.entries(itemsByCategory).map(([category, categoryItems]) => (
+                  <div
+                    key={category}
+                    className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark"
+                  >
+                    <div className="px-4 py-2 bg-slate-100 dark:bg-slate-700 border-b border-border-light dark:border-border-dark">
+                      <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 capitalize">
+                        {category}
+                      </h3>
+                    </div>
+                    <div className="divide-y divide-border-light dark:divide-border-dark">
+                      {categoryItems.map((item) => {
+                        const isChecked = checkedItems[item.normalizedName] || false
+
+                        return (
+                          <label
+                            key={item.normalizedName}
+                            className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
+                              isChecked ? 'opacity-60' : ''
+                            }`}
+                          >
+                            <div className="flex size-6 items-center justify-center shrink-0">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleItem(item.normalizedName)}
+                                className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
+                              />
+                            </div>
+                            <span
+                              className={`text-base font-medium flex-1 text-text-primary-light dark:text-text-primary-dark ${
+                                isChecked ? 'line-through' : ''
+                              }`}
+                            >
+                              {item.name}
+                              <span
+                                className={`text-text-secondary-light dark:text-text-secondary-dark font-normal ${isChecked ? 'line-through' : ''}`}
+                              >
+                                {' '}
+                                — {item.amount}
+                              </span>
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* Legacy flat display */
+              <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+                <div className="divide-y divide-border-light dark:divide-border-dark">
+                  {items.map((item) => {
+                    const isChecked = checkedItems[item.normalizedName] || false
+
+                    return (
+                      <label
+                        key={item.normalizedName}
+                        className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
+                          isChecked ? 'opacity-60' : ''
                         }`}
                       >
-                        {item.name}
+                        <div className="flex size-6 items-center justify-center shrink-0">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => toggleItem(item.normalizedName)}
+                            className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
+                          />
+                        </div>
                         <span
-                          className={`text-text-secondary-light dark:text-text-secondary-dark font-normal ${isChecked ? 'line-through' : ''}`}
+                          className={`text-base font-medium flex-1 text-text-primary-light dark:text-text-primary-dark ${
+                            isChecked ? 'line-through' : ''
+                          }`}
                         >
-                          {' '}
-                          — {item.amount}
+                          {item.name}
+                          <span
+                            className={`text-text-secondary-light dark:text-text-secondary-dark font-normal ${isChecked ? 'line-through' : ''}`}
+                          >
+                            {' '}
+                            — {item.amount}
+                          </span>
                         </span>
-                      </span>
-                    </label>
-                  )
-                })}
+                      </label>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Reset Button */}
             <div className="pt-4 pb-8 flex justify-center">

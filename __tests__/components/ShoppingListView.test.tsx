@@ -8,6 +8,8 @@ vi.mock('@/lib/context', () => ({
   useAppContext: () => ({
     scaleFactor: 1,
     tenantToken: 'test-token',
+    settings: { persons: [] },
+    getVariantAssignment: () => null,
   }),
 }))
 

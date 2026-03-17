@@ -16,8 +16,8 @@ import { useAppContext } from '@/lib/context'
 import { filterMealsByPreferences, type HouseholdConfig } from '@/lib/meal-filter'
 
 interface SwipeViewProps {
-  meals: Meal[]
-  onSwipeRight: (meal: Meal) => void
+  meals: (Meal | MealWithVariants)[]
+  onSwipeRight: (meal: Meal | MealWithVariants) => void
   currentDay: DayKey | null
   onComplete: () => void
   weeklyPlan: WeeklyPlan
@@ -27,11 +27,11 @@ interface SwipeViewProps {
   weekDates?: Date[]
   onDaySelect?: (day: DayKey) => void
   allDaysFilled?: boolean
-  shuffledMealsFromContext?: Meal[]
+  shuffledMealsFromContext?: (Meal | MealWithVariants)[]
   currentSwipeIndexFromContext?: number
   seenIdsFromContext?: string[]
   setCurrentSwipeIndexInContext?: (index: number) => void
-  setShuffledMealsInContext?: (meals: Meal[]) => void
+  setShuffledMealsInContext?: (meals: (Meal | MealWithVariants)[]) => void
   setSeenIdsInContext?: (ids: string[]) => void
   // Fridge mode props
   fridgeModeEnabled?: boolean
@@ -247,7 +247,29 @@ export default function SwipeView({
   const handleCardTap = useCallback(
     (e: React.PointerEvent) => {
       if (Math.abs(e.clientX - dragStartX) < 10 && currentMeal) {
-        setModalMeal(currentMeal)
+        // Convert MealWithVariants to Meal for modal compatibility
+        const modalMealData: Meal =
+          'variants' in currentMeal
+            ? {
+                id: currentMeal.id,
+                nazwa: currentMeal.nazwa,
+                opis: currentMeal.opis,
+                photo_url: currentMeal.photo_url,
+                prep_time: currentMeal.prep_time,
+                kcal_baza: currentMeal.variants.find((v) => v.is_default)?.kcal || 0,
+                kcal_z_miesem: currentMeal.variants.find((v) => v.is_default)?.kcal || 0,
+                bialko_baza: currentMeal.variants.find((v) => v.is_default)?.protein || 0,
+                bialko_z_miesem: currentMeal.variants.find((v) => v.is_default)?.protein || 0,
+                trudnosc: currentMeal.trudnosc,
+                kuchnia: currentMeal.kuchnia,
+                category: currentMeal.category,
+                skladniki_baza: currentMeal.przepis, // Fallback
+                skladniki_mieso: '[]',
+                przepis: currentMeal.przepis,
+                tags: currentMeal.tags,
+              }
+            : currentMeal
+        setModalMeal(modalMealData)
       }
     },
     [dragStartX, currentMeal]

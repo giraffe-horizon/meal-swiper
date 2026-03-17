@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { motion, type MotionValue, type PanInfo } from 'framer-motion'
-import type { Meal } from '@/types'
+import type { Meal, MealWithVariants } from '@/types'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface SwipeCardProps {
-  meal: Meal
+  meal: Meal | MealWithVariants
   x: MotionValue<number>
   rotate: MotionValue<number>
   likeOpacity: MotionValue<number>
@@ -101,7 +101,16 @@ export default function SwipeCard({
               </div>
               <div className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
-                <span>{Math.round((meal.kcal_baza * people) / 2)} kcal</span>
+                <span>
+                  {Math.round(
+                    (('kcal_baza' in meal
+                      ? meal.kcal_baza
+                      : meal.variants.find((v) => v.is_default)?.kcal || 0) *
+                      people) /
+                      2
+                  )}{' '}
+                  kcal
+                </span>
                 <span className="text-slate-300 text-xs">dla {people} os.</span>
               </div>
             </div>

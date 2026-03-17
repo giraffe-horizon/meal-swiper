@@ -1,12 +1,12 @@
 'use client'
 
 import type { MotionValue, PanInfo } from 'framer-motion'
-import type { Meal } from '@/types'
+import type { Meal, MealWithVariants } from '@/types'
 import SwipeCard from './SwipeCard'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface SwipeStackProps {
-  stackCards: Meal[]
+  stackCards: (Meal | MealWithVariants)[]
   currentIndex: number
   totalCards: number
   x: MotionValue<number>
@@ -114,7 +114,16 @@ export default function SwipeStack({
                         <span className="material-symbols-outlined text-[18px]">
                           local_fire_department
                         </span>
-                        <span>{Math.round((meal.kcal_baza * people) / 2)} kcal</span>
+                        <span>
+                          {Math.round(
+                            (('kcal_baza' in meal
+                              ? meal.kcal_baza
+                              : meal.variants.find((v) => v.is_default)?.kcal || 0) *
+                              people) /
+                              2
+                          )}{' '}
+                          kcal
+                        </span>
                         <span className="text-slate-300 text-xs">dla {people} os.</span>
                       </div>
                     </div>

@@ -24,7 +24,7 @@ function getDefaultDay(weeklyPlan: ReturnType<typeof useAppContext>['weeklyPlan'
 }
 
 export default function CookingPage() {
-  const { weeklyPlan, weekOffset, settings, scaleFactor } = useAppContext()
+  const { weeklyPlan, weekOffset, settings, scaleFactor, getVariantAssignment } = useAppContext()
   const { weekDates } = useWeekDates(weekOffset)
 
   const defaultDay = useMemo(() => getDefaultDay(weeklyPlan), [weeklyPlan])
@@ -32,6 +32,7 @@ export default function CookingPage() {
 
   const effectiveDay = selectedDay && weeklyPlan[selectedDay] ? selectedDay : defaultDay
   const meal = effectiveDay ? weeklyPlan[effectiveDay] : null
+  const variantAssignment = meal ? getVariantAssignment(meal.id) : null
 
   const handleDaySelect = (day: DayKey) => setSelectedDay(day)
 
@@ -50,6 +51,8 @@ export default function CookingPage() {
           meal={meal}
           people={settings.people}
           scaleFactor={scaleFactor}
+          persons={settings.persons}
+          variantAssignment={variantAssignment}
         />
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center p-8">
