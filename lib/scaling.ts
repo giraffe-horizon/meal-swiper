@@ -6,7 +6,7 @@ import type {
   CatalogIngredient,
   MealWithVariants,
 } from '@/types'
-import { parseAmount, formatAmount } from '@/lib/amounts'
+import { parseAmount, formatAmount, formatNumber } from '@/lib/amounts'
 
 // Przepisy bazowe są kalibrowane na 2 osoby × 2000 kcal = 4000 kcal łącznie
 export const BASE_KCAL_PER_PERSON = 2000
@@ -20,6 +20,12 @@ export function computeScaleFactor(persons: PersonSettings[], basePeople = 2): n
     // Fallback: jeśli brak osób, zakładamy 2 osoby × 2000 kcal = brak skalowania
     return 1
   }
+
+  // Guard against division by zero
+  if (basePeople === 0) {
+    return 1
+  }
+
   const totalKcal = persons.reduce((sum, p) => sum + p.kcal, 0)
   return totalKcal / (basePeople * BASE_KCAL_PER_PERSON)
 }
@@ -145,6 +151,15 @@ export function calculatePersonScale(
   const mealsPerDay = person.mealsPerDay || 3
   const targetKcalPerMeal = dailyKcal / mealsPerDay
 
+  // Guard against division by zero
+  if (variant.kcal === 0) {
+    return {
+      scale: 1,
+      resultKcal: 0,
+      resultProtein: Math.round(variant.protein),
+    }
+  }
+
   const scale = targetKcalPerMeal / variant.kcal
 
   return {
@@ -193,14 +208,6 @@ export function scaleIngredientAmount(
     pieces: null,
     display,
   }
-}
-
-/**
- * Format number helper (używana w scaleIngredientAmount)
- */
-function formatNumber(n: number): string {
-  if (Number.isInteger(n)) return n.toString()
-  return n.toFixed(1).replace(/\.0$/, '')
 }
 
 /**

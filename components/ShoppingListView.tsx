@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import type { WeeklyPlan, MealWithVariants } from '@/types'
+import type { WeeklyPlan, MealWithVariants, MealVariant } from '@/types'
 import { getWeekKey } from '@/lib/utils'
 import { getCheckedItems, saveCheckedItems, removeCheckedItems } from '@/lib/storage'
 import { generateShoppingList } from '@/lib/shopping'
@@ -51,8 +51,12 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
             }
           }
 
-          // Note: We're casting to MealWithVariants here assuming the meal has variants
-          // since we confirmed hasVariants is true
+          // Safety check: ensure meal has variants before casting
+          const mealWithVariants = meal as { variants?: unknown }
+          if (!('variants' in meal) || !Array.isArray(mealWithVariants.variants)) {
+            return null
+          }
+
           return {
             meal: meal as unknown as MealWithVariants,
             variantAssignment,
@@ -60,7 +64,16 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
           }
         })
         .filter(
-          (entry) => entry.variantAssignment && Object.keys(entry.variantAssignment).length > 0
+          (
+            entry
+          ): entry is {
+            meal: MealWithVariants
+            variantAssignment: Record<string, MealVariant>
+            personScales: Record<string, number>
+          } =>
+            entry !== null &&
+            entry.variantAssignment &&
+            Object.keys(entry.variantAssignment).length > 0
         )
 
       const variantShoppingList = aggregateShoppingList(weekPlanEntries)

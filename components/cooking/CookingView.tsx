@@ -139,11 +139,13 @@ export default function CookingView({
           if (!displayIngredient) displayIngredient = ingredient
         }
 
-        sharedIngredients.push({
-          ...displayIngredient,
-          totalDisplay:
-            totalGrams >= 1000 ? `${(totalGrams / 1000).toFixed(1)} kg` : `${totalGrams} g`,
-        })
+        if (displayIngredient) {
+          sharedIngredients.push({
+            ...displayIngredient,
+            totalDisplay:
+              totalGrams >= 1000 ? `${(totalGrams / 1000).toFixed(1)} kg` : `${totalGrams} g`,
+          })
+        }
       } else {
         // Unique to specific variants
         for (const [vId] of variantGroups) {

@@ -94,6 +94,60 @@ describe('scaling-v2 (variant architecture)', () => {
       expect(result.resultKcal).toBe(333) // 520 * 0.64 ≈ 333
       expect(result.resultProtein).toBe(19) // 30 * 0.64 ≈ 19
     })
+
+    it('handles zero kcal variant safely', () => {
+      const zeroKcalVariant: MealVariant = {
+        id: 'zero-variant',
+        meal_id: 'meal-zero',
+        name: 'Zero Kcal Variant',
+        kcal: 0,
+        protein: 10,
+        dietary_flags: [],
+        is_default: true,
+      }
+
+      const person: PersonSettings = {
+        name: 'Test',
+        kcal: 2000,
+        protein: 120,
+        dailyKcal: 2000,
+        mealsPerDay: 3,
+      }
+
+      const result = calculatePersonScale(zeroKcalVariant, person)
+
+      // Should not crash and should return reasonable defaults
+      expect(result.scale).toBe(1)
+      expect(result.resultKcal).toBe(0)
+      expect(result.resultProtein).toBe(10)
+    })
+
+    it('handles negative kcal variant safely', () => {
+      const negativeKcalVariant: MealVariant = {
+        id: 'negative-variant',
+        meal_id: 'meal-negative',
+        name: 'Negative Kcal Variant',
+        kcal: -100,
+        protein: 10,
+        dietary_flags: [],
+        is_default: true,
+      }
+
+      const person: PersonSettings = {
+        name: 'Test',
+        kcal: 2000,
+        protein: 120,
+        dailyKcal: 2000,
+        mealsPerDay: 3,
+      }
+
+      const result = calculatePersonScale(negativeKcalVariant, person)
+
+      // Should handle negative values (though unrealistic)
+      expect(result.scale).toBeLessThan(0)
+      expect(result.resultKcal).toBe(667) // 2000/3 = 666.67, 666.67/-100 = -6.67, -100 * -6.67 = 667
+      expect(result.resultProtein).toBe(-67) // 10 * -6.67 = -66.7 ≈ -67
+    })
   })
 
   describe('scaleIngredientAmount', () => {
