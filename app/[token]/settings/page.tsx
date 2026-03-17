@@ -2,6 +2,8 @@
 
 import { useAppContext } from '@/lib/context'
 import { useEffect, useState, useRef } from 'react'
+import PreferenceEditor from '@/components/settings/PreferenceEditor'
+import type { PersonSettings } from '@/types'
 
 export default function SettingsPage() {
   const { settings, updateSettings, tenantToken } = useAppContext()
@@ -12,9 +14,10 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState<'token' | 'link' | null>(null)
   const saveNameTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const shareLink = tenantToken && typeof window !== 'undefined'
-    ? `${window.location.origin}/${tenantToken}/plan`
-    : ''
+  const shareLink =
+    tenantToken && typeof window !== 'undefined'
+      ? `${window.location.origin}/${tenantToken}/plan`
+      : ''
 
   useEffect(() => {
     if (!tenantToken) return
@@ -104,6 +107,12 @@ export default function SettingsPage() {
   const handlePersonChange = (index: number, field: 'kcal' | 'protein', value: number) => {
     const newPersons = [...settings.persons]
     newPersons[index] = { ...newPersons[index], [field]: Math.max(0, value) }
+    updateSettings({ ...settings, persons: newPersons })
+  }
+
+  const handlePreferenceChange = (index: number, updatedPerson: PersonSettings) => {
+    const newPersons = [...settings.persons]
+    newPersons[index] = updatedPerson
     updateSettings({ ...settings, persons: newPersons })
   }
 
@@ -325,6 +334,13 @@ export default function SettingsPage() {
                     className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-slate-900 dark:text-text-primary-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
                 </div>
+
+                {/* Preferencje */}
+                <PreferenceEditor
+                  person={person}
+                  personIndex={index}
+                  onChange={handlePreferenceChange}
+                />
               </div>
             ))}
           </div>

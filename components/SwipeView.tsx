@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
-import type { Meal, DayKey, WeeklyPlan } from '@/types'
+import type { Meal, DayKey, WeeklyPlan, MealWithVariants } from '@/types'
 import { DAY_KEYS, DAY_NAMES_MAP, getWeekDates } from '@/lib/utils'
 import MealModal from '@/components/MealModal'
 import DaySelector from '@/components/ui/DaySelector'
@@ -13,6 +13,7 @@ import CategoryFilter from '@/components/swipe/CategoryFilter' // kept for futur
 import FridgeModeFilter from '@/components/swipe/FridgeModeFilter'
 import type { IngredientWithCategory } from '@/lib/fridge'
 import { useAppContext } from '@/lib/context'
+import { filterMealsByPreferences, type HouseholdConfig } from '@/lib/meal-filter'
 
 interface SwipeViewProps {
   meals: Meal[]
@@ -70,6 +71,36 @@ export default function SwipeView({
   onClearFridgeIngredients,
 }: SwipeViewProps) {
   const { settings } = useAppContext()
+
+  // State for meals with variants (for compatibility calculation)
+  const [mealsWithVariants, setMealsWithVariants] = useState<MealWithVariants[]>([])
+
+  // Fetch meals with variants for compatibility calculation
+  useEffect(() => {
+    fetch('/api/meals?format=variants')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => (Array.isArray(data) ? setMealsWithVariants(data) : []))
+      .catch(() => {})
+  }, [])
+
+  // Compatibility stats calculation
+  const compatibilityStats = useMemo(() => {
+    if (mealsWithVariants.length === 0) {
+      return { compatible: 0, total: 0, warning: null }
+    }
+
+    const householdConfig: HouseholdConfig = {
+      persons: settings.persons.slice(0, settings.people),
+    }
+
+    const filterResult = filterMealsByPreferences(mealsWithVariants, householdConfig)
+
+    return {
+      compatible: filterResult.total,
+      total: mealsWithVariants.length,
+      warning: filterResult.warning,
+    }
+  }, [mealsWithVariants, settings.persons, settings.people])
 
   const seenIds = seenIdsFromContext
   const shuffledMeals = useMemo(
@@ -311,8 +342,55 @@ export default function SwipeView({
           />
         )}
 
+        {/* Compatibility Indicator */}
+        {compatibilityStats.total > 0 && (
+          <div className="mx-4 mb-3">
+            {compatibilityStats.warning === 'none' ? (
+              <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800/30 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-red-600 dark:text-red-400">
+                    warning
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                      Brak pasujących posiłków
+                    </p>
+                    <p className="text-xs text-red-600 dark:text-red-400">
+                      Sprawdź swoje preferencje żywieniowe
+                    </p>
+                  </div>
+                </div>
+                <a
+                  href="/settings"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-sm">settings</span>
+                  <span className="hidden sm:inline">Ustawienia</span>
+                </a>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center p-2 bg-slate-50 dark:bg-surface-dark/30 rounded-lg">
+                <span className="text-xs text-slate-600 dark:text-text-secondary-dark">
+                  <span className="font-semibold text-primary">
+                    {compatibilityStats.compatible}
+                  </span>
+                  {' z '}
+                  <span className="font-medium">{compatibilityStats.total}</span>
+                  {' posiłków pasuje do preferencji'}
+                  {compatibilityStats.warning === 'too_few' && (
+                    <span className="text-amber-600 dark:text-amber-400"> • Mało opcji</span>
+                  )}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center text-slate-500 dark:text-text-secondary-dark px-6" data-testid="empty-state">
+          <div
+            className="text-center text-slate-500 dark:text-text-secondary-dark px-6"
+            data-testid="empty-state"
+          >
             <p className="text-lg">Brak więcej posiłków</p>
             {fridgeModeEnabled && fridgeSelectedIngredients.length > 0 && (
               <p className="text-sm mt-2">
@@ -370,6 +448,48 @@ export default function SwipeView({
           onToggleIngredient={onToggleFridgeIngredient ?? (() => {})}
           onClear={onClearFridgeIngredients ?? (() => {})}
         />
+      )}
+
+      {/* Compatibility Indicator */}
+      {compatibilityStats.total > 0 && (
+        <div className="mx-4 mb-3">
+          {compatibilityStats.warning === 'none' ? (
+            <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800/30 rounded-xl">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-red-600 dark:text-red-400">
+                  warning
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                    Brak pasujących posiłków
+                  </p>
+                  <p className="text-xs text-red-600 dark:text-red-400">
+                    Sprawdź swoje preferencje żywieniowe
+                  </p>
+                </div>
+              </div>
+              <a
+                href="/settings"
+                className="flex items-center gap-1 px-3 py-1.5 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors"
+              >
+                <span className="material-symbols-outlined text-sm">settings</span>
+                <span className="hidden sm:inline">Ustawienia</span>
+              </a>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center p-2 bg-slate-50 dark:bg-surface-dark/30 rounded-lg">
+              <span className="text-xs text-slate-600 dark:text-text-secondary-dark">
+                <span className="font-semibold text-primary">{compatibilityStats.compatible}</span>
+                {' z '}
+                <span className="font-medium">{compatibilityStats.total}</span>
+                {' posiłków pasuje do preferencji'}
+                {compatibilityStats.warning === 'too_few' && (
+                  <span className="text-amber-600 dark:text-amber-400"> • Mało opcji</span>
+                )}
+              </span>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Card Stack Area */}

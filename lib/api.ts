@@ -1,4 +1,11 @@
-import type { Meal, WeeklyPlan, AppSettings, TenantInfo } from '@/types'
+import type {
+  Meal,
+  WeeklyPlan,
+  AppSettings,
+  TenantInfo,
+  CatalogIngredient,
+  MealWithVariants,
+} from '@/types'
 
 function tenantHeaders(token: string | null): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
@@ -8,6 +15,13 @@ function tenantHeaders(token: string | null): Record<string, string> {
 
 export async function fetchMeals(): Promise<Meal[]> {
   const res = await fetch('/api/meals')
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  const data = await res.json()
+  return Array.isArray(data) ? data : []
+}
+
+export async function fetchMealsWithVariants(): Promise<MealWithVariants[]> {
+  const res = await fetch('/api/meals?format=variants')
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   const data = await res.json()
   return Array.isArray(data) ? data : []
@@ -93,4 +107,18 @@ export async function updateTenantName(token: string, name: string): Promise<voi
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, name }),
   })
+}
+
+export async function fetchIngredients(): Promise<CatalogIngredient[]> {
+  const res = await fetch('/api/ingredients')
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  const data = await res.json()
+  return Array.isArray(data) ? data : []
+}
+
+export async function fetchCuisines(): Promise<string[]> {
+  const res = await fetch('/api/cuisines')
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  const data = await res.json()
+  return Array.isArray(data) ? data : []
 }
