@@ -44,3 +44,10 @@ scripts/generated-images/
 screenshots/
 test-results/
 coverage/
+
+# Coverage reports
+coverage/
+
+# Build output logs
+*.txt
+!public/robots.txt
