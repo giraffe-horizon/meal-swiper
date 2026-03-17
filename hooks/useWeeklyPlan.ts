@@ -4,20 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import type { Meal, DayKey, WeeklyPlan } from '@/types'
 import { getWeeklyPlan, saveWeeklyPlan, createDefaultPlan } from '@/lib/storage'
 import { getWeekKey } from '@/lib/utils'
-
-function tenantHeaders(token: string | null): Record<string, string> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  if (token) headers['X-Tenant-Token'] = token
-  return headers
-}
-
-function syncPlanToServer(weekKey: string, plan: WeeklyPlan, token: string | null): void {
-  fetch('/api/plan', {
-    method: 'POST',
-    headers: tenantHeaders(token),
-    body: JSON.stringify({ week: weekKey, plan }),
-  }).catch(() => {})
-}
+import { usePlanQuery, usePlanMutation } from '@/hooks/queries/usePlanQuery'
 
 export function useWeeklyPlan(tenantToken: string | null = null) {
   const [weekOffset, setWeekOffset] = useState(0)
@@ -27,35 +14,33 @@ export function useWeeklyPlan(tenantToken: string | null = null) {
     typeof window !== 'undefined' ? getWeeklyPlan(weekKey) : createDefaultPlan()
   )
 
-  // Gdy zmienia się tydzień: załaduj z localStorage, potem sync z serwera
+  // Server sync via react-query
+  const { data: serverPlan } = usePlanQuery(weekKey, tenantToken)
+  const { mutate: savePlanToServer } = usePlanMutation(tenantToken)
+
+  // When week changes: reload from localStorage
   useEffect(() => {
-    // Załaduj lokalny plan dla nowego tygodnia
     const localPlan = getWeeklyPlan(weekKey)
     // eslint-disable-next-line react-hooks/set-state-in-effect -- celowy reset stanu przy zmianie tygodnia
     setWeeklyPlan(localPlan)
+  }, [weekKey])
 
-    // Sync z serwera (async, nadpisuje jeśli serwer ma nowsze dane)
-    const headers: Record<string, string> = {}
-    if (tenantToken) headers['X-Tenant-Token'] = tenantToken
-
-    fetch(`/api/plan?week=${encodeURIComponent(weekKey)}`, { headers })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((serverPlan: WeeklyPlan | null) => {
-        if (serverPlan) {
-          setWeeklyPlan(serverPlan)
-          saveWeeklyPlan(weekKey, serverPlan)
-        }
-      })
-      .catch(() => {}) // graceful degradation — zostaw lokalny plan
-  }, [weekKey, tenantToken])
+  // When server data arrives: sync to state + localStorage
+  useEffect(() => {
+    if (serverPlan) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync planu z serwera
+      setWeeklyPlan(serverPlan)
+      saveWeeklyPlan(weekKey, serverPlan)
+    }
+  }, [serverPlan, weekKey])
 
   const updatePlan = useCallback(
     (newPlan: WeeklyPlan) => {
       setWeeklyPlan(newPlan)
       saveWeeklyPlan(weekKey, newPlan)
-      syncPlanToServer(weekKey, newPlan, tenantToken)
+      savePlanToServer({ weekKey, plan: newPlan })
     },
-    [weekKey, tenantToken]
+    [weekKey, savePlanToServer]
   )
 
   const setMeal = useCallback(

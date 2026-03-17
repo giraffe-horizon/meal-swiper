@@ -1,7 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React from 'react'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import type { Meal } from '@/types'
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
+  })
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+  return Wrapper
+}
 
 const mockMeal: Meal = {
   id: '1',
@@ -32,7 +45,7 @@ describe('useWeeklyPlan', () => {
   })
 
   it('initializes with empty plan', async () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon).toBeNull()
@@ -41,17 +54,17 @@ describe('useWeeklyPlan', () => {
   })
 
   it('weekOffset starts at 0', () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
     expect(result.current.weekOffset).toBe(0)
   })
 
   it('weekKey is a date string', () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
     expect(result.current.weekKey).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 
   it('setMeal adds meal to plan', async () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon).toBeNull()
@@ -65,7 +78,7 @@ describe('useWeeklyPlan', () => {
   })
 
   it('setMeal clears vacation flag for that day', async () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon).toBeNull()
@@ -88,7 +101,7 @@ describe('useWeeklyPlan', () => {
   })
 
   it('removeMeal removes meal from plan', async () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon).toBeNull()
@@ -108,7 +121,7 @@ describe('useWeeklyPlan', () => {
   })
 
   it('toggleVacation sets free flag', async () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon_free).toBe(false)
@@ -122,7 +135,7 @@ describe('useWeeklyPlan', () => {
   })
 
   it('toggleVacation clears meal when setting vacation', async () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon).toBeNull()
@@ -141,7 +154,7 @@ describe('useWeeklyPlan', () => {
   })
 
   it('toggleVacation toggles off when already free', async () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon_free).toBe(false)
@@ -161,7 +174,7 @@ describe('useWeeklyPlan', () => {
   })
 
   it('setWeekOffset changes week', () => {
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     act(() => {
       result.current.setWeekOffset(2)
@@ -189,7 +202,7 @@ describe('useWeeklyPlan', () => {
       json: async () => serverPlan,
     })
 
-    const { result } = renderHook(() => useWeeklyPlan())
+    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon).toEqual(mockMeal)

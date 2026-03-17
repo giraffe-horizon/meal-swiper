@@ -3,13 +3,13 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import type { AppSettings } from '@/types'
 import { computeScaleFactor } from '@/lib/scaling'
+import { useSettingsQuery, useSettingsMutation } from '@/hooks/queries/useSettingsQuery'
 
 function getStorageKey(): string {
   if (typeof window === 'undefined') return 'meal_swiper_settings'
   const token = localStorage.getItem('meal_swiper_tenant_token') || ''
   return token ? `${token}_meal_swiper_settings` : 'meal_swiper_settings'
 }
-const API_KEY = 'app_settings'
 
 export const DEFAULT_SETTINGS: AppSettings = {
   people: 2,
@@ -20,90 +20,72 @@ export const DEFAULT_SETTINGS: AppSettings = {
   theme: 'system',
 }
 
-function tenantHeaders(token: string | null): Record<string, string> {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  if (token) headers['X-Tenant-Token'] = token
-  return headers
-}
-
 export function useSettings(tenantToken: string | null = null) {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS)
   const [isLoaded, setIsLoaded] = useState(false)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const tenantTokenRef = useRef(tenantToken)
-  tenantTokenRef.current = tenantToken
 
-  // Load settings: try D1 first, fallback to localStorage
+  // Load from localStorage immediately (fast UX)
   useEffect(() => {
     let cancelled = false
-
-    async function load() {
-      // Immediately show localStorage data for fast UX
-      try {
-        const stored = localStorage.getItem(getStorageKey())
-        if (stored) {
-          const parsed = JSON.parse(stored) as AppSettings
-          if (!cancelled) setSettings((prev) => ({ ...prev, ...parsed }))
-        }
-      } catch {
-        // ignore
+    try {
+      const stored = localStorage.getItem(getStorageKey())
+      if (stored && !cancelled) {
+        const parsed = JSON.parse(stored) as AppSettings
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- celowe załadowanie localStorage przed renderem
+        setSettings((prev) => ({ ...prev, ...parsed }))
       }
-
-      // Then fetch from D1 (source of truth)
-      try {
-        const headers: Record<string, string> = {}
-        if (tenantToken) headers['X-Tenant-Token'] = tenantToken
-
-        const res = await fetch(`/api/settings?key=${API_KEY}`, { headers })
-        if (res.ok) {
-          const data = await res.json()
-          if (data && !cancelled) {
-            setSettings((prev) => {
-              const next = { ...prev, ...data }
-              // Sync to localStorage
-              localStorage.setItem(getStorageKey(), JSON.stringify(next))
-              return next
-            })
-          }
-        }
-      } catch {
-        // D1 unavailable, localStorage data already loaded
-      } finally {
-        if (!cancelled) setIsLoaded(true)
-      }
+    } catch {
+      // ignore
     }
-
-    load()
     return () => {
       cancelled = true
     }
   }, [tenantToken])
 
-  // Save to D1 (debounced) + localStorage (immediate)
-  const updateSettings = useCallback((newSettings: AppSettings) => {
-    setSettings(newSettings)
+  // Server sync via react-query
+  const { data: serverSettings, isFetched } = useSettingsQuery(tenantToken)
+  const { mutate: saveSettingsToServer } = useSettingsMutation(tenantToken)
 
-    // Immediate localStorage save
-    try {
-      localStorage.setItem(getStorageKey(), JSON.stringify(newSettings))
-    } catch {
-      // ignore
-    }
-
-    // Debounced D1 save (300ms)
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
-    saveTimeoutRef.current = setTimeout(async () => {
-      try {
-        await fetch('/api/settings', {
-          method: 'POST',
-          headers: tenantHeaders(tenantTokenRef.current),
-          body: JSON.stringify({ key: API_KEY, value: newSettings }),
+  // When server data arrives: sync to state + localStorage
+  useEffect(() => {
+    if (isFetched) {
+      if (serverSettings) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- sync danych z D1 po załadowaniu
+        setSettings((prev) => {
+          const next = { ...prev, ...serverSettings }
+          try {
+            localStorage.setItem(getStorageKey(), JSON.stringify(next))
+          } catch {
+            // ignore
+          }
+          return next
         })
-      } catch {
-        console.error('Failed to save settings to D1')
       }
-    }, 300)
-  }, [])
+      setIsLoaded(true)
+    }
+  }, [serverSettings, isFetched])
+
+  // Save to D1 (debounced) + localStorage (immediate)
+  const updateSettings = useCallback(
+    (newSettings: AppSettings) => {
+      setSettings(newSettings)
+
+      // Immediate localStorage save
+      try {
+        localStorage.setItem(getStorageKey(), JSON.stringify(newSettings))
+      } catch {
+        // ignore
+      }
+
+      // Debounced D1 save (300ms)
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+      saveTimeoutRef.current = setTimeout(() => {
+        saveSettingsToServer(newSettings)
+      }, 300)
+    },
+    [saveSettingsToServer]
+  )
 
   const totalKcal = useMemo(() => {
     return settings.persons.slice(0, settings.people).reduce((sum, person) => sum + person.kcal, 0)

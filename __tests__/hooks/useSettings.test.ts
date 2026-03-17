@@ -1,6 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React from 'react'
 import { useSettings, DEFAULT_SETTINGS } from '@/hooks/useSettings'
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
+  })
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+  return Wrapper
+}
 
 describe('useSettings', () => {
   beforeEach(() => {
@@ -13,7 +26,7 @@ describe('useSettings', () => {
   })
 
   it('initializes with default settings', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.settings.people).toBe(DEFAULT_SETTINGS.people)
@@ -26,7 +39,7 @@ describe('useSettings', () => {
       JSON.stringify({ people: 3, persons: DEFAULT_SETTINGS.persons, theme: 'dark' })
     )
 
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.settings.people).toBe(3)
@@ -34,7 +47,7 @@ describe('useSettings', () => {
   })
 
   it('updateSettings changes settings', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.settings.people).toBe(2)
@@ -48,7 +61,7 @@ describe('useSettings', () => {
   })
 
   it('updateSettings saves to localStorage', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.settings.people).toBe(2)
@@ -63,7 +76,7 @@ describe('useSettings', () => {
   })
 
   it('computes totalKcal from active persons', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       // 2 people: 2000 + 1800 = 3800
@@ -72,7 +85,7 @@ describe('useSettings', () => {
   })
 
   it('computes totalProtein from active persons', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       // 2 people: 120 + 100 = 220
@@ -81,7 +94,7 @@ describe('useSettings', () => {
   })
 
   it('scaleFactor returns a number', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(typeof result.current.scaleFactor).toBe('number')
@@ -89,7 +102,7 @@ describe('useSettings', () => {
   })
 
   it('isLoaded becomes true after loading', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.isLoaded).toBe(true)
@@ -98,7 +111,7 @@ describe('useSettings', () => {
 
   it('handles invalid localStorage JSON gracefully', async () => {
     localStorage.setItem('meal_swiper_settings', 'invalid-json')
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.isLoaded).toBe(true)
@@ -109,7 +122,7 @@ describe('useSettings', () => {
   })
 
   it('updates totalKcal when people count changes', async () => {
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.totalKcal).toBe(3800) // 2 people
@@ -133,7 +146,7 @@ describe('useSettings', () => {
       json: async () => serverSettings,
     })
 
-    const { result } = renderHook(() => useSettings())
+    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.settings.people).toBe(5)

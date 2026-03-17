@@ -62,3 +62,10 @@ export interface AppSettings {
   persons: PersonSettings[]
   theme: 'light' | 'dark' | 'system'
 }
+
+export interface TenantInfo {
+  id: string
+  token: string
+  name: string
+  created_at: string
+}

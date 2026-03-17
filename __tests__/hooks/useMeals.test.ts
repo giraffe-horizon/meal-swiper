@@ -1,6 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import React from 'react'
 import { useMeals } from '@/hooks/useMeals'
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
+  })
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+  return Wrapper
+}
 
 describe('useMeals', () => {
   beforeEach(() => {
@@ -9,17 +22,20 @@ describe('useMeals', () => {
 
   it('starts with loading=true', () => {
     vi.stubGlobal('fetch', vi.fn().mockReturnValue(new Promise(() => {}))) // never resolves
-    const { result } = renderHook(() => useMeals())
+    const { result } = renderHook(() => useMeals(), { wrapper: createWrapper() })
     expect(result.current.loading).toBe(true)
   })
 
   it('loading=false after successful fetch', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve([{ id: '1', nazwa: 'Test' }]),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve([{ id: '1', nazwa: 'Test' }]),
+      })
+    )
 
-    const { result } = renderHook(() => useMeals())
+    const { result } = renderHook(() => useMeals(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -29,12 +45,15 @@ describe('useMeals', () => {
   })
 
   it('sets error when API returns error', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: false,
-      status: 500,
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+      })
+    )
 
-    const { result } = renderHook(() => useMeals())
+    const { result } = renderHook(() => useMeals(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -46,7 +65,7 @@ describe('useMeals', () => {
   it('sets error when fetch throws', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')))
 
-    const { result } = renderHook(() => useMeals())
+    const { result } = renderHook(() => useMeals(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -59,12 +78,15 @@ describe('useMeals', () => {
       { id: '1', nazwa: 'Pasta', photo_url: 'https://example.com/img.jpg' },
       { id: '2', nazwa: 'Pizza', photo_url: 'https://example.com/img2.jpg' },
     ]
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockMeals),
-    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockMeals),
+      })
+    )
 
-    const { result } = renderHook(() => useMeals())
+    const { result } = renderHook(() => useMeals(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.meals).toHaveLength(2)
