@@ -123,7 +123,7 @@ describe('DaySelector', () => {
         kcal_z_miesem: 500,
         bialko_baza: 15,
         bialko_z_miesem: 25,
-        trudnosc: 'łatwe',
+        trudnosc: 'łatwe' as const,
         kuchnia: 'polska',
         category: 'makarony',
         skladniki_baza: '[]',

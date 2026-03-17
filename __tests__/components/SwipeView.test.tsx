@@ -48,6 +48,7 @@ const mockMeal: Meal = {
   bialko_z_miesem: 30,
   trudnosc: 'łatwe',
   kuchnia: 'włoska',
+  category: 'obiad',
   skladniki_baza: '[]',
   skladniki_mieso: '[]',
   przepis: '{}',

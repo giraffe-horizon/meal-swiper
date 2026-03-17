@@ -171,7 +171,7 @@ const testMeal = {
   kcal_z_miesem: 400,
   bialko_baza: 10,
   bialko_z_miesem: 20,
-  trudnosc: 'łatwe',
+  trudnosc: 'łatwe' as const,
   kuchnia: 'polska',
   category: 'makarony',
   skladniki_baza: '[]',

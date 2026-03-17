@@ -1,10 +1,10 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { NextResponse } from 'next/server'
-import { fetchMealsFromD1, fetchAllMealsWithVariants, type D1Database } from '@/lib/db'
+import { fetchAllCuisines, type D1Database } from '@/lib/db'
 
 export const runtime = 'edge'
 
-export async function GET(request: Request) {
+export async function GET() {
   const { env } = await getCloudflareContext()
   const db = (env as unknown as { DB: D1Database }).DB
 
@@ -13,22 +13,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const url = new URL(request.url)
-    const format = url.searchParams.get('format')
-
-    let meals
-    if (format === 'variants') {
-      meals = await fetchAllMealsWithVariants(db)
-    } else {
-      // Default to legacy format for backward compatibility
-      meals = await fetchMealsFromD1(db)
-    }
-
-    return NextResponse.json(meals, {
+    const cuisines = await fetchAllCuisines(db)
+    return NextResponse.json(cuisines, {
       headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' },
     })
   } catch (error) {
-    console.error('Error fetching meals from D1:', error)
+    console.error('Error fetching cuisines from D1:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

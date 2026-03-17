@@ -15,7 +15,6 @@ const baseMeal: Meal = {
   trudnosc: 'łatwe',
   kuchnia: 'polska',
   category: 'makarony',
-  składniki_baza: '[]',
   skladniki_baza: JSON.stringify([
     { name: 'Makaron', amount: '200g' },
     { name: 'Sos', amount: '100ml' },
