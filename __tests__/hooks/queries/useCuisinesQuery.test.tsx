@@ -6,7 +6,7 @@ import * as api from '@/lib/api'
 
 // Mock the API
 vi.mock('@/lib/api', () => ({
-  fetchCuisines: vi.fn()
+  fetchCuisines: vi.fn(),
 }))
 
 describe('useCuisinesQuery', () => {
@@ -18,18 +18,18 @@ describe('useCuisinesQuery', () => {
         },
       },
     })
-    return ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     )
+    Wrapper.displayName = 'TestWrapper'
+    return Wrapper
   }
 
   it('returns query result', () => {
     vi.mocked(api.fetchCuisines).mockResolvedValue(['Italian', 'Mexican'])
 
     const { result } = renderHook(() => useCuisinesQuery(), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(),
     })
 
     expect(result.current.isLoading).toBeDefined()
@@ -40,7 +40,7 @@ describe('useCuisinesQuery', () => {
     vi.mocked(api.fetchCuisines).mockResolvedValue(['Italian', 'Mexican'])
 
     renderHook(() => useCuisinesQuery(), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(),
     })
 
     expect(api.fetchCuisines).toHaveBeenCalled()
@@ -48,7 +48,7 @@ describe('useCuisinesQuery', () => {
 
   it('has correct staleTime configuration', () => {
     const { result } = renderHook(() => useCuisinesQuery(), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(),
     })
 
     // Check that the query has staleTime set (5 minutes = 300000ms)

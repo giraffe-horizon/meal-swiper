@@ -6,7 +6,7 @@ import * as api from '@/lib/api'
 
 // Mock the API
 vi.mock('@/lib/api', () => ({
-  fetchIngredients: vi.fn()
+  fetchIngredients: vi.fn(),
 }))
 
 describe('useIngredientsQuery', () => {
@@ -18,22 +18,22 @@ describe('useIngredientsQuery', () => {
         },
       },
     })
-    return ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     )
+    Wrapper.displayName = 'TestWrapper'
+    return Wrapper
   }
 
   it('returns query result', () => {
     const mockIngredients = [
       { id: '1', name: 'Tomato', category: 'vegetables', is_seasoning: false },
-      { id: '2', name: 'Salt', category: 'spices', is_seasoning: true }
+      { id: '2', name: 'Salt', category: 'spices', is_seasoning: true },
     ]
     vi.mocked(api.fetchIngredients).mockResolvedValue(mockIngredients)
 
     const { result } = renderHook(() => useIngredientsQuery(), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(),
     })
 
     expect(result.current.isLoading).toBeDefined()
@@ -43,12 +43,12 @@ describe('useIngredientsQuery', () => {
   it('uses fetchIngredients as query function', () => {
     const mockIngredients = [
       { id: '1', name: 'Tomato', category: 'vegetables', is_seasoning: false },
-      { id: '2', name: 'Salt', category: 'spices', is_seasoning: true }
+      { id: '2', name: 'Salt', category: 'spices', is_seasoning: true },
     ]
     vi.mocked(api.fetchIngredients).mockResolvedValue(mockIngredients)
 
     renderHook(() => useIngredientsQuery(), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(),
     })
 
     expect(api.fetchIngredients).toHaveBeenCalled()
@@ -56,7 +56,7 @@ describe('useIngredientsQuery', () => {
 
   it('has correct staleTime configuration', () => {
     const { result } = renderHook(() => useIngredientsQuery(), {
-      wrapper: createWrapper()
+      wrapper: createWrapper(),
     })
 
     // Check that the query has staleTime set (5 minutes = 300000ms)

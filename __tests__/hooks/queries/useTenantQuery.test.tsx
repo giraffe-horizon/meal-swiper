@@ -5,7 +5,7 @@ import {
   useTenantQuery,
   useCreateTenantMutation,
   useUpdateTenantNameMutation,
-  tenantQueryKey
+  tenantQueryKey,
 } from '@/hooks/queries/useTenantQuery'
 import * as api from '@/lib/api'
 
@@ -13,7 +13,7 @@ import * as api from '@/lib/api'
 vi.mock('@/lib/api', () => ({
   fetchTenantInfo: vi.fn(),
   createTenant: vi.fn(),
-  updateTenantName: vi.fn()
+  updateTenantName: vi.fn(),
 }))
 
 describe('useTenantQuery hooks', () => {
@@ -25,14 +25,14 @@ describe('useTenantQuery hooks', () => {
         },
         mutations: {
           retry: false,
-        }
+        },
       },
     })
-    return ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     )
+    Wrapper.displayName = 'TestWrapper'
+    return Wrapper
   }
 
   describe('useTenantQuery', () => {
@@ -41,7 +41,7 @@ describe('useTenantQuery hooks', () => {
       vi.mocked(api.fetchTenantInfo).mockResolvedValue({ id: '1', name: 'Test' })
 
       const { result } = renderHook(() => useTenantQuery(token), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       expect(result.current.isLoading).toBeDefined()
@@ -50,7 +50,7 @@ describe('useTenantQuery hooks', () => {
 
     it('returns query result when token is null', () => {
       const { result } = renderHook(() => useTenantQuery(null), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       expect(result.current.isLoading).toBeDefined()
@@ -59,10 +59,10 @@ describe('useTenantQuery hooks', () => {
 
     it('is enabled only when token is provided', () => {
       const { result: withToken } = renderHook(() => useTenantQuery('token'), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
       const { result: withoutToken } = renderHook(() => useTenantQuery(null), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       expect(withToken.current.isEnabled).toBe(true)
@@ -74,7 +74,7 @@ describe('useTenantQuery hooks', () => {
       vi.mocked(api.fetchTenantInfo).mockResolvedValue({ id: '1', name: 'Test' })
 
       renderHook(() => useTenantQuery(token), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       expect(api.fetchTenantInfo).toHaveBeenCalledWith(token)
@@ -84,7 +84,7 @@ describe('useTenantQuery hooks', () => {
   describe('useCreateTenantMutation', () => {
     it('uses createTenant as mutation function', () => {
       const { result } = renderHook(() => useCreateTenantMutation(), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       expect(result.current.mutate).toBeDefined()
@@ -96,7 +96,7 @@ describe('useTenantQuery hooks', () => {
       vi.mocked(api.createTenant).mockResolvedValue({ id: '1', name: 'New Tenant' })
 
       const { result } = renderHook(() => useCreateTenantMutation(), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       await act(async () => {
@@ -111,7 +111,7 @@ describe('useTenantQuery hooks', () => {
     it('uses updateTenantName as mutation function', () => {
       const token = 'test-token'
       const { result } = renderHook(() => useUpdateTenantNameMutation(token), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       expect(result.current.mutate).toBeDefined()
@@ -124,7 +124,7 @@ describe('useTenantQuery hooks', () => {
       vi.mocked(api.updateTenantName).mockResolvedValue({ id: '1', name: newName })
 
       const { result } = renderHook(() => useUpdateTenantNameMutation(token), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       await act(async () => {
@@ -136,7 +136,7 @@ describe('useTenantQuery hooks', () => {
 
     it('handles null token gracefully', () => {
       const { result } = renderHook(() => useUpdateTenantNameMutation(null), {
-        wrapper: createWrapper()
+        wrapper: createWrapper(),
       })
 
       expect(result.current.mutate).toBeDefined()

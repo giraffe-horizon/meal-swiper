@@ -16,7 +16,7 @@ describe('PreferenceEditor', () => {
     diet: [],
     cuisinePreferences: [],
     excludedIngredients: [],
-    mealsPerDay: 3
+    mealsPerDay: 3,
   }
 
   const mockOnChange = vi.fn()
@@ -25,7 +25,7 @@ describe('PreferenceEditor', () => {
     { id: '1', name: 'Tomato', category: 'vegetables', is_seasoning: false },
     { id: '2', name: 'Onion', category: 'vegetables', is_seasoning: false },
     { id: '3', name: 'Salt', category: 'spices', is_seasoning: true },
-    { id: '4', name: 'Chicken Breast', category: 'meat', is_seasoning: false }
+    { id: '4', name: 'Chicken Breast', category: 'meat', is_seasoning: false },
   ]
 
   const mockCuisines = ['Italian', 'Mexican', 'Asian', 'American']
@@ -38,11 +38,11 @@ describe('PreferenceEditor', () => {
         },
       },
     })
-    return ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     )
+    Wrapper.displayName = 'TestWrapper'
+    return Wrapper
   }
 
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe('PreferenceEditor', () => {
       isLoading: false,
       error: null,
       isError: false,
-      isSuccess: true
+      isSuccess: true,
     } as any)
 
     vi.mocked(cuisinesQuery.useCuisinesQuery).mockReturnValue({
@@ -62,33 +62,23 @@ describe('PreferenceEditor', () => {
       isLoading: false,
       error: null,
       isError: false,
-      isSuccess: true
+      isSuccess: true,
     } as any)
   })
 
   it('renders collapsed by default', () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     expect(screen.getByText('Preferencje — Test Person')).toBeInTheDocument()
     expect(screen.queryByText('Dieta')).not.toBeInTheDocument()
   })
 
   it('expands when header is clicked', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
     fireEvent.click(header)
@@ -99,14 +89,9 @@ describe('PreferenceEditor', () => {
   })
 
   it('renders diet options when expanded', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -122,14 +107,9 @@ describe('PreferenceEditor', () => {
   })
 
   it('handles diet selection', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -141,20 +121,15 @@ describe('PreferenceEditor', () => {
 
       expect(mockOnChange).toHaveBeenCalledWith(0, {
         ...mockPerson,
-        diet: ['vegetarian']
+        diet: ['vegetarian'],
       })
     })
   })
 
   it('renders cuisine preferences', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -162,21 +137,16 @@ describe('PreferenceEditor', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Lubię kuchnie')).toBeInTheDocument()
-      mockCuisines.forEach(cuisine => {
+      mockCuisines.forEach((cuisine) => {
         expect(screen.getByText(cuisine)).toBeInTheDocument()
       })
     })
   })
 
   it('handles cuisine toggle', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -188,20 +158,15 @@ describe('PreferenceEditor', () => {
 
       expect(mockOnChange).toHaveBeenCalledWith(0, {
         ...mockPerson,
-        cuisinePreferences: ['Italian']
+        cuisinePreferences: ['Italian'],
       })
     })
   })
 
   it('renders ingredient search', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -213,14 +178,9 @@ describe('PreferenceEditor', () => {
   })
 
   it('filters ingredients by search term', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -238,14 +198,9 @@ describe('PreferenceEditor', () => {
   })
 
   it('filters out seasoning ingredients', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -262,14 +217,9 @@ describe('PreferenceEditor', () => {
   })
 
   it('handles meals per day change', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -281,20 +231,15 @@ describe('PreferenceEditor', () => {
 
       expect(mockOnChange).toHaveBeenCalledWith(0, {
         ...mockPerson,
-        mealsPerDay: 4
+        mealsPerDay: 4,
       })
     })
   })
 
   it('clamps meals per day to valid range', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -307,14 +252,14 @@ describe('PreferenceEditor', () => {
       fireEvent.change(mealsInput, { target: { value: '15' } })
       expect(mockOnChange).toHaveBeenCalledWith(0, {
         ...mockPerson,
-        mealsPerDay: 10
+        mealsPerDay: 10,
       })
 
       // Test lower limit
       fireEvent.change(mealsInput, { target: { value: '0' } })
       expect(mockOnChange).toHaveBeenCalledWith(0, {
         ...mockPerson,
-        mealsPerDay: 1
+        mealsPerDay: 1,
       })
     })
   })
@@ -325,7 +270,7 @@ describe('PreferenceEditor', () => {
       isLoading: true,
       error: null,
       isError: false,
-      isSuccess: false
+      isSuccess: false,
     } as any)
 
     vi.mocked(cuisinesQuery.useCuisinesQuery).mockReturnValue({
@@ -333,17 +278,12 @@ describe('PreferenceEditor', () => {
       isLoading: true,
       error: null,
       isError: false,
-      isSuccess: false
+      isSuccess: false,
     } as any)
 
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -355,14 +295,9 @@ describe('PreferenceEditor', () => {
   })
 
   it('handles ingredient exclusion', async () => {
-    render(
-      <PreferenceEditor
-        person={mockPerson}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
-      { wrapper: createWrapper() }
-    )
+    render(<PreferenceEditor person={mockPerson} personIndex={0} onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     // Expand
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
@@ -378,7 +313,7 @@ describe('PreferenceEditor', () => {
 
         expect(mockOnChange).toHaveBeenCalledWith(0, {
           ...mockPerson,
-          excludedIngredients: ['1']
+          excludedIngredients: ['1'],
         })
       })
     })
@@ -387,15 +322,11 @@ describe('PreferenceEditor', () => {
   it('shows selected excluded ingredients', async () => {
     const personWithExclusions = {
       ...mockPerson,
-      excludedIngredients: ['1'] // Tomato excluded
+      excludedIngredients: ['1'], // Tomato excluded
     }
 
     render(
-      <PreferenceEditor
-        person={personWithExclusions}
-        personIndex={0}
-        onChange={mockOnChange}
-      />,
+      <PreferenceEditor person={personWithExclusions} personIndex={0} onChange={mockOnChange} />,
       { wrapper: createWrapper() }
     )
 
