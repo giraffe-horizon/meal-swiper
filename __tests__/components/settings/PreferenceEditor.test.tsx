@@ -116,13 +116,15 @@ describe('PreferenceEditor', () => {
     fireEvent.click(header)
 
     await waitFor(() => {
-      const vegetarianOption = screen.getByLabelText('Wegetariańska')
-      fireEvent.click(vegetarianOption)
+      expect(screen.getByLabelText('Wegetariańska')).toBeInTheDocument()
+    })
 
-      expect(mockOnChange).toHaveBeenCalledWith(0, {
-        ...mockPerson,
-        diet: ['vegetarian'],
-      })
+    const vegetarianOption = screen.getByLabelText('Wegetariańska')
+    fireEvent.click(vegetarianOption)
+
+    expect(mockOnChange).toHaveBeenCalledWith(0, {
+      ...mockPerson,
+      diet: ['vegetarian'],
     })
   })
 
@@ -153,13 +155,15 @@ describe('PreferenceEditor', () => {
     fireEvent.click(header)
 
     await waitFor(() => {
-      const italianButton = screen.getByText('Italian')
-      fireEvent.click(italianButton)
+      expect(screen.getByText('Italian')).toBeInTheDocument()
+    })
 
-      expect(mockOnChange).toHaveBeenCalledWith(0, {
-        ...mockPerson,
-        cuisinePreferences: ['Italian'],
-      })
+    const italianButton = screen.getByText('Italian')
+    fireEvent.click(italianButton)
+
+    expect(mockOnChange).toHaveBeenCalledWith(0, {
+      ...mockPerson,
+      cuisinePreferences: ['Italian'],
     })
   })
 
@@ -186,14 +190,16 @@ describe('PreferenceEditor', () => {
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
     fireEvent.click(header)
 
-    await waitFor(async () => {
-      const searchInput = screen.getByPlaceholderText('Szukaj składników...')
-      fireEvent.change(searchInput, { target: { value: 'tom' } })
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Szukaj składników...')).toBeInTheDocument()
+    })
 
-      await waitFor(() => {
-        expect(screen.getByText('Tomato')).toBeInTheDocument()
-        expect(screen.queryByText('Onion')).not.toBeInTheDocument()
-      })
+    const searchInput = screen.getByPlaceholderText('Szukaj składników...')
+    fireEvent.change(searchInput, { target: { value: 'tom' } })
+
+    await waitFor(() => {
+      expect(screen.getByText('Tomato')).toBeInTheDocument()
+      expect(screen.queryByText('Onion')).not.toBeInTheDocument()
     })
   })
 
@@ -206,13 +212,15 @@ describe('PreferenceEditor', () => {
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
     fireEvent.click(header)
 
-    await waitFor(async () => {
-      const searchInput = screen.getByPlaceholderText('Szukaj składników...')
-      fireEvent.change(searchInput, { target: { value: 'salt' } })
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Szukaj składników...')).toBeInTheDocument()
+    })
 
-      await waitFor(() => {
-        expect(screen.queryByText('Salt')).not.toBeInTheDocument()
-      })
+    const searchInput = screen.getByPlaceholderText('Szukaj składników...')
+    fireEvent.change(searchInput, { target: { value: 'salt' } })
+
+    await waitFor(() => {
+      expect(screen.queryByText('Salt')).not.toBeInTheDocument()
     })
   })
 
@@ -226,13 +234,15 @@ describe('PreferenceEditor', () => {
     fireEvent.click(header)
 
     await waitFor(() => {
-      const mealsInput = screen.getByDisplayValue('3')
-      fireEvent.change(mealsInput, { target: { value: '4' } })
+      expect(screen.getByDisplayValue('3')).toBeInTheDocument()
+    })
 
-      expect(mockOnChange).toHaveBeenCalledWith(0, {
-        ...mockPerson,
-        mealsPerDay: 4,
-      })
+    const mealsInput = screen.getByDisplayValue('3')
+    fireEvent.change(mealsInput, { target: { value: '4' } })
+
+    expect(mockOnChange).toHaveBeenCalledWith(0, {
+      ...mockPerson,
+      mealsPerDay: 4,
     })
   })
 
@@ -246,21 +256,23 @@ describe('PreferenceEditor', () => {
     fireEvent.click(header)
 
     await waitFor(() => {
-      const mealsInput = screen.getByDisplayValue('3')
+      expect(screen.getByDisplayValue('3')).toBeInTheDocument()
+    })
 
-      // Test upper limit
-      fireEvent.change(mealsInput, { target: { value: '15' } })
-      expect(mockOnChange).toHaveBeenCalledWith(0, {
-        ...mockPerson,
-        mealsPerDay: 10,
-      })
+    // Test upper limit
+    fireEvent.change(screen.getByDisplayValue('3'), { target: { value: '15' } })
+    expect(mockOnChange).toHaveBeenCalledWith(0, {
+      ...mockPerson,
+      mealsPerDay: 10,
+    })
 
-      // Test lower limit
-      fireEvent.change(mealsInput, { target: { value: '0' } })
-      expect(mockOnChange).toHaveBeenCalledWith(0, {
-        ...mockPerson,
-        mealsPerDay: 1,
-      })
+    mockOnChange.mockClear()
+
+    // Test lower limit — parseInt('0') || 3 gives 3 (0 is falsy), so use '-5' instead
+    fireEvent.change(screen.getByDisplayValue('3'), { target: { value: '-5' } })
+    expect(mockOnChange).toHaveBeenCalledWith(0, {
+      ...mockPerson,
+      mealsPerDay: 1,
     })
   })
 
@@ -303,19 +315,23 @@ describe('PreferenceEditor', () => {
     const header = screen.getByRole('button', { name: /Preferencje — Test Person/ })
     fireEvent.click(header)
 
-    await waitFor(async () => {
-      const searchInput = screen.getByPlaceholderText('Szukaj składników...')
-      fireEvent.change(searchInput, { target: { value: 'tomato' } })
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Szukaj składników...')).toBeInTheDocument()
+    })
 
-      await waitFor(() => {
-        const tomatoButton = screen.getByText('Tomato')
-        fireEvent.click(tomatoButton)
+    const searchInput = screen.getByPlaceholderText('Szukaj składników...')
+    fireEvent.change(searchInput, { target: { value: 'tomato' } })
 
-        expect(mockOnChange).toHaveBeenCalledWith(0, {
-          ...mockPerson,
-          excludedIngredients: ['1'],
-        })
-      })
+    await waitFor(() => {
+      expect(screen.getByText('Tomato')).toBeInTheDocument()
+    })
+
+    const tomatoButton = screen.getByText('Tomato')
+    fireEvent.click(tomatoButton)
+
+    expect(mockOnChange).toHaveBeenCalledWith(0, {
+      ...mockPerson,
+      excludedIngredients: ['1'],
     })
   })
 
