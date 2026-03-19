@@ -206,9 +206,9 @@ export default function CookingView({
     setCheckedIngredients((prev) => ({ ...prev, [key]: !prev[key] }))
 
   return (
-    <div>
-      {/* Hero image */}
-      <div className="relative w-full" style={{ height: 'clamp(160px, 30vh, 280px)' }}>
+    <div className="bg-surface text-on-surface font-body min-h-screen">
+      {/* Hero image with glassmorphism overlay */}
+      <div className="relative w-full" style={{ height: 'clamp(200px, 35vh, 320px)' }}>
         {meal.photo_url && !imgError ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -224,95 +224,111 @@ export default function CookingView({
             iconSize="text-7xl"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-          <h1 className="text-2xl font-bold leading-tight">{meal.nazwa}</h1>
-          <div className="flex items-center gap-4 mt-2 text-sm text-white/80">
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">schedule</span>
-              {meal.prep_time} min
-            </span>
+
+        {/* Glassmorphism overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 p-6 glass-card border-t border-white/5">
+          <div className="flex justify-between items-start mb-3">
+            <div>
+              <span className="text-primary text-[10px] font-label font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
+                {meal.kuchnia || 'Międzynarodowa'}
+              </span>
+              <h1 className="font-headline text-3xl font-bold text-on-surface mt-1 leading-tight">
+                {meal.nazwa}
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2 text-on-surface-variant bg-black/20 px-3 py-2 rounded-lg backdrop-blur-md">
+              <span className="material-symbols-outlined text-sm">schedule</span>
+              <span className="font-label text-sm font-bold">{meal.prep_time} min</span>
+            </div>
             {!isVariantMeal && legacyData && (
               <>
-                <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]">
-                    local_fire_department
+                <div className="flex items-center gap-2 text-on-surface-variant bg-black/20 px-3 py-2 rounded-lg backdrop-blur-md">
+                  <span className="material-symbols-outlined text-sm">local_fire_department</span>
+                  <span className="font-label text-sm font-bold">{legacyData.totalKcal} kcal</span>
+                </div>
+                <div className="flex items-center gap-2 text-on-surface-variant bg-black/20 px-3 py-2 rounded-lg backdrop-blur-md">
+                  <span className="material-symbols-outlined text-sm">fitness_center</span>
+                  <span className="font-label text-sm font-bold">
+                    {legacyData.totalProtein}g białka
                   </span>
-                  {legacyData.totalKcal} kcal
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]">fitness_center</span>
-                  {legacyData.totalProtein}g białka
-                </span>
+                </div>
               </>
             )}
             {isVariantMeal && variantData && (
-              <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[16px]">group</span>
-                {variantData.hasSplit ? 'Split per osoba' : 'Wspólny wariant'}
-              </span>
+              <div className="flex items-center gap-2 text-on-surface-variant bg-black/20 px-3 py-2 rounded-lg backdrop-blur-md">
+                <span className="material-symbols-outlined text-sm">group</span>
+                <span className="font-label text-sm font-bold">
+                  {variantData.hasSplit ? 'Split per osoba' : 'Wspólny wariant'}
+                </span>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-6 pb-8">
+      <div className="px-6 mt-8 space-y-12 pb-32 max-w-2xl mx-auto">
         {/* Legacy ingredients rendering */}
         {!isVariantMeal && legacyData && (
           <>
             {/* Składniki baza */}
             {legacyData.scaledBase.length > 0 && (
               <section>
-                <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-[20px]">
-                    grocery
-                  </span>
-                  Składniki ({people} {people === 1 ? 'osoby' : 'osób'})
-                </h2>
-                <div className="space-y-2">
+                <div className="flex items-center gap-4 mb-6">
+                  <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                    <span className="material-symbols-outlined text-primary text-[24px]">
+                      grocery
+                    </span>
+                    Składniki ({people} {people === 1 ? 'osoby' : 'osób'})
+                  </h2>
+                  <div className="h-[1px] w-full bg-outline-variant/30"></div>
+                </div>
+                <div className="space-y-4">
                   {legacyData.scaledBase.map((ing, i) => {
                     const key = `base-${i}`
                     const checked = checkedIngredients[key] ?? false
                     return (
-                      <label
-                        key={key}
-                        className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
-                          checked
-                            ? 'opacity-50 bg-slate-50 dark:bg-surface-dark/50'
-                            : 'hover:bg-slate-50 dark:hover:bg-surface-dark/30'
-                        }`}
-                        onClick={() => toggleIngredient(key)}
-                      >
+                      <div key={key} className="flex items-center justify-between group">
                         <div
-                          className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                            checked
-                              ? 'bg-primary border-primary'
-                              : 'border-slate-300 dark:border-slate-600'
-                          }`}
+                          className="flex items-center gap-4 cursor-pointer flex-1"
+                          onClick={() => toggleIngredient(key)}
                         >
-                          {checked && (
-                            <span className="material-symbols-outlined text-white text-[14px]">
-                              check
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                              checked
+                                ? 'bg-primary'
+                                : 'border-2 border-outline-variant hover:border-primary transition-colors'
+                            }`}
+                          >
+                            {checked && (
+                              <span
+                                className="material-symbols-outlined text-[16px] text-on-primary font-bold"
+                                style={{ fontVariationSettings: '"wght" 700' }}
+                              >
+                                check
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <span
+                              className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                            >
+                              {ing.name}
                             </span>
-                          )}
+                            <span className="mx-2 text-outline-variant text-xs">•</span>
+                            <span
+                              className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                checked ? 'text-outline-variant line-through' : 'text-tertiary'
+                              }`}
+                            >
+                              {ing.amount}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0 flex items-baseline">
-                          <span
-                            className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                          >
-                            {ing.name}
-                          </span>
-                          <span
-                            aria-hidden
-                            className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
-                          />
-                          <span
-                            className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
-                          >
-                            {ing.amount}
-                          </span>
-                        </div>
-                      </label>
+                      </div>
                     )
                   })}
                 </div>
@@ -322,56 +338,58 @@ export default function CookingView({
             {/* Dokładka mięsna */}
             {legacyData.scaledMeat.length > 0 && (
               <section>
-                <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-orange-500 text-[20px]">
-                    set_meal
-                  </span>
-                  Opcja mięsna
-                </h2>
-                <div className="space-y-2">
+                <div className="flex items-center gap-4 mb-6">
+                  <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                    <span className="material-symbols-outlined text-secondary text-[24px]">
+                      set_meal
+                    </span>
+                    Opcja mięsna
+                  </h2>
+                  <div className="h-[1px] w-full bg-outline-variant/30"></div>
+                </div>
+                <div className="space-y-4">
                   {legacyData.scaledMeat.map((ing, i) => {
                     const key = `meat-${i}`
                     const checked = checkedIngredients[key] ?? false
                     return (
-                      <label
-                        key={key}
-                        className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
-                          checked
-                            ? 'opacity-50 bg-slate-50 dark:bg-surface-dark/50'
-                            : 'hover:bg-slate-50 dark:hover:bg-surface-dark/30'
-                        }`}
-                        onClick={() => toggleIngredient(key)}
-                      >
+                      <div key={key} className="flex items-center justify-between group">
                         <div
-                          className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                            checked
-                              ? 'bg-orange-500 border-orange-500'
-                              : 'border-slate-300 dark:border-slate-600'
-                          }`}
+                          className="flex items-center gap-4 cursor-pointer flex-1"
+                          onClick={() => toggleIngredient(key)}
                         >
-                          {checked && (
-                            <span className="material-symbols-outlined text-white text-[14px]">
-                              check
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                              checked
+                                ? 'bg-secondary'
+                                : 'border-2 border-outline-variant hover:border-secondary transition-colors'
+                            }`}
+                          >
+                            {checked && (
+                              <span
+                                className="material-symbols-outlined text-[16px] text-on-secondary font-bold"
+                                style={{ fontVariationSettings: '"wght" 700' }}
+                              >
+                                check
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <span
+                              className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                            >
+                              {ing.name}
                             </span>
-                          )}
+                            <span className="mx-2 text-outline-variant text-xs">•</span>
+                            <span
+                              className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                checked ? 'text-outline-variant line-through' : 'text-tertiary'
+                              }`}
+                            >
+                              {ing.amount}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0 flex items-baseline">
-                          <span
-                            className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                          >
-                            {ing.name}
-                          </span>
-                          <span
-                            aria-hidden
-                            className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
-                          />
-                          <span
-                            className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
-                          >
-                            {ing.amount}
-                          </span>
-                        </div>
-                      </label>
+                      </div>
                     )
                   })}
                 </div>
@@ -386,56 +404,58 @@ export default function CookingView({
             {/* Shared ingredients */}
             {variantData.sharedIngredients.length > 0 && (
               <section>
-                <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-[20px]">
-                    grocery
-                  </span>
-                  WSPÓLNE
-                </h2>
-                <div className="space-y-2">
+                <div className="flex items-center gap-4 mb-6">
+                  <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                    <span className="material-symbols-outlined text-primary text-[24px]">
+                      grocery
+                    </span>
+                    WSPÓLNE
+                  </h2>
+                  <div className="h-[1px] w-full bg-outline-variant/30"></div>
+                </div>
+                <div className="space-y-4">
                   {variantData.sharedIngredients.map((ing, i) => {
                     const key = `shared-${i}`
                     const checked = checkedIngredients[key] ?? false
                     return (
-                      <label
-                        key={key}
-                        className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
-                          checked
-                            ? 'opacity-50 bg-slate-50 dark:bg-surface-dark/50'
-                            : 'hover:bg-slate-50 dark:hover:bg-surface-dark/30'
-                        }`}
-                        onClick={() => toggleIngredient(key)}
-                      >
+                      <div key={key} className="flex items-center justify-between group">
                         <div
-                          className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                            checked
-                              ? 'bg-primary border-primary'
-                              : 'border-slate-300 dark:border-slate-600'
-                          }`}
+                          className="flex items-center gap-4 cursor-pointer flex-1"
+                          onClick={() => toggleIngredient(key)}
                         >
-                          {checked && (
-                            <span className="material-symbols-outlined text-white text-[14px]">
-                              check
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                              checked
+                                ? 'bg-primary'
+                                : 'border-2 border-outline-variant hover:border-primary transition-colors'
+                            }`}
+                          >
+                            {checked && (
+                              <span
+                                className="material-symbols-outlined text-[16px] text-on-primary font-bold"
+                                style={{ fontVariationSettings: '"wght" 700' }}
+                              >
+                                check
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <span
+                              className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                            >
+                              {ing.ingredient?.name || 'Unknown'}
                             </span>
-                          )}
+                            <span className="mx-2 text-outline-variant text-xs">•</span>
+                            <span
+                              className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                checked ? 'text-outline-variant line-through' : 'text-tertiary'
+                              }`}
+                            >
+                              {ing.totalDisplay}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0 flex items-baseline">
-                          <span
-                            className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                          >
-                            {ing.ingredient?.name || 'Unknown'}
-                          </span>
-                          <span
-                            aria-hidden
-                            className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
-                          />
-                          <span
-                            className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
-                          >
-                            {ing.totalDisplay}
-                          </span>
-                        </div>
-                      </label>
+                      </div>
                     )
                   })}
                 </div>
@@ -448,13 +468,16 @@ export default function CookingView({
 
               return (
                 <section key={personInfo.person.name}>
-                  <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-blue-500 text-[20px]">
-                      person
-                    </span>
-                    {personInfo.person.name} ({personInfo.resultKcal} kcal)
-                  </h2>
-                  <div className="space-y-2">
+                  <div className="flex items-center gap-4 mb-6">
+                    <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                      <span className="material-symbols-outlined text-secondary text-[24px]">
+                        person
+                      </span>
+                      {personInfo.person.name} ({personInfo.resultKcal} kcal)
+                    </h2>
+                    <div className="h-[1px] w-full bg-outline-variant/30"></div>
+                  </div>
+                  <div className="space-y-4">
                     {uniqueIngredients.map((ing, i) => {
                       const key = `person-${personIndex}-${i}`
                       const checked = checkedIngredients[key] ?? false
@@ -463,45 +486,44 @@ export default function CookingView({
                         calculatePersonScale(personInfo.variant, personInfo.person).scale
                       )
                       return (
-                        <label
-                          key={key}
-                          className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
-                            checked
-                              ? 'opacity-50 bg-slate-50 dark:bg-surface-dark/50'
-                              : 'hover:bg-slate-50 dark:hover:bg-surface-dark/30'
-                          }`}
-                          onClick={() => toggleIngredient(key)}
-                        >
+                        <div key={key} className="flex items-center justify-between group">
                           <div
-                            className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                              checked
-                                ? 'bg-blue-500 border-blue-500'
-                                : 'border-slate-300 dark:border-slate-600'
-                            }`}
+                            className="flex items-center gap-4 cursor-pointer flex-1"
+                            onClick={() => toggleIngredient(key)}
                           >
-                            {checked && (
-                              <span className="material-symbols-outlined text-white text-[14px]">
-                                check
+                            <div
+                              className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                                checked
+                                  ? 'bg-secondary'
+                                  : 'border-2 border-outline-variant hover:border-secondary transition-colors'
+                              }`}
+                            >
+                              {checked && (
+                                <span
+                                  className="material-symbols-outlined text-[16px] text-on-secondary font-bold"
+                                  style={{ fontVariationSettings: '"wght" 700' }}
+                                >
+                                  check
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <span
+                                className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                              >
+                                {ing.ingredient?.name || 'Unknown'}
                               </span>
-                            )}
+                              <span className="mx-2 text-outline-variant text-xs">•</span>
+                              <span
+                                className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                  checked ? 'text-outline-variant line-through' : 'text-tertiary'
+                                }`}
+                              >
+                                {scaledAmount.display}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0 flex items-baseline">
-                            <span
-                              className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                            >
-                              {ing.ingredient?.name || 'Unknown'}
-                            </span>
-                            <span
-                              aria-hidden
-                              className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
-                            />
-                            <span
-                              className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
-                            >
-                              {scaledAmount.display}
-                            </span>
-                          </div>
-                        </label>
+                        </div>
                       )
                     })}
                   </div>
@@ -511,19 +533,21 @@ export default function CookingView({
 
             {/* Macros per person */}
             {variantData.personData.length > 0 && (
-              <section className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-                <h3 className="text-sm font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[18px]">analytics</span>
+              <section className="bg-secondary-container rounded-xl p-6 border border-secondary-container/20">
+                <h3 className="font-headline text-lg font-bold text-on-secondary-container mb-4 flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[24px]">analytics</span>
                   Makroskładniki per osoba
                 </h3>
-                <div className="space-y-1">
+                <div className="space-y-3">
                   {variantData.personData.map((personInfo) => (
                     <div
                       key={personInfo.person.name}
-                      className="text-sm text-blue-700 dark:text-blue-300"
+                      className="text-on-secondary-container/80 font-body"
                     >
-                      <strong>{personInfo.person.name}:</strong> ~{personInfo.resultKcal} kcal ·{' '}
-                      {personInfo.resultProtein}g białka
+                      <span className="font-semibold text-on-secondary-container">
+                        {personInfo.person.name}:
+                      </span>{' '}
+                      ~{personInfo.resultKcal} kcal · {personInfo.resultProtein}g białka
                     </div>
                   ))}
                 </div>
@@ -536,12 +560,15 @@ export default function CookingView({
         {((legacyData && legacyData.steps.length > 0) ||
           (variantData && variantData.steps.length > 0)) && (
           <section>
-            <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">
-                format_list_numbered
-              </span>
-              Przepis
-            </h2>
+            <div className="flex items-center gap-4 mb-6">
+              <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                <span className="material-symbols-outlined text-primary text-[24px]">
+                  format_list_numbered
+                </span>
+                Przepis
+              </h2>
+              <div className="h-[1px] w-full bg-outline-variant/30"></div>
+            </div>
             {legacyData && (
               <>
                 <CookingProgressBar
@@ -573,12 +600,12 @@ export default function CookingView({
 
         {/* Tips - works for both legacy and variant */}
         {((legacyData && legacyData.tips) || (variantData && variantData.tips)) && (
-          <section className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-            <h2 className="text-sm font-bold text-amber-800 dark:text-amber-300 mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">lightbulb</span>
+          <section className="bg-tertiary-container rounded-xl p-6 border border-tertiary-container/20">
+            <h2 className="font-headline text-lg font-bold text-on-tertiary-container mb-4 flex items-center gap-3">
+              <span className="material-symbols-outlined text-[24px]">lightbulb</span>
               Wskazówki szefa
             </h2>
-            <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+            <p className="text-on-tertiary-container/80 font-body leading-relaxed">
               {legacyData?.tips || variantData?.tips}
             </p>
           </section>

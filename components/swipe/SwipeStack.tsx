@@ -67,11 +67,15 @@ export default function SwipeStack({
             )
           }
 
-          // Background stack cards — identical to top card
+          // Background stack cards with stacking effect
           return (
             <div
               key={`stack-${actualIndex}`}
-              className="absolute inset-0 rounded-2xl shadow-xl overflow-hidden pointer-events-none"
+              className={`absolute inset-0 bg-surface-container rounded-lg overflow-hidden pointer-events-none ${
+                stackIdx === 1
+                  ? 'translate-y-2 scale-[0.96] opacity-70 blur-[0.5px]'
+                  : 'translate-y-4 scale-[0.92] opacity-40 blur-[1px]'
+              }`}
               style={{
                 zIndex: 10 - stackIdx,
               }}
@@ -81,7 +85,7 @@ export default function SwipeStack({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   alt={meal.nazwa}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="w-full h-full object-cover"
                   src={meal.photo_url}
                   draggable="false"
                   onError={(e) => {
@@ -89,50 +93,8 @@ export default function SwipeStack({
                   }}
                 />
               ) : (
-                <MealImagePlaceholder className="absolute inset-0 w-full h-full" />
+                <MealImagePlaceholder className="w-full h-full" />
               )}
-
-              {/* Gradient overlay at bottom */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-
-              {/* Content at bottom — matching SwipeCard layout */}
-              <div className="absolute bottom-0 left-0 right-0 p-5 pb-6 text-white">
-                <div className="flex justify-between items-end">
-                  <div className="flex-1 min-w-0 mr-3">
-                    <h2 className="text-2xl font-bold leading-tight drop-shadow-lg">
-                      {meal.nazwa}
-                    </h2>
-                    <p className="text-slate-200 text-sm mt-1 line-clamp-2 drop-shadow">
-                      {meal.opis}
-                    </p>
-                    <div className="flex items-center gap-4 mt-3 text-sm font-medium text-slate-100">
-                      <div className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[18px]">schedule</span>
-                        <span>{meal.prep_time} min</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[18px]">
-                          local_fire_department
-                        </span>
-                        <span>
-                          {Math.round(
-                            (('kcal_baza' in meal
-                              ? meal.kcal_baza
-                              : meal.variants.find((v) => v.is_default)?.kcal || 0) *
-                              people) /
-                              2
-                          )}{' '}
-                          kcal
-                        </span>
-                        <span className="text-slate-300 text-xs">dla {people} os.</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-slate-800 rounded-full px-3 py-1 text-xs font-bold shrink-0">
-                    {actualIndex + 1}/{totalCards}
-                  </div>
-                </div>
-              </div>
             </div>
           )
         })}

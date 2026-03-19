@@ -17,14 +17,16 @@ describe('PreferenceEditor', () => {
     cuisinePreferences: [],
     excludedIngredients: [],
     mealsPerDay: 3,
+    kcal: 2000,
+    protein: 100,
   }
 
   const mockOnChange = vi.fn()
 
   const mockIngredients = [
-    { id: '1', name: 'Tomato', category: 'vegetables', is_seasoning: false },
-    { id: '2', name: 'Onion', category: 'vegetables', is_seasoning: false },
-    { id: '3', name: 'Salt', category: 'spices', is_seasoning: true },
+    { id: '1', name: 'Tomato', category: 'warzywa', is_seasoning: false, flags: [] },
+    { id: '2', name: 'Onion', category: 'warzywa', is_seasoning: false, flags: [] },
+    { id: '3', name: 'Salt', category: 'przyprawy', is_seasoning: true, flags: [] },
     { id: '4', name: 'Chicken Breast', category: 'meat', is_seasoning: false },
   ]
 

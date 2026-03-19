@@ -52,8 +52,12 @@ vi.mock('@/lib/context', () => ({
 
 // Mock Navigation component
 vi.mock('@/components/Navigation', () => ({
-  default: ({ activeView }: { activeView: string }) => (
-    <nav data-testid="navigation" data-active={activeView} />
+  default: ({ activeView, token }: { activeView: string; token?: string }) => (
+    <nav data-testid="navigation" data-active={activeView}>
+      <a href={`/${token || ''}/settings`.replace('//', '/')} role="link">
+        Ustawienia
+      </a>
+    </nav>
   ),
 }))
 
@@ -83,8 +87,8 @@ describe('AppShell', () => {
         <div>Content</div>
       </AppShell>
     )
-    // Title was removed — only the restaurant logo icon remains in the header
-    expect(screen.queryByRole('heading')).toBeNull()
+    // New design has both app title and week range
+    expect(screen.getByRole('heading', { name: 'Culinary Alchemist' })).toBeInTheDocument()
     const logo = document.querySelector('.material-symbols-outlined')
     expect(logo).toBeTruthy()
   })
@@ -123,7 +127,7 @@ describe('AppShell', () => {
         <div />
       </AppShell>
     )
-    const settingsLink = screen.getByTitle('Ustawienia')
+    const settingsLink = screen.getByRole('link', { name: /Ustawienia/i })
     expect(settingsLink).toBeInTheDocument()
     expect(settingsLink.getAttribute('href')).toBe('/test-token/settings')
   })

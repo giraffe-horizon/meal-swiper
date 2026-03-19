@@ -430,10 +430,10 @@ export default function SwipeView({
   const stackCards = activeMeals.slice(currentIndex, currentIndex + 3)
 
   return (
-    <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden relative">
+    <main className="flex-1 flex flex-col items-center px-4 pt-6 pb-32 max-w-lg mx-auto w-full relative bg-background">
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-white px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
+        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-on-primary px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
           <span className="material-symbols-outlined text-[18px]">check_circle</span>
           <span className="font-semibold truncate">{toastText}</span>
         </div>
@@ -441,81 +441,24 @@ export default function SwipeView({
 
       {/* Reshuffle Toast */}
       {reshuffleToast && (
-        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-slate-700 text-white px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
+        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-surface-container text-on-surface px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
           <span>🔄</span>
           <span className="font-semibold">Nowe propozycje!</span>
         </div>
       )}
 
-      {/* Day Selector */}
-      <DaySelector
-        weeklyPlan={weeklyPlan}
-        weekDates={weekDates}
-        selectedDay={currentDay}
-        onSelect={(day) => onDaySelect?.(day)}
-        showThumbnails
-      />
-
-      {/* Category & Cuisine Filter — hidden for UX redesign */}
-      {/* <CategoryFilter ... /> */}
-
-      {/* Fridge Mode Filter */}
-      {onToggleFridgeMode && (
-        <FridgeModeFilter
-          enabled={fridgeModeEnabled}
-          allIngredients={fridgeAllIngredients}
-          selectedIngredients={fridgeSelectedIngredients}
-          matchingMealsCount={fridgeMatchingMealsCount}
-          onToggle={onToggleFridgeMode}
-          onToggleIngredient={onToggleFridgeIngredient ?? (() => {})}
-          onClear={onClearFridgeIngredients ?? (() => {})}
-        />
-      )}
-
-      {/* Compatibility Indicator */}
-      {compatibilityStats.total > 0 && (
-        <div className="mx-4 mb-3">
-          {compatibilityStats.warning === 'none' ? (
-            <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800/30 rounded-xl">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-red-600 dark:text-red-400">
-                  warning
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-red-800 dark:text-red-300">
-                    Brak pasujących posiłków
-                  </p>
-                  <p className="text-xs text-red-600 dark:text-red-400">
-                    Sprawdź swoje preferencje żywieniowe
-                  </p>
-                </div>
-              </div>
-              <a
-                href="/settings"
-                className="flex items-center gap-1 px-3 py-1.5 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors"
-              >
-                <span className="material-symbols-outlined text-sm">settings</span>
-                <span className="hidden sm:inline">Ustawienia</span>
-              </a>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center p-2 bg-slate-50 dark:bg-surface-dark/30 rounded-lg">
-              <span className="text-xs text-slate-600 dark:text-text-secondary-dark">
-                <span className="font-semibold text-primary">{compatibilityStats.compatible}</span>
-                {' z '}
-                <span className="font-medium">{compatibilityStats.total}</span>
-                {' posiłków pasuje do preferencji'}
-                {compatibilityStats.warning === 'too_few' && (
-                  <span className="text-amber-600 dark:text-amber-400"> • Mało opcji</span>
-                )}
-              </span>
-            </div>
-          )}
+      {/* Matching Badge */}
+      <div className="mb-6 self-start">
+        <div className="inline-flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-primary/10">
+          <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          <span className="font-label text-sm font-bold text-primary tracking-wide">
+            {compatibilityStats.compatible} POSIŁKÓW PASUJE
+          </span>
         </div>
-      )}
+      </div>
 
-      {/* Card Stack Area */}
-      <div className="flex-1 flex flex-col items-center px-4 pb-2 relative min-h-0">
+      {/* Tinder-style Card Stack */}
+      <div className="relative w-full aspect-[3/4] group">
         <SwipeStack
           stackCards={stackCards}
           currentIndex={currentIndex}
@@ -529,7 +472,10 @@ export default function SwipeView({
           onPointerUp={handleCardTap}
           people={settings.people}
         />
+      </div>
 
+      {/* Action Buttons */}
+      <div className="flex items-center gap-8 mt-8">
         <SwipeActions
           onLeft={handleSwipeLeft}
           onRight={handleSwipeRight}
@@ -539,8 +485,22 @@ export default function SwipeView({
         />
       </div>
 
+      {/* Week Selector Section */}
+      <section className="w-full mt-10">
+        <h3 className="font-headline text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4 px-2">
+          Twój Tydzień
+        </h3>
+        <DaySelector
+          weeklyPlan={weeklyPlan}
+          weekDates={weekDates}
+          selectedDay={currentDay}
+          onSelect={(day) => onDaySelect?.(day)}
+          showThumbnails
+        />
+      </section>
+
       {/* Meal Detail Modal */}
       <MealModal meal={modalMeal} onClose={() => setModalMeal(null)} />
-    </div>
+    </main>
   )
 }

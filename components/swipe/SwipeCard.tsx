@@ -38,7 +38,7 @@ export default function SwipeCard({
   return (
     <motion.div
       key={`card-${currentIndex}`}
-      className="absolute inset-0 rounded-2xl shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing select-none touch-none"
+      className="absolute inset-0 bg-surface-container rounded-lg overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing select-none touch-none transition-transform duration-300 hover:rotate-1"
       style={{ x, rotate, zIndex: 10 }}
       drag="x"
       dragElastic={0.7}
@@ -47,19 +47,19 @@ export default function SwipeCard({
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
     >
-      {/* Full image background */}
-      <div className="absolute inset-0">
+      {/* Meal Photo */}
+      <div className="w-full h-full relative">
         {showPlaceholder ? (
           <MealImagePlaceholder
             category={meal.category}
-            className="absolute inset-0 w-full h-full"
+            className="w-full h-full"
             iconSize="text-7xl"
           />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             alt={meal.nazwa}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            className="w-full h-full object-cover pointer-events-none"
             src={meal.photo_url}
             draggable="false"
             onError={() => setImgError(true)}
@@ -67,56 +67,84 @@ export default function SwipeCard({
         )}
       </div>
 
-      {/* Swipe overlays */}
+      {/* LIKE/NOPE Overlays */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+        className="absolute top-8 left-8 border-4 border-primary text-primary font-headline font-black text-4xl px-4 py-1 rounded-lg uppercase -rotate-12 pointer-events-none z-20"
         style={{ opacity: likeOpacity }}
       >
-        <div className="border-[6px] border-green-400 text-green-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[-20deg] bg-black">
-          DODAJ DO PLANU
-        </div>
+        LIKE
       </motion.div>
       <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+        className="absolute top-8 right-8 border-4 border-error text-error font-headline font-black text-4xl px-4 py-1 rounded-lg uppercase rotate-12 pointer-events-none z-20"
         style={{ opacity: nopeOpacity }}
       >
-        <div className="border-[6px] border-red-400 text-red-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[20deg] bg-black">
-          POMIJAM
-        </div>
+        NOPE
       </motion.div>
 
-      {/* Solid overlay at bottom */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
-
-      {/* Content at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 pb-6 text-white pointer-events-none">
-        <div className="flex justify-between items-end">
-          <div className="flex-1 min-w-0 mr-3">
-            <h2 className="text-2xl font-bold leading-tight drop-shadow-lg">{meal.nazwa}</h2>
-            <p className="text-slate-200 text-sm mt-1 line-clamp-2 drop-shadow">{meal.opis}</p>
-            <div className="flex items-center gap-4 mt-3 text-sm font-medium text-slate-100">
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[18px]">schedule</span>
-                <span>{meal.prep_time} min</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
-                <span>
-                  {Math.round(
-                    (('kcal_baza' in meal
-                      ? meal.kcal_baza
-                      : meal.variants.find((v) => v.is_default)?.kcal || 0) *
-                      people) /
-                      2
-                  )}{' '}
-                  kcal
-                </span>
-                <span className="text-slate-300 text-xs">dla {people} os.</span>
-              </div>
-            </div>
+      {/* Glassmorphism Overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 glass-card border-t border-white/5">
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
+              {meal.kuchnia || 'Międzynarodowa'}
+            </span>
+            <h2 className="font-headline text-2xl font-bold text-on-surface mt-1">{meal.nazwa}</h2>
           </div>
-          <div className="bg-slate-800 rounded-full px-3 py-1 text-xs font-bold shrink-0">
-            {currentIndex + 1}/{totalCards}
+          <div className="flex items-center gap-1 text-on-surface-variant bg-black/20 px-2 py-1 rounded-md backdrop-blur-md">
+            <span className="material-symbols-outlined text-sm">schedule</span>
+            <span className="font-label text-xs font-bold">{meal.prep_time} min</span>
+          </div>
+        </div>
+
+        {/* Nutritional Highlights */}
+        <div className="flex gap-4 mt-4">
+          <div className="flex flex-col">
+            <span className="text-on-surface-variant text-[10px] uppercase font-semibold tracking-tighter">
+              Kcal
+            </span>
+            <span className="font-label text-tertiary font-bold text-lg leading-tight">
+              {Math.round(
+                (('kcal_baza' in meal
+                  ? meal.kcal_baza
+                  : meal.variants.find((v) => v.is_default)?.kcal || 0) *
+                  people) /
+                  2
+              )}
+            </span>
+          </div>
+          <div className="w-px h-8 bg-outline-variant/30"></div>
+          <div className="flex flex-col">
+            <span className="text-on-surface-variant text-[10px] uppercase font-semibold tracking-tighter">
+              Białko
+            </span>
+            <span className="font-label text-on-surface font-bold text-lg leading-tight">
+              {Math.round(
+                (('bialko_baza' in meal
+                  ? meal.bialko_baza
+                  : meal.variants.find((v) => v.is_default)?.protein || 0) *
+                  people) /
+                  2
+              )}
+              g
+            </span>
+          </div>
+          <div className="w-px h-8 bg-outline-variant/30"></div>
+          <div className="flex flex-col">
+            <span className="text-on-surface-variant text-[10px] uppercase font-semibold tracking-tighter">
+              Tłuszcze
+            </span>
+            <span className="font-label text-on-surface font-bold text-lg leading-tight">
+              {Math.round(
+                (('bialko_baza' in meal
+                  ? meal.bialko_baza * 0.6 // Rough estimate
+                  : meal.variants.find((v) => v.is_default)?.fat ||
+                    (meal.variants.find((v) => v.is_default)?.protein || 0) * 0.6 ||
+                    0) *
+                  people) /
+                  2
+              )}
+              g
+            </span>
           </div>
         </div>
       </div>

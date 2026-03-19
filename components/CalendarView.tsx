@@ -28,26 +28,59 @@ export default function CalendarView({
   const { weekDates } = useWeekDates(weekOffset)
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-background-light dark:bg-background-dark">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 px-4 flex-1 min-h-0 pb-4 pt-4">
+    <main className="max-w-2xl mx-auto px-6 pb-6">
+      {/* Horizontal Calendar Scroll */}
+      <div className="flex justify-between gap-2 overflow-x-auto pb-4 mb-10 hide-scrollbar">
+        {DAY_KEYS.map((day, index) => {
+          const isActive = weeklyPlan[day] !== null || weeklyPlan[`${day}_free`]
+          return (
+            <div
+              key={day}
+              className={`flex flex-col items-center min-w-[56px] py-4 rounded-xl cursor-pointer transition-colors ${
+                isActive
+                  ? 'bg-primary text-on-primary'
+                  : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
+              }`}
+              onClick={() => onDayClick(day)}
+            >
+              <span className="font-label text-[10px] font-bold uppercase opacity-80">
+                {DAY_NAMES[index].substring(0, 3)}
+              </span>
+              <span className="font-headline text-lg font-black">
+                {formatDateShort(weekDates[index]).split('.')[0]}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Meal Grid */}
+      <div className="space-y-8">
         {DAY_KEYS.map((day, index) => (
-          <DayCard
-            key={day}
-            day={day}
-            meal={weeklyPlan[day]}
-            isFree={weeklyPlan[`${day}_free`]}
-            dateStr={formatDateShort(weekDates[index])}
-            dayName={DAY_NAMES[index]}
-            people={settings.people}
-            onDayClick={onDayClick}
-            onRemoveMeal={onRemoveMeal}
-            onToggleVacation={onToggleVacation}
-            onMealClick={setSelectedMeal}
-          />
+          <section key={day}>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="font-headline text-lg font-bold text-on-surface">
+                {DAY_NAMES[index]}
+              </span>
+              <div className="h-[1px] flex-grow bg-outline-variant/30"></div>
+            </div>
+            <DayCard
+              day={day}
+              meal={weeklyPlan[day]}
+              isFree={weeklyPlan[`${day}_free`]}
+              dateStr={formatDateShort(weekDates[index])}
+              dayName={DAY_NAMES[index]}
+              people={settings.people}
+              onDayClick={onDayClick}
+              onRemoveMeal={onRemoveMeal}
+              onToggleVacation={onToggleVacation}
+              onMealClick={setSelectedMeal}
+            />
+          </section>
         ))}
       </div>
 
       <MealModal meal={selectedMeal} onClose={() => setSelectedMeal(null)} />
-    </div>
+    </main>
   )
 }

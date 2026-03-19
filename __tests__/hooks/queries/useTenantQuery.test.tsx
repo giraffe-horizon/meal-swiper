@@ -38,7 +38,12 @@ describe('useTenantQuery hooks', () => {
   describe('useTenantQuery', () => {
     it('returns query result when token is provided', () => {
       const token = 'test-token'
-      vi.mocked(api.fetchTenantInfo).mockResolvedValue({ id: '1', name: 'Test' })
+      vi.mocked(api.fetchTenantInfo).mockResolvedValue({
+        id: '1',
+        name: 'Test',
+        token: 'test-token',
+        created_at: '2024-01-01T00:00:00Z',
+      })
 
       const { result } = renderHook(() => useTenantQuery(token), {
         wrapper: createWrapper(),
@@ -71,7 +76,12 @@ describe('useTenantQuery hooks', () => {
 
     it('calls fetchTenantInfo with token', () => {
       const token = 'test-token'
-      vi.mocked(api.fetchTenantInfo).mockResolvedValue({ id: '1', name: 'Test' })
+      vi.mocked(api.fetchTenantInfo).mockResolvedValue({
+        id: '1',
+        name: 'Test',
+        token: 'test-token',
+        created_at: '2024-01-01T00:00:00Z',
+      })
 
       renderHook(() => useTenantQuery(token), {
         wrapper: createWrapper(),
@@ -93,7 +103,7 @@ describe('useTenantQuery hooks', () => {
 
     it('calls createTenant when mutated', async () => {
       const mockTenant = { token: 'new-token', name: 'New Tenant' }
-      vi.mocked(api.createTenant).mockResolvedValue({ id: '1', name: 'New Tenant' })
+      vi.mocked(api.createTenant).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useCreateTenantMutation(), {
         wrapper: createWrapper(),
@@ -121,7 +131,7 @@ describe('useTenantQuery hooks', () => {
     it('calls updateTenantName with token and name', async () => {
       const token = 'test-token'
       const newName = 'Updated Name'
-      vi.mocked(api.updateTenantName).mockResolvedValue({ id: '1', name: newName })
+      vi.mocked(api.updateTenantName).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useUpdateTenantNameMutation(token), {
         wrapper: createWrapper(),

@@ -151,6 +151,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   const totalItems = items.length
   const checkedCount = items.filter((item) => checkedItems[item.normalizedName]).length
   const allChecked = totalItems > 0 && checkedCount === totalItems
+  const progressPercent = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0
 
   const checkAllItems = () => {
     const newChecked: Record<string, boolean> = {}
@@ -172,162 +173,203 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-background-light dark:bg-background-dark">
-      {/* Toolbar */}
-      {hasAnyItems && (
-        <div className="flex items-center justify-between gap-2 px-4 py-2 border-b border-border-light dark:border-border-dark">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
-              {checkedCount}/{totalItems} produktów
-            </span>
-            {allChecked && <span className="text-sm">🎉</span>}
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={checkAllItems}
-              className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
-            >
-              Zaznacz wszystkie
-            </button>
-            <button
-              onClick={shareList}
-              className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
-            >
-              <span className="material-symbols-outlined text-[16px]">share</span>
-              Udostępnij
-            </button>
-          </div>
+    <div className="bg-surface text-on-surface font-body min-h-screen pb-32">
+      {/* TopAppBar */}
+      <header className="bg-background flex items-center justify-between px-6 py-4 w-full">
+        <div className="flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
+          <h1 className="font-headline font-bold tracking-tight text-xl uppercase text-primary">
+            Culinary Alchemist
+          </h1>
         </div>
-      )}
+        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:opacity-80 transition-opacity active:scale-95 duration-150">
+          <span className="material-symbols-outlined text-primary">search</span>
+        </button>
+      </header>
 
-      {/* Main Content */}
-      <main className="flex-1 p-4 overflow-y-auto">
+      <main className="px-6 mt-8 max-w-2xl mx-auto">
         {!hasAnyItems ? (
-          <div className="flex flex-col items-center justify-center h-full">
+          <div className="flex flex-col items-center justify-center h-full py-20">
             <div className="text-6xl mb-4">🛒</div>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-text-primary-dark mb-2">
-              Brak listy zakupów
-            </h2>
-            <p className="text-slate-600 dark:text-text-secondary-dark text-center">
+            <h2 className="text-2xl font-bold text-on-surface mb-2">Brak listy zakupów</h2>
+            <p className="text-on-surface-variant text-center">
               Zaplanuj posiłki na tydzień, aby wygenerować listę.
             </p>
           </div>
         ) : (
           <>
-            {allChecked && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-4 text-center">
-                <div className="text-4xl mb-2">🎉</div>
-                <p className="text-lg font-bold text-green-800 dark:text-green-200">
-                  Zakupy zrobione!
-                </p>
-                <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                  Wszystkie produkty zaznaczone
-                </p>
+            {/* Progress Hero Section */}
+            <section className="mb-10">
+              <div className="flex items-end justify-between mb-4">
+                <div>
+                  <span className="font-label text-tertiary text-sm font-bold tracking-widest uppercase">
+                    Postęp zakupów
+                  </span>
+                  <h2 className="font-headline text-4xl font-extrabold mt-1">
+                    {checkedCount}/{totalItems} kupione
+                  </h2>
+                </div>
+                <button
+                  onClick={shareList}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container font-semibold transition-all hover:opacity-90 active:scale-95"
+                >
+                  <span className="material-symbols-outlined text-[20px]">share</span>
+                  <span className="text-sm">Udostępnij</span>
+                </button>
               </div>
-            )}
+              <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full shadow-[0_0_15px_rgba(105,221,150,0.3)] transition-all duration-500"
+                  style={{ width: `${progressPercent}%` }}
+                ></div>
+              </div>
+            </section>
 
-            {/* Variant-based categorized display */}
-            {isVariantBased && Object.keys(itemsByCategory).length > 0 ? (
-              <div className="space-y-4">
-                {Object.entries(itemsByCategory).map(([category, categoryItems]) => (
-                  <div
-                    key={category}
-                    className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark"
-                  >
-                    <div className="px-4 py-2 bg-slate-100 dark:bg-slate-700 border-b border-border-light dark:border-border-dark">
-                      <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 capitalize">
+            {/* Shopping List Groups */}
+            <div className="space-y-12">
+              {/* Variant-based categorized display */}
+              {isVariantBased && Object.keys(itemsByCategory).length > 0 ? (
+                Object.entries(itemsByCategory).map(([category, categoryItems]) => (
+                  <section key={category}>
+                    <div className="flex items-center gap-4 mb-6">
+                      <h3 className="font-headline text-lg font-bold text-on-surface-variant flex-shrink-0 capitalize">
                         {category}
                       </h3>
+                      <div className="h-[1px] w-full bg-outline-variant/30"></div>
                     </div>
-                    <div className="divide-y divide-border-light dark:divide-border-dark">
+                    <div className="space-y-4">
                       {categoryItems.map((item) => {
                         const isChecked = checkedItems[item.normalizedName] || false
 
                         return (
-                          <label
+                          <div
                             key={item.normalizedName}
-                            className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
-                              isChecked ? 'opacity-60' : ''
-                            }`}
+                            className="flex items-center justify-between group"
                           >
-                            <div className="flex size-6 items-center justify-center shrink-0">
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => toggleItem(item.normalizedName)}
-                                className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
-                              />
-                            </div>
-                            <span
-                              className={`text-base font-medium flex-1 text-text-primary-light dark:text-text-primary-dark ${
-                                isChecked ? 'line-through' : ''
-                              }`}
+                            <div
+                              className="flex items-center gap-4 cursor-pointer"
+                              onClick={() => toggleItem(item.normalizedName)}
                             >
-                              {item.name}
-                              <span
-                                className={`text-text-secondary-light dark:text-text-secondary-dark font-normal ${isChecked ? 'line-through' : ''}`}
+                              <div
+                                className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                                  isChecked
+                                    ? 'bg-primary'
+                                    : 'border-2 border-outline-variant hover:border-primary transition-colors'
+                                }`}
                               >
-                                {' '}
-                                — {item.amount}
+                                {isChecked && (
+                                  <span
+                                    className="material-symbols-outlined text-[16px] text-on-primary font-bold"
+                                    style={{ fontVariationSettings: "'wght' 700" }}
+                                  >
+                                    check
+                                  </span>
+                                )}
+                              </div>
+                              <div>
+                                <span
+                                  className={`text-on-surface font-semibold ${isChecked ? 'line-through opacity-60' : ''}`}
+                                >
+                                  {item.name}
+                                </span>
+                                <span className="mx-2 text-outline-variant text-xs">•</span>
+                                <span
+                                  className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                    isChecked
+                                      ? 'text-outline-variant line-through'
+                                      : 'text-tertiary'
+                                  }`}
+                                >
+                                  {item.amount}
+                                </span>
+                              </div>
+                            </div>
+                            <button className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <span className="material-symbols-outlined text-outline-variant">
+                                more_vert
                               </span>
-                            </span>
-                          </label>
+                            </button>
+                          </div>
                         )
                       })}
                     </div>
+                  </section>
+                ))
+              ) : (
+                /* Legacy flat display */
+                <section>
+                  <div className="flex items-center gap-4 mb-6">
+                    <h3 className="font-headline text-lg font-bold text-on-surface-variant flex-shrink-0">
+                      Produkty
+                    </h3>
+                    <div className="h-[1px] w-full bg-outline-variant/30"></div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              /* Legacy flat display */
-              <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
-                <div className="divide-y divide-border-light dark:divide-border-dark">
-                  {items.map((item) => {
-                    const isChecked = checkedItems[item.normalizedName] || false
+                  <div className="space-y-4">
+                    {items.map((item) => {
+                      const isChecked = checkedItems[item.normalizedName] || false
 
-                    return (
-                      <label
-                        key={item.normalizedName}
-                        className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
-                          isChecked ? 'opacity-60' : ''
-                        }`}
-                      >
-                        <div className="flex size-6 items-center justify-center shrink-0">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => toggleItem(item.normalizedName)}
-                            className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
-                          />
-                        </div>
-                        <span
-                          className={`text-base font-medium flex-1 text-text-primary-light dark:text-text-primary-dark ${
-                            isChecked ? 'line-through' : ''
-                          }`}
+                      return (
+                        <div
+                          key={item.normalizedName}
+                          className="flex items-center justify-between group"
                         >
-                          {item.name}
-                          <span
-                            className={`text-text-secondary-light dark:text-text-secondary-dark font-normal ${isChecked ? 'line-through' : ''}`}
+                          <div
+                            className="flex items-center gap-4 cursor-pointer"
+                            onClick={() => toggleItem(item.normalizedName)}
                           >
-                            {' '}
-                            — {item.amount}
-                          </span>
-                        </span>
-                      </label>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
+                            <div
+                              className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                                isChecked
+                                  ? 'bg-primary'
+                                  : 'border-2 border-outline-variant hover:border-primary transition-colors'
+                              }`}
+                            >
+                              {isChecked && (
+                                <span
+                                  className="material-symbols-outlined text-[16px] text-on-primary font-bold"
+                                  style={{ fontVariationSettings: "'wght' 700" }}
+                                >
+                                  check
+                                </span>
+                              )}
+                            </div>
+                            <div>
+                              <span
+                                className={`text-on-surface font-semibold ${isChecked ? 'line-through opacity-60' : ''}`}
+                              >
+                                {item.name}
+                              </span>
+                              <span className="mx-2 text-outline-variant text-xs">•</span>
+                              <span
+                                className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                  isChecked ? 'text-outline-variant line-through' : 'text-tertiary'
+                                }`}
+                              >
+                                {item.amount}
+                              </span>
+                            </div>
+                          </div>
+                          <button className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span className="material-symbols-outlined text-outline-variant">
+                              more_vert
+                            </span>
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </section>
+              )}
+            </div>
 
-            {/* Reset Button */}
-            <div className="pt-4 pb-8 flex justify-center">
+            {/* Add Item FAB */}
+            <div className="mt-12 mb-20">
               <button
                 onClick={resetList}
-                className="px-6 py-2.5 rounded-full border border-border-light dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-2"
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-xl border-2 border-dashed border-outline-variant/30 text-on-surface-variant hover:border-primary/50 hover:text-primary transition-all"
               >
-                <span className="material-symbols-outlined text-sm">refresh</span>
-                Resetuj listę
+                <span className="material-symbols-outlined">refresh</span>
+                <span className="font-semibold">Resetuj listę zakupów</span>
               </button>
             </div>
           </>

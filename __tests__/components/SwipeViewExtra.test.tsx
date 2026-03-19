@@ -228,10 +228,10 @@ describe('SwipeView - filter state', () => {
 })
 
 describe('SwipeView - onComplete fallback', () => {
-  it('calls onComplete when "Pomiń ten dzień" clicked and no onSkipDay', () => {
+  it('calls onComplete when star button clicked and no onSkipDay', () => {
     const onComplete = vi.fn()
     render(<SwipeView {...defaultProps} onComplete={onComplete} onSkipDay={undefined} />)
-    fireEvent.click(screen.getByText(/Pomiń ten dzień/))
+    fireEvent.click(screen.getByTitle('Oznacz jako ulubione'))
     expect(onComplete).toHaveBeenCalled()
   })
 })

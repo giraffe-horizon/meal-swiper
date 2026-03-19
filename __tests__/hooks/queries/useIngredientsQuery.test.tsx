@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useIngredientsQuery, INGREDIENTS_QUERY_KEY } from '@/hooks/queries/useIngredientsQuery'
 import * as api from '@/lib/api'
+import type { CatalogIngredient } from '@/types'
 
 // Mock the API
 vi.mock('@/lib/api', () => ({
@@ -26,9 +27,9 @@ describe('useIngredientsQuery', () => {
   }
 
   it('returns query result', () => {
-    const mockIngredients = [
-      { id: '1', name: 'Tomato', category: 'vegetables', is_seasoning: false },
-      { id: '2', name: 'Salt', category: 'spices', is_seasoning: true },
+    const mockIngredients: CatalogIngredient[] = [
+      { id: '1', name: 'Tomato', category: 'warzywa' as const, is_seasoning: false, flags: [] },
+      { id: '2', name: 'Salt', category: 'przyprawy' as const, is_seasoning: true, flags: [] },
     ]
     vi.mocked(api.fetchIngredients).mockResolvedValue(mockIngredients)
 
@@ -41,9 +42,9 @@ describe('useIngredientsQuery', () => {
   })
 
   it('uses fetchIngredients as query function', () => {
-    const mockIngredients = [
-      { id: '1', name: 'Tomato', category: 'vegetables', is_seasoning: false },
-      { id: '2', name: 'Salt', category: 'spices', is_seasoning: true },
+    const mockIngredients: CatalogIngredient[] = [
+      { id: '1', name: 'Tomato', category: 'warzywa' as const, is_seasoning: false, flags: [] },
+      { id: '2', name: 'Salt', category: 'przyprawy' as const, is_seasoning: true, flags: [] },
     ]
     vi.mocked(api.fetchIngredients).mockResolvedValue(mockIngredients)
 

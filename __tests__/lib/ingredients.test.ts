@@ -39,21 +39,24 @@ describe('lib/ingredients', () => {
       {
         id: '1',
         name: 'Fresh Tomato (organic)',
-        category: 'vegetables',
-        is_seasoning: false
+        category: 'warzywa',
+        is_seasoning: false,
+        flags: [],
       },
       {
         id: '2',
         name: 'RED ONION',
-        category: 'vegetables',
-        is_seasoning: false
+        category: 'warzywa',
+        is_seasoning: false,
+        flags: [],
       },
       {
         id: '3',
         name: '  Garlic   Powder  ',
-        category: 'spices',
-        is_seasoning: true
-      }
+        category: 'przyprawy',
+        is_seasoning: true,
+        flags: [],
+      },
     ]
 
     it('creates a map with normalized names as keys', () => {
@@ -90,8 +93,8 @@ describe('lib/ingredients', () => {
       expect(garlic).toEqual({
         id: '3',
         name: '  Garlic   Powder  ',
-        category: 'spices',
-        is_seasoning: true
+        category: 'przyprawy',
+        is_seasoning: true,
       })
     })
   })

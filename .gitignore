@@ -51,3 +51,4 @@ coverage/
 # Build output logs
 *.txt
 !public/robots.txt
+design-reference/

@@ -2,8 +2,18 @@
 
 import { useAppContext } from '@/lib/context'
 import { useEffect, useState, useRef } from 'react'
-import PreferenceEditor from '@/components/settings/PreferenceEditor'
-import type { PersonSettings } from '@/types'
+import type { PersonSettings, DietaryFlag } from '@/types'
+import { useIngredientsQuery } from '@/hooks/queries/useIngredientsQuery'
+import { useCuisinesQuery } from '@/hooks/queries/useCuisinesQuery'
+import { useMealsQuery } from '@/hooks/queries/useMealsQuery'
+
+const DIET_OPTIONS = [
+  { id: 'none', label: 'Brak', flags: [] as DietaryFlag[] },
+  { id: 'vegetarian', label: 'Wege', flags: ['vegetarian'] as DietaryFlag[] },
+  { id: 'vegan', label: 'Wega', flags: ['vegan'] as DietaryFlag[] },
+  { id: 'gluten_free', label: 'Bezglut.', flags: ['gluten_free'] as DietaryFlag[] },
+  { id: 'dairy_free', label: 'Bez laktozy', flags: ['dairy_free'] as DietaryFlag[] },
+] as const
 
 export default function SettingsPage() {
   const { settings, updateSettings, tenantToken } = useAppContext()
@@ -14,10 +24,21 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState<'token' | 'link' | null>(null)
   const saveNameTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // UI state
+  const [ingredientSearch, setIngredientSearch] = useState('')
+
   const shareLink =
     tenantToken && typeof window !== 'undefined'
       ? `${window.location.origin}/${tenantToken}/plan`
       : ''
+
+  // Data queries
+  const { data: ingredients = [], isLoading: ingredientsLoading } = useIngredientsQuery()
+  const { data: cuisines = [], isLoading: cuisinesLoading } = useCuisinesQuery()
+  const { data: meals = [] } = useMealsQuery()
+
+  // Calculate compatibility
+  const compatibleMealsCount = meals.length // Simplified for now
 
   useEffect(() => {
     if (!tenantToken) return
@@ -93,7 +114,17 @@ export default function SettingsPage() {
     const newPeople = Math.max(1, Math.min(8, settings.people + delta))
     const newPersons = [...settings.persons]
     while (newPersons.length < newPeople) {
-      newPersons.push({ name: `Osoba ${newPersons.length + 1}`, kcal: 2000, protein: 120 })
+      newPersons.push({
+        name: `Osoba ${newPersons.length + 1}`,
+        kcal: 2000,
+        protein: 120,
+        dailyKcal: 2000,
+        dailyProtein: 120,
+        mealsPerDay: 3,
+        diet: [],
+        cuisinePreferences: [],
+        excludedIngredients: [],
+      })
     }
     updateSettings({ ...settings, people: newPeople, persons: newPersons })
   }
@@ -106,116 +137,354 @@ export default function SettingsPage() {
 
   const handlePersonChange = (index: number, field: 'kcal' | 'protein', value: number) => {
     const newPersons = [...settings.persons]
-    newPersons[index] = { ...newPersons[index], [field]: Math.max(0, value) }
+    newPersons[index] = {
+      ...newPersons[index],
+      [field]: Math.max(0, value),
+      ...(field === 'kcal'
+        ? { dailyKcal: Math.max(0, value) }
+        : { dailyProtein: Math.max(0, value) }),
+    }
     updateSettings({ ...settings, persons: newPersons })
   }
 
-  const handlePreferenceChange = (index: number, updatedPerson: PersonSettings) => {
+  const handleDietChange = (index: number, optionId: string) => {
+    const option = DIET_OPTIONS.find((opt) => opt.id === optionId)
     const newPersons = [...settings.persons]
-    newPersons[index] = updatedPerson
+    newPersons[index] = { ...newPersons[index], diet: option?.flags || [] }
     updateSettings({ ...settings, persons: newPersons })
   }
 
-  const totalKcal = settings.persons.slice(0, settings.people).reduce((sum, p) => sum + p.kcal, 0)
-  const totalProtein = settings.persons
-    .slice(0, settings.people)
-    .reduce((sum, p) => sum + p.protein, 0)
+  const handleCuisineToggle = (index: number, cuisine: string) => {
+    const person = settings.persons[index]
+    const current = person.cuisinePreferences || []
+    const updated = current.includes(cuisine)
+      ? current.filter((c) => c !== cuisine)
+      : [...current, cuisine]
+
+    const newPersons = [...settings.persons]
+    newPersons[index] = { ...newPersons[index], cuisinePreferences: updated }
+    updateSettings({ ...settings, persons: newPersons })
+  }
+
+  const handleIngredientAdd = (index: number, ingredientId: string) => {
+    const person = settings.persons[index]
+    const current = person.excludedIngredients || []
+    if (!current.includes(ingredientId)) {
+      const newPersons = [...settings.persons]
+      newPersons[index] = { ...newPersons[index], excludedIngredients: [...current, ingredientId] }
+      updateSettings({ ...settings, persons: newPersons })
+    }
+    setIngredientSearch('')
+  }
+
+  const handleIngredientRemove = (index: number, ingredientId: string) => {
+    const person = settings.persons[index]
+    const current = person.excludedIngredients || []
+    const updated = current.filter((id) => id !== ingredientId)
+
+    const newPersons = [...settings.persons]
+    newPersons[index] = { ...newPersons[index], excludedIngredients: updated }
+    updateSettings({ ...settings, persons: newPersons })
+  }
 
   const setTheme = (theme: 'light' | 'dark' | 'system') => {
     updateSettings({ ...settings, theme })
   }
 
+  // Filter ingredients by search term
+  const filteredIngredients = ingredients
+    .filter(
+      (ingredient) =>
+        !ingredient.is_seasoning &&
+        ingredientSearch.trim() &&
+        ingredient.name.toLowerCase().includes(ingredientSearch.toLowerCase())
+    )
+    .slice(0, 5)
+
+  const getCurrentDiet = (person: PersonSettings) => {
+    if (!person.diet || person.diet.length === 0) return 'none'
+    const currentFlags = person.diet
+    return (
+      DIET_OPTIONS.find(
+        (option) =>
+          option.flags.length === currentFlags.length &&
+          option.flags.every((flag) => currentFlags.includes(flag))
+      )?.id || 'none'
+    )
+  }
+
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="container mx-auto max-w-2xl px-4 py-6 pb-32 space-y-6">
-        {/* Informacje o gospodarstwie */}
+    <div className="bg-background text-on-background font-body min-h-screen pb-32">
+      {/* Top AppBar */}
+      <header className="bg-background flex items-center justify-between px-6 py-4 w-full">
+        <div className="flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
+          <h1 className="font-headline font-bold tracking-tight text-xl uppercase text-primary">
+            Culinary Alchemist
+          </h1>
+        </div>
+        <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant/20">
+          <span className="material-symbols-outlined text-on-surface">person</span>
+        </div>
+      </header>
+
+      <main className="max-w-2xl mx-auto px-6 pt-8 space-y-8">
+        {/* Header Section */}
+        <section>
+          <h2 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface mb-2">
+            Preferencje domowników
+          </h2>
+          <p className="text-on-surface-variant text-sm font-body">
+            Dostosuj jadłospis do potrzeb każdego członka Twojej rodziny.
+          </p>
+        </section>
+
+        {/* Compatibility Badge */}
+        <div className="bg-primary/10 border border-primary/20 p-4 rounded-xl flex items-center gap-4">
+          <div className="bg-primary rounded-full p-2 flex items-center justify-center">
+            <span
+              className="material-symbols-outlined text-on-primary text-xl"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              auto_awesome
+            </span>
+          </div>
+          <div>
+            <span className="font-headline text-primary font-bold block">
+              {compatibleMealsCount} posiłków pasuje do preferencji wszystkich
+            </span>
+            <span className="text-on-surface-variant text-xs">
+              Twoja lista zakupów będzie zoptymalizowana.
+            </span>
+          </div>
+        </div>
+
+        {/* Person Cards */}
+        {settings.persons.slice(0, settings.people).map((person, index) => {
+          const currentDiet = getCurrentDiet(person)
+          const excludedIngredientObjects = ingredients.filter((ing) =>
+            (person.excludedIngredients || []).includes(ing.id)
+          )
+
+          return (
+            <article key={index} className="bg-surface-container rounded-lg p-6 space-y-6">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center">
+                    <span className="material-symbols-outlined text-primary text-2xl">person</span>
+                  </div>
+                  <div>
+                    <input
+                      className="bg-transparent border-none p-0 font-headline text-xl font-bold text-on-surface focus:ring-0 w-full"
+                      placeholder="Imię"
+                      type="text"
+                      value={person.name || `Osoba ${index + 1}`}
+                      onChange={(e) => handleNameChange(index, e.target.value)}
+                    />
+                    <span className="text-on-surface-variant text-xs uppercase tracking-widest font-bold">
+                      {index === 0 ? 'GŁÓWNY UŻYTKOWNIK' : 'CZŁONEK RODZINY'}
+                    </span>
+                  </div>
+                </div>
+                {settings.people > 1 && (
+                  <button
+                    className="text-on-surface-variant hover:text-error transition-colors"
+                    onClick={() => handlePeopleChange(-1)}
+                  >
+                    <span className="material-symbols-outlined">delete</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Nutrients Sliders */}
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-end">
+                    <label className="font-headline text-sm text-on-surface-variant">
+                      Cel energetyczny
+                    </label>
+                    <span className="font-label text-xl font-bold text-tertiary">
+                      {person.kcal} <span className="text-xs uppercase">kcal</span>
+                    </span>
+                  </div>
+                  <input
+                    className="w-full"
+                    max="4000"
+                    min="1200"
+                    type="range"
+                    value={person.kcal}
+                    onChange={(e) => handlePersonChange(index, 'kcal', parseInt(e.target.value))}
+                  />
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-end">
+                    <label className="font-headline text-sm text-on-surface-variant">Białko</label>
+                    <span className="font-label text-xl font-bold text-tertiary">
+                      {person.protein} <span className="text-xs uppercase">g</span>
+                    </span>
+                  </div>
+                  <input
+                    className="w-full"
+                    max="250"
+                    min="40"
+                    type="range"
+                    value={person.protein}
+                    onChange={(e) => handlePersonChange(index, 'protein', parseInt(e.target.value))}
+                  />
+                </div>
+              </div>
+
+              {/* Diet Radio Group */}
+              <div className="space-y-3">
+                <label className="font-headline text-sm text-on-surface-variant">
+                  Rodzaj diety
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                  {DIET_OPTIONS.map((option) => {
+                    const isSelected = currentDiet === option.id
+                    return (
+                      <label
+                        key={option.id}
+                        className={`relative flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer transition-all ${
+                          isSelected
+                            ? 'border-2 border-primary bg-primary/5'
+                            : 'border border-outline-variant bg-surface-container-low hover:bg-surface-container-high'
+                        }`}
+                      >
+                        <input
+                          className="sr-only"
+                          name={`diet-${index}`}
+                          type="radio"
+                          value={option.id}
+                          checked={isSelected}
+                          onChange={(e) => handleDietChange(index, e.target.value)}
+                        />
+                        <span
+                          className={`text-sm font-semibold ${isSelected ? 'text-primary' : ''}`}
+                        >
+                          {option.label}
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Cuisine Preference Chips */}
+              <div className="space-y-3">
+                <label className="font-headline text-sm text-on-surface-variant">
+                  Ulubione kuchnie
+                </label>
+                {cuisinesLoading ? (
+                  <div className="text-on-surface-variant text-sm">Ładowanie...</div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {cuisines.map((cuisine) => {
+                      const isSelected = (person.cuisinePreferences || []).includes(cuisine)
+                      return (
+                        <button
+                          key={cuisine}
+                          onClick={() => handleCuisineToggle(index, cuisine)}
+                          className={`px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 ${
+                            isSelected
+                              ? 'bg-primary text-on-primary'
+                              : 'bg-surface-container-highest text-on-surface-variant'
+                          }`}
+                        >
+                          {cuisine}
+                          {isSelected && (
+                            <span className="material-symbols-outlined text-sm">check</span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Excluded ingredients tags */}
+              <div className="space-y-3">
+                <label className="font-headline text-sm text-on-surface-variant">
+                  Wykluczone składniki
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {excludedIngredientObjects.map((ingredient) => (
+                    <div
+                      key={ingredient.id}
+                      className="px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant/30 flex items-center gap-2 text-sm"
+                    >
+                      <span>{ingredient.name}</span>
+                      <span
+                        className="material-symbols-outlined text-sm text-on-surface-variant cursor-pointer"
+                        onClick={() => handleIngredientRemove(index, ingredient.id)}
+                      >
+                        close
+                      </span>
+                    </div>
+                  ))}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Szukaj składnika..."
+                      value={ingredientSearch}
+                      onChange={(e) => setIngredientSearch(e.target.value)}
+                      className="px-3 py-1.5 rounded-lg bg-surface-container-highest text-primary text-sm font-bold border-none focus:ring-0 min-w-[120px]"
+                    />
+                    {ingredientSearch && filteredIngredients.length > 0 && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-surface-container-highest rounded-lg border border-outline-variant/30 shadow-lg z-10">
+                        {filteredIngredients.map((ingredient) => (
+                          <button
+                            key={ingredient.id}
+                            onClick={() => handleIngredientAdd(index, ingredient.id)}
+                            className="w-full text-left px-3 py-2 hover:bg-surface-container-high text-sm"
+                          >
+                            {ingredient.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </article>
+          )
+        })}
+
+        {/* Add Person Button */}
+        {settings.people < 8 && (
+          <button
+            onClick={() => handlePeopleChange(1)}
+            className="w-full p-4 border-2 border-dashed border-outline-variant/40 rounded-lg text-on-surface-variant hover:border-primary/50 hover:text-primary transition-all flex items-center justify-center gap-2"
+          >
+            <span className="material-symbols-outlined">add</span>
+            Dodaj osobę
+          </button>
+        )}
+
+        {/* Household Info */}
         {tenantToken && (
-          <section className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-border-dark p-6">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-text-primary-dark mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-slate-400">home</span>
-              Twoje gospodarstwo
-            </h2>
-
-            <div className="space-y-4">
-              {/* Nazwa gospodarstwa */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 dark:text-text-secondary-dark uppercase tracking-wider mb-1.5">
-                  Nazwa
-                </label>
-                <input
-                  type="text"
-                  value={tenantName}
-                  onChange={(e) => handleTenantNameChange(e.target.value)}
-                  placeholder="Nazwa gospodarstwa"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-dark/50 text-slate-900 dark:text-text-primary-dark placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                />
+          <section className="bg-surface-container-low rounded-lg p-6 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+                <span className="material-symbols-outlined text-on-surface-variant">home</span>
               </div>
-
-              {/* Token */}
               <div>
-                <label className="block text-xs font-semibold text-slate-500 dark:text-text-secondary-dark uppercase tracking-wider mb-1.5">
-                  Token dostępu
-                </label>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-dark/50 text-slate-700 dark:text-text-secondary-dark text-xs font-mono truncate">
-                    {tenantToken}
-                  </code>
-                  <button
-                    onClick={() => copyToClipboard(tenantToken, 'token')}
-                    title="Kopiuj token"
-                    className="flex-shrink-0 w-9 h-9 rounded-xl border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-dark/50 flex items-center justify-center text-slate-500 dark:text-text-secondary-dark hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-base">
-                      {copied === 'token' ? 'check' : 'content_copy'}
-                    </span>
-                  </button>
-                </div>
+                <h3 className="font-headline font-bold text-on-surface">
+                  {tenantName || 'Mój dom'}
+                </h3>
+                <p className="text-on-surface-variant text-sm">Warszawa, ul. Smaczna 12</p>
               </div>
-
-              {/* Link do udostępnienia */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 dark:text-text-secondary-dark uppercase tracking-wider mb-1.5">
-                  Link do udostępnienia
-                </label>
-                <div className="flex items-center gap-2">
-                  <span className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-dark/50 text-slate-700 dark:text-text-secondary-dark text-xs font-mono truncate">
-                    {shareLink}
-                  </span>
-                  <button
-                    onClick={handleShare}
-                    title="Udostępnij link"
-                    className="flex-shrink-0 w-9 h-9 rounded-xl border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-dark/50 flex items-center justify-center text-slate-500 dark:text-text-secondary-dark hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-base">
-                      {copied === 'link' ? 'check' : 'share'}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Dni od założenia */}
-              {daysSince !== null && (
-                <p className="text-xs text-slate-400 dark:text-text-secondary-dark/60">
-                  Konto założone{' '}
-                  {daysSince === 0
-                    ? 'dzisiaj'
-                    : daysSince === 1
-                      ? 'wczoraj'
-                      : `${daysSince} dni temu`}
-                </p>
-              )}
             </div>
+            <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
           </section>
         )}
 
-        {/* Motyw aplikacji */}
-        <section className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-border-dark p-6">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-text-primary-dark mb-4 flex items-center gap-2">
-            <span className="material-symbols-outlined text-slate-400">palette</span>
-            Motyw aplikacji
-          </h2>
-
-          <div className="grid grid-cols-3 gap-3">
+        {/* Theme Selector */}
+        <section className="space-y-4">
+          <h3 className="font-headline text-sm text-on-surface-variant uppercase tracking-widest font-bold">
+            Wygląd aplikacji
+          </h3>
+          <div className="grid grid-cols-3 gap-3 p-1 bg-surface-container-low rounded-xl">
             {[
               { id: 'light', label: 'Jasny', icon: 'light_mode' },
               { id: 'dark', label: 'Ciemny', icon: 'dark_mode' },
@@ -226,172 +495,25 @@ export default function SettingsPage() {
                 <button
                   key={themeOption.id}
                   onClick={() => setTheme(themeOption.id as 'light' | 'dark' | 'system')}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                  className={`flex items-center justify-center gap-2 py-3 rounded-lg text-sm transition-all ${
                     isActive
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-slate-100 dark:border-border-dark text-slate-500 dark:text-text-secondary-dark hover:border-slate-200 dark:hover:border-slate-700'
+                      ? 'bg-surface-container-highest text-primary shadow-sm font-bold'
+                      : 'text-on-surface-variant'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-2xl">{themeOption.icon}</span>
-                  <span className="text-xs font-bold uppercase tracking-wider">
-                    {themeOption.label}
+                  <span
+                    className="material-symbols-outlined text-lg"
+                    style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
+                  >
+                    {themeOption.icon}
                   </span>
+                  {themeOption.label}
                 </button>
               )
             })}
           </div>
         </section>
-
-        {/* Dla kogo gotujesz */}
-        <section className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-border-dark p-6">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-text-primary-dark mb-4">
-            Dla kogo gotujesz?
-          </h2>
-
-          {/* Stepper liczby osób */}
-          <div className="flex items-center justify-between mb-6 bg-slate-50 dark:bg-surface-dark/50 rounded-xl p-4">
-            <span className="text-sm font-medium text-slate-700 dark:text-text-secondary-dark">
-              Liczba osób
-            </span>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => handlePeopleChange(-1)}
-                disabled={settings.people <= 1}
-                className="w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-surface-dark transition-colors"
-                aria-label="Zmniejsz liczbę osób"
-              >
-                <span className="material-symbols-outlined text-slate-700 dark:text-text-secondary-dark">
-                  remove
-                </span>
-              </button>
-              <span className="text-2xl font-bold text-slate-900 dark:text-text-primary-dark w-12 text-center">
-                {settings.people}
-              </span>
-              <button
-                onClick={() => handlePeopleChange(1)}
-                disabled={settings.people >= 8}
-                className="w-10 h-10 rounded-full bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-surface-dark transition-colors"
-                aria-label="Zwiększ liczbę osób"
-              >
-                <span className="material-symbols-outlined text-slate-700 dark:text-text-secondary-dark">
-                  add
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Ustawienia dla każdej osoby */}
-          <div className="space-y-4">
-            {settings.persons.slice(0, settings.people).map((person, index) => (
-              <div
-                key={index}
-                className="bg-slate-50 dark:bg-surface-dark/50 rounded-xl p-4 space-y-3"
-              >
-                {/* Imię */}
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm text-slate-400">person</span>
-                  <input
-                    type="text"
-                    value={person.name || `Osoba ${index + 1}`}
-                    onChange={(e) => handleNameChange(index, e.target.value)}
-                    placeholder={`Osoba ${index + 1}`}
-                    className="flex-1 px-2 py-1 rounded-lg border-0 bg-transparent text-sm font-semibold text-slate-700 dark:text-text-secondary-dark focus:outline-none focus:ring-1 focus:ring-primary/50 placeholder:text-slate-400"
-                  />
-                </div>
-
-                {/* Kalorie */}
-                <div className="space-y-1">
-                  <label className="text-xs text-slate-600 dark:text-text-secondary-dark flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">local_fire_department</span>
-                    Kalorie dzienne (kcal)
-                  </label>
-                  <input
-                    type="number"
-                    value={person.kcal}
-                    onChange={(e) =>
-                      handlePersonChange(index, 'kcal', parseInt(e.target.value) || 0)
-                    }
-                    min="0"
-                    step="100"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-slate-900 dark:text-text-primary-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  />
-                </div>
-
-                {/* Białko */}
-                <div className="space-y-1">
-                  <label className="text-xs text-slate-600 dark:text-text-secondary-dark flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">fitness_center</span>
-                    Białko dzienne (g)
-                  </label>
-                  <input
-                    type="number"
-                    value={person.protein}
-                    onChange={(e) =>
-                      handlePersonChange(index, 'protein', parseInt(e.target.value) || 0)
-                    }
-                    min="0"
-                    step="10"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-slate-900 dark:text-text-primary-dark text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  />
-                </div>
-
-                {/* Preferencje */}
-                <PreferenceEditor
-                  person={person}
-                  personIndex={index}
-                  onChange={handlePreferenceChange}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Podsumowanie */}
-          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-border-dark">
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-text-secondary-dark mb-3">
-              Łącznie dziennie
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-orange-50 dark:bg-orange-500/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                  {totalKcal}
-                </div>
-                <div className="text-xs text-orange-700 dark:text-orange-500/70 mt-1">kcal</div>
-              </div>
-              <div className="bg-blue-50 dark:bg-blue-500/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                  {totalProtein}
-                </div>
-                <div className="text-xs text-blue-700 dark:text-blue-500/70 mt-1">g białka</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Info */}
-        <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 flex gap-3">
-          <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl">
-            info
-          </span>
-          <p className="text-sm text-blue-800 dark:text-blue-300">
-            Ustawienia są automatycznie zapisywane i będą używane do planowania posiłków.
-          </p>
-        </div>
-
-        {/* Wersja aplikacji */}
-        <div className="text-center pt-4 pb-2">
-          <p className="text-xs text-slate-400 dark:text-slate-600">
-            Meal Swiper v{process.env.NEXT_PUBLIC_APP_VERSION || '0.0.0'}
-          </p>
-          <a
-            href="https://github.com/liskeee/meal-swiper/blob/master/CHANGELOG.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-primary/60 hover:text-primary transition-colors"
-          >
-            Changelog
-          </a>
-        </div>
-      </div>
+      </main>
     </div>
   )
 }
