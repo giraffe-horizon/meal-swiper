@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppContext } from '@/lib/context'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import type { PersonSettings, DietaryFlag } from '@/types'
 import { useIngredientsQuery } from '@/hooks/queries/useIngredientsQuery'
 import { useCuisinesQuery } from '@/hooks/queries/useCuisinesQuery'
@@ -20,20 +20,13 @@ export default function SettingsPage() {
 
   // Tenant info state
   const [tenantName, setTenantName] = useState('')
-  const [daysSince, setDaysSince] = useState<number | null>(null)
-  const [copied, setCopied] = useState<'token' | 'link' | null>(null)
-  const saveNameTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // UI state
   const [ingredientSearch, setIngredientSearch] = useState('')
 
-  const shareLink =
-    tenantToken && typeof window !== 'undefined'
-      ? `${window.location.origin}/${tenantToken}/plan`
-      : ''
 
   // Data queries
-  const { data: ingredients = [], isLoading: ingredientsLoading } = useIngredientsQuery()
+  const { data: ingredients = [] } = useIngredientsQuery()
   const { data: cuisines = [], isLoading: cuisinesLoading } = useCuisinesQuery()
   const { data: meals = [] } = useMealsQuery()
 
@@ -47,67 +40,12 @@ export default function SettingsPage() {
       .then((data) => {
         if (data) {
           setTenantName(data.name || '')
-          if (data.created_at) {
-            const days = Math.floor(
-              (Date.now() - new Date(data.created_at).getTime()) / (1000 * 60 * 60 * 24)
-            )
-            setDaysSince(days)
-          }
         }
       })
       .catch(() => {})
   }, [tenantToken])
 
-  const handleTenantNameChange = (value: string) => {
-    setTenantName(value)
-    if (saveNameTimer.current) clearTimeout(saveNameTimer.current)
-    saveNameTimer.current = setTimeout(async () => {
-      if (!tenantToken) return
-      await fetch('/api/tenant', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: tenantToken, name: value }),
-      }).catch(() => {})
-    }, 500)
-  }
 
-  const copyToClipboard = async (text: string, type: 'token' | 'link') => {
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text)
-      } else {
-        const textarea = document.createElement('textarea')
-        textarea.value = text
-        textarea.style.position = 'fixed'
-        textarea.style.opacity = '0'
-        document.body.appendChild(textarea)
-        textarea.select()
-        document.execCommand('copy')
-        document.body.removeChild(textarea)
-      }
-      setCopied(type)
-      setTimeout(() => setCopied(null), 2000)
-    } catch {
-      window.prompt('Skopiuj:', text)
-    }
-  }
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Meal Swiper',
-          text: tenantName ? `Dołącz do "${tenantName}" w Meal Swiper` : 'Dołącz do Meal Swiper',
-          url: shareLink,
-        })
-      } catch {
-        // User cancelled share dialog
-      }
-    } else {
-      // Fallback: copy link
-      await copyToClipboard(shareLink, 'link')
-    }
-  }
 
   // Settings handlers
   const handlePeopleChange = (delta: number) => {

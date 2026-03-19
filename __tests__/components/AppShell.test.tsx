@@ -87,8 +87,9 @@ describe('AppShell', () => {
         <div>Content</div>
       </AppShell>
     )
-    // New design has both app title and week range
-    expect(screen.getByRole('heading', { name: 'Culinary Alchemist' })).toBeInTheDocument()
+    // New design has restaurant icon and week navigation
+    const restaurantIcon = screen.getByText('restaurant')
+    expect(restaurantIcon).toBeInTheDocument()
     const logo = document.querySelector('.material-symbols-outlined')
     expect(logo).toBeTruthy()
   })

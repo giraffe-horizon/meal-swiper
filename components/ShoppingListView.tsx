@@ -150,18 +150,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   const hasAnyItems = items.length > 0
   const totalItems = items.length
   const checkedCount = items.filter((item) => checkedItems[item.normalizedName]).length
-  const allChecked = totalItems > 0 && checkedCount === totalItems
   const progressPercent = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0
-
-  const checkAllItems = () => {
-    const newChecked: Record<string, boolean> = {}
-    items.forEach((item) => {
-      newChecked[item.normalizedName] = true
-    })
-    setCheckedItems(newChecked)
-    saveCheckedItems(weekKey, newChecked)
-    syncCheckedToServer({ weekKey, checked: newChecked })
-  }
 
   const shareList = () => {
     let text = '📝 Lista zakupów\n\n'

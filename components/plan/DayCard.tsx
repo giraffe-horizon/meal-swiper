@@ -8,8 +8,8 @@ interface DayCardProps {
   day: DayKey
   meal: Meal | null
   isFree: boolean
-  dateStr: string
-  dayName: string
+  _dateStr: string
+  _dayName: string
   people: number
   onDayClick: (day: DayKey) => void
   onRemoveMeal: (day: DayKey) => void
@@ -21,15 +21,14 @@ export default function DayCard({
   day,
   meal,
   isFree,
-  dateStr,
-  dayName,
+  _dateStr,
+  _dayName,
   people,
   onDayClick,
   onRemoveMeal,
   onToggleVacation,
   onMealClick,
 }: DayCardProps) {
-  const [activeMenu, setActiveMenu] = useState(false)
   const [imgError, setImgError] = useState(false)
 
   const handleContextMenu = (e: React.MouseEvent) => {

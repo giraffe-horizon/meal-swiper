@@ -4,7 +4,7 @@ interface SwipeActionsProps {
   onLeft: () => void
   onRight: () => void
   disabled: boolean
-  currentDay: string | null
+  _currentDay: string | null
   onSkipDay: () => void
 }
 
@@ -12,7 +12,7 @@ export default function SwipeActions({
   onLeft,
   onRight,
   disabled,
-  currentDay,
+  _currentDay,
   onSkipDay,
 }: SwipeActionsProps) {
   return (

@@ -16,7 +16,7 @@ interface SwipeCardProps {
   onPointerUp: (e: React.PointerEvent) => void
   people: number
   currentIndex: number
-  totalCards: number
+  _totalCards: number
 }
 
 export default function SwipeCard({
@@ -30,7 +30,7 @@ export default function SwipeCard({
   onPointerUp,
   people,
   currentIndex,
-  totalCards,
+  _totalCards,
 }: SwipeCardProps) {
   const [imgError, setImgError] = useState(false)
   const showPlaceholder = !meal.photo_url || imgError

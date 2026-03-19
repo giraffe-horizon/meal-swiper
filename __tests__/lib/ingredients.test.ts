@@ -95,6 +95,7 @@ describe('lib/ingredients', () => {
         name: '  Garlic   Powder  ',
         category: 'przyprawy',
         is_seasoning: true,
+        flags: [],
       })
     })
   })
