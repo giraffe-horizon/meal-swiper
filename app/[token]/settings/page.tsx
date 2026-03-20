@@ -5,9 +5,8 @@ import { useEffect, useState, useMemo } from 'react'
 import type { PersonSettings, DietaryFlag } from '@/types'
 import { useIngredientsQuery } from '@/hooks/queries/useIngredientsQuery'
 import { useCuisinesQuery } from '@/hooks/queries/useCuisinesQuery'
-import { useMealsQuery } from '@/hooks/queries/useMealsQuery'
+import { useMealsWithVariantsQuery } from '@/hooks/queries/useMealsWithVariantsQuery'
 import { filterMealsByPreferences } from '@/lib/meal-filter'
-import type { MealWithVariants } from '@/types'
 
 const DIET_OPTIONS = [
   { id: 'none', label: 'Brak', flags: [] as DietaryFlag[] },
@@ -31,7 +30,7 @@ export default function SettingsPage() {
   // Data queries
   const { data: ingredients = [] } = useIngredientsQuery()
   const { data: cuisines = [], isLoading: cuisinesLoading } = useCuisinesQuery()
-  const { data: meals = [] } = useMealsQuery()
+  const { data: meals = [] } = useMealsWithVariantsQuery()
 
   // Calculate compatibility using real filtering logic
   const compatibleMealsCount = useMemo(() => {
@@ -43,7 +42,7 @@ export default function SettingsPage() {
     const activePersons = settings.persons.slice(0, settings.people)
 
     // Filter meals using the meal filter logic
-    const filterResult = filterMealsByPreferences(meals as unknown as MealWithVariants[], {
+    const filterResult = filterMealsByPreferences(meals, {
       persons: activePersons,
     })
 
