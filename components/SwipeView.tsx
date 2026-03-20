@@ -480,7 +480,7 @@ export default function SwipeView({
           onLeft={handleSwipeLeft}
           onRight={handleSwipeRight}
           disabled={isAnimating}
-          currentDay={currentDay}
+          _currentDay={currentDay}
           onSkipDay={handleSkipDay}
         />
       </div>
