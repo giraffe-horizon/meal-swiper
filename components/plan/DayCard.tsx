@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Meal, DayKey } from '@/types'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
@@ -8,8 +8,8 @@ interface DayCardProps {
   day: DayKey
   meal: Meal | null
   isFree: boolean
-  _dateStr: string
-  _dayName: string
+  dateStr: string
+  dayName: string
   people: number
   onDayClick: (day: DayKey) => void
   onRemoveMeal: (day: DayKey) => void
@@ -21,8 +21,8 @@ export default function DayCard({
   day,
   meal,
   isFree,
-  _dateStr,
-  _dayName,
+  dateStr,
+  dayName,
   people,
   onDayClick,
   onRemoveMeal,
@@ -30,6 +30,19 @@ export default function DayCard({
   onMealClick,
 }: DayCardProps) {
   const [imgError, setImgError] = useState(false)
+  const [activeMenu, setActiveMenu] = useState(false)
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setActiveMenu(false)
+    }
+
+    if (activeMenu) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [activeMenu])
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -55,8 +68,59 @@ export default function DayCard({
       <div
         data-testid={`day-card-${day}`}
         onContextMenu={handleContextMenu}
-        className="bg-surface-container rounded-lg overflow-hidden flex h-40 shadow-lg"
+        className="bg-surface-container rounded-lg overflow-hidden flex h-40 shadow-lg relative"
       >
+        {/* Day name and date header */}
+        <div className="absolute top-2 left-3 right-3 flex items-center justify-between z-10">
+          <div className="text-left">
+            <div className="font-headline text-xs font-bold text-on-surface uppercase tracking-wider bg-surface-container/80 backdrop-blur px-2 py-0.5 rounded">
+              {dayName}
+            </div>
+            <div className="font-body text-xs text-on-surface bg-surface-container/80 backdrop-blur px-2 py-0.5 rounded mt-1">
+              {dateStr}
+            </div>
+          </div>
+          <div className="relative">
+            <button
+              onClick={() => setActiveMenu(!activeMenu)}
+              className="p-1.5 bg-surface-container/80 backdrop-blur hover:bg-surface-container-high rounded-full transition-colors"
+            >
+              <span className="material-symbols-outlined text-on-surface text-lg">more_vert</span>
+            </button>
+            {activeMenu && (
+              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-20">
+                <button
+                  onClick={() => {
+                    onDayClick(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Zmień danie
+                </button>
+                <button
+                  onClick={() => {
+                    onRemoveMeal(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Usuń danie
+                </button>
+                <button
+                  onClick={() => {
+                    onToggleVacation(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Oznacz jako wolny
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="w-1/3 relative overflow-hidden">
           {meal.photo_url && !imgError ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -75,7 +139,7 @@ export default function DayCard({
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-surface-container/20"></div>
         </div>
-        <div className="w-2/3 p-5 flex flex-col justify-between">
+        <div className="w-2/3 p-5 pt-16 flex flex-col justify-between">
           <div>
             <span className="font-label text-[10px] uppercase tracking-widest text-primary font-bold mb-1 block">
               {meal.category || 'Posiłek'}
@@ -120,17 +184,115 @@ export default function DayCard({
     )
   }
 
-  return (
-    <button
-      data-testid={`day-card-${day}`}
-      onClick={() => onDayClick(day)}
-      onContextMenu={handleContextMenu}
-      className="w-full h-32 border-2 border-dashed border-outline-variant/40 rounded-lg flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group"
-    >
-      <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
-        <span className="material-symbols-outlined">add</span>
+  // Vacation view
+  if (isFree) {
+    return (
+      <div
+        data-testid={`day-card-${day}`}
+        className="w-full h-32 bg-surface-container rounded-lg flex flex-col items-center justify-center gap-2 text-on-surface relative overflow-hidden"
+      >
+        {/* Day name and date header */}
+        <div className="absolute top-2 left-3 right-3 flex items-center justify-between">
+          <div className="text-left">
+            <div className="font-headline text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+              {dayName}
+            </div>
+            <div className="font-body text-xs text-on-surface-variant">{dateStr}</div>
+          </div>
+          <div className="relative">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setActiveMenu(!activeMenu)
+              }}
+              className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"
+            >
+              <span className="material-symbols-outlined text-on-surface-variant text-lg">
+                more_vert
+              </span>
+            </button>
+            {activeMenu && (
+              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-10">
+                <button
+                  onClick={() => {
+                    onToggleVacation(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Anuluj urlop
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Vacation content */}
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center">
+            <span className="material-symbols-outlined text-2xl text-tertiary">flight</span>
+          </div>
+          <span className="font-headline text-lg font-bold text-tertiary">Urlop</span>
+        </div>
       </div>
-      <span className="font-body text-sm font-medium">Dodaj posiłek</span>
-    </button>
+    )
+  }
+
+  // Empty day view
+  return (
+    <div
+      data-testid={`day-card-${day}`}
+      className="w-full h-32 border-2 border-dashed border-outline-variant/40 rounded-lg flex flex-col text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group relative overflow-hidden"
+    >
+      {/* Day name and date header */}
+      <div className="absolute top-2 left-3 right-3 flex items-center justify-between">
+        <div className="text-left">
+          <div className="font-headline text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+            {dayName}
+          </div>
+          <div className="font-body text-xs text-on-surface-variant">{dateStr}</div>
+        </div>
+        <div className="relative">
+          <button
+            onClick={() => setActiveMenu(!activeMenu)}
+            className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"
+          >
+            <span className="material-symbols-outlined text-on-surface-variant text-lg">
+              more_vert
+            </span>
+          </button>
+          {activeMenu && (
+            <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-10">
+              <button
+                onClick={() => {
+                  onDayClick(day)
+                  setActiveMenu(false)
+                }}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+              >
+                Dodaj danie
+              </button>
+              <button
+                onClick={() => {
+                  onToggleVacation(day)
+                  setActiveMenu(false)
+                }}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+              >
+                Oznacz jako wolny
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Add meal content */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-2">
+        <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
+          <span className="material-symbols-outlined">add</span>
+        </div>
+        <span className="font-body text-sm font-medium">Dodaj posiłek</span>
+      </div>
+    </div>
   )
 }

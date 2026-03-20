@@ -16,7 +16,7 @@ interface SwipeCardProps {
   onPointerUp: (e: React.PointerEvent) => void
   people: number
   currentIndex: number
-  _totalCards: number
+  totalCards: number
 }
 
 export default function SwipeCard({
@@ -30,7 +30,7 @@ export default function SwipeCard({
   onPointerUp,
   people,
   currentIndex,
-  _totalCards,
+  totalCards,
 }: SwipeCardProps) {
   const [imgError, setImgError] = useState(false)
   const showPlaceholder = !meal.photo_url || imgError
@@ -80,6 +80,13 @@ export default function SwipeCard({
       >
         NOPE
       </motion.div>
+
+      {/* Progress Counter */}
+      <div className="absolute top-4 left-4 bg-surface-container/80 backdrop-blur px-3 py-1.5 rounded-full pointer-events-none z-20">
+        <span className="font-label text-sm font-bold text-on-surface">
+          {currentIndex + 1}/{totalCards}
+        </span>
+      </div>
 
       {/* Glassmorphism Overlay */}
       <div className="absolute bottom-0 left-0 right-0 p-6 glass-card border-t border-white/5">

@@ -50,10 +50,14 @@ describe('DayCard - empty state', () => {
     expect(screen.getByText('Dodaj posiłek')).toBeInTheDocument()
   })
 
-  it('calls onDayClick when empty card clicked', () => {
+  it('calls onDayClick when menu "Dodaj danie" is clicked', () => {
     render(<DayCard {...defaultProps} />)
-    const card = screen.getByTestId('day-card-mon')
-    fireEvent.click(card)
+    // Click the menu button
+    const menuButton = screen.getByRole('button')
+    fireEvent.click(menuButton)
+    // Click "Dodaj danie" option
+    const addMealButton = screen.getByText('Dodaj danie')
+    fireEvent.click(addMealButton)
     expect(defaultProps.onDayClick).toHaveBeenCalledWith('mon')
   })
 
@@ -93,11 +97,14 @@ describe('DayCard - context menu (right-click)', () => {
     vi.clearAllMocks()
   })
 
-  it('handles context menu on empty day (confirm = true) → toggleVacation', () => {
-    window.confirm = vi.fn(() => true)
+  it('calls onToggleVacation when menu "Oznacz jako wolny" is clicked on empty day', () => {
     render(<DayCard {...defaultProps} />)
-    const card = screen.getByTestId('day-card-mon')
-    fireEvent.contextMenu(card)
+    // Click the menu button
+    const menuButton = screen.getByRole('button')
+    fireEvent.click(menuButton)
+    // Click "Oznacz jako wolny" option
+    const markFreeButton = screen.getByText('Oznacz jako wolny')
+    fireEvent.click(markFreeButton)
     expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
   })
 
@@ -126,11 +133,14 @@ describe('DayCard - context menu (right-click)', () => {
     expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
   })
 
-  it('handles context menu on vacation day (confirm = true) → toggleVacation off', () => {
-    window.confirm = vi.fn(() => true)
+  it('handles vacation day via menu "Anuluj urlop"', () => {
     render(<DayCard {...defaultProps} isFree={true} />)
-    const card = screen.getByTestId('day-card-mon')
-    fireEvent.contextMenu(card)
+    // Click the menu button
+    const menuButton = screen.getByRole('button')
+    fireEvent.click(menuButton)
+    // Click "Anuluj urlop" option
+    const cancelVacationButton = screen.getByText('Anuluj urlop')
+    fireEvent.click(cancelVacationButton)
     expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
   })
 })

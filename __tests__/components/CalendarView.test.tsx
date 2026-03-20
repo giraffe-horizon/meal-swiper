@@ -99,7 +99,9 @@ describe('CalendarView', () => {
         onToggleVacation={onToggleVacation}
       />
     )
-    expect(screen.getByText(/4 Mar/)).toBeInTheDocument()
+    // Check that date appears at least once (could be in horizontal scroll or day cards)
+    const dateElements = screen.getAllByText(/4 Mar/)
+    expect(dateElements.length).toBeGreaterThan(0)
   })
 
   it('shows day names', () => {
@@ -112,7 +114,10 @@ describe('CalendarView', () => {
         onToggleVacation={onToggleVacation}
       />
     )
-    expect(screen.getByText(/Poniedziałek/)).toBeInTheDocument()
-    expect(screen.getByText(/Piątek/)).toBeInTheDocument()
+    // Check that day names appear at least once (could be in section headers or day cards)
+    const mondayElements = screen.getAllByText(/Poniedziałek/)
+    expect(mondayElements.length).toBeGreaterThan(0)
+    const fridayElements = screen.getAllByText(/Piątek/)
+    expect(fridayElements.length).toBeGreaterThan(0)
   })
 })

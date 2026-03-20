@@ -151,6 +151,17 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   const totalItems = items.length
   const checkedCount = items.filter((item) => checkedItems[item.normalizedName]).length
   const progressPercent = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0
+  const allChecked = totalItems > 0 && checkedCount === totalItems
+
+  const checkAllItems = () => {
+    const newChecked = allChecked
+      ? {} // Uncheck all
+      : items.reduce((acc, item) => ({ ...acc, [item.normalizedName]: true }), {}) // Check all
+
+    setCheckedItems(newChecked)
+    saveCheckedItems(weekKey, newChecked)
+    syncCheckedToServer({ weekKey, checked: newChecked })
+  }
 
   const shareList = () => {
     let text = '📝 Lista zakupów\n\n'
@@ -198,13 +209,26 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
                     {checkedCount}/{totalItems} kupione
                   </h2>
                 </div>
-                <button
-                  onClick={shareList}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container font-semibold transition-all hover:opacity-90 active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-[20px]">share</span>
-                  <span className="text-sm">Udostępnij</span>
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={checkAllItems}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-high text-on-surface font-semibold transition-all hover:opacity-90 active:scale-95"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      {allChecked ? 'check_box' : 'check_box_outline_blank'}
+                    </span>
+                    <span className="text-sm">
+                      {allChecked ? 'Odznacz wszystko' : 'Zaznacz wszystko'}
+                    </span>
+                  </button>
+                  <button
+                    onClick={shareList}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container font-semibold transition-all hover:opacity-90 active:scale-95"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">share</span>
+                    <span className="text-sm">Udostępnij</span>
+                  </button>
+                </div>
               </div>
               <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
                 <div
