@@ -43,7 +43,7 @@ export default function SettingsPage() {
     const activePersons = settings.persons.slice(0, settings.people)
 
     // Filter meals using the meal filter logic
-    const filterResult = filterMealsByPreferences(meals as MealWithVariants[], {
+    const filterResult = filterMealsByPreferences(meals as unknown as MealWithVariants[], {
       persons: activePersons,
     })
 
