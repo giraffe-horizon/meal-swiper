@@ -21,7 +21,7 @@ export default function DaySelector({
   const shortNames = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt']
 
   return (
-    <div className="flex gap-2 px-4 py-1 sm:py-2 overflow-x-auto scrollbar-none justify-center">
+    <div className="flex justify-between gap-2 overflow-x-auto pb-4 hide-scrollbar">
       {DAY_KEYS.map((day, idx) => {
         const meal = weeklyPlan[day]
         const isFree = weeklyPlan[`${day}_free`]
@@ -34,14 +34,18 @@ export default function DaySelector({
             key={day}
             onClick={() => !isFree && onSelect(day)}
             disabled={isFree}
-            className={`flex flex-col items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl transition-all ${
+            className={`flex flex-col items-center min-w-[56px] py-4 rounded-xl transition-all ${
               isActive
-                ? 'bg-primary/20 ring-2 ring-primary shadow-sm'
-                : 'hover:bg-surface-container-low'
+                ? 'bg-primary text-on-primary'
+                : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
             } ${isFree ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             {showThumbnails && (
-              <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center bg-surface-container-low shrink-0">
+              <div
+                className={`relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shrink-0 mb-1 ${
+                  meal ? 'border-2 border-primary' : ''
+                }`}
+              >
                 {meal ? (
                   <div className="absolute inset-0 bg-surface-container flex items-center justify-center">
                     {meal.photo_url ? (
@@ -70,16 +74,14 @@ export default function DaySelector({
               </div>
             )}
             <span
-              className={`text-xs font-semibold ${
-                isActive ? 'text-primary' : 'text-on-surface-variant'
+              className={`font-label text-[10px] font-bold uppercase ${
+                isActive ? 'opacity-80' : ''
               }`}
             >
               {shortName}
             </span>
             {dateLabel && (
-              <span className="text-[10px] text-on-surface-variant/60 hidden sm:block">
-                {dateLabel}
-              </span>
+              <span className="font-headline text-lg font-black">{dateLabel.split('.')[0]}</span>
             )}
           </button>
         )

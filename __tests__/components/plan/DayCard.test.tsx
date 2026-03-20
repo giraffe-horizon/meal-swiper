@@ -50,18 +50,12 @@ describe('DayCard - empty state', () => {
     expect(screen.getByText('Dodaj posiłek')).toBeInTheDocument()
   })
 
-  it('calls onDayClick when menu "Dodaj danie" is clicked', () => {
+  it('calls onDayClick when empty card is clicked', () => {
     render(<DayCard {...defaultProps} />)
-    // Click the menu button
-    const menuButton = screen.getByRole('button')
-    fireEvent.click(menuButton)
-    // Click "Dodaj danie" option
-    const addMealButton = screen.getByText('Dodaj danie')
-    fireEvent.click(addMealButton)
+    const card = screen.getByTestId('day-card-mon')
+    fireEvent.click(card)
     expect(defaultProps.onDayClick).toHaveBeenCalledWith('mon')
   })
-
-  // Menu functionality removed in new design - using context menu instead
 })
 
 describe('DayCard - with meal', () => {
@@ -80,14 +74,12 @@ describe('DayCard - with meal', () => {
     expect(screen.getByText(/20g protein/)).toBeInTheDocument()
   })
 
-  it('calls onMealClick when recipe button clicked', () => {
+  it('calls onMealClick when meal card clicked', () => {
     render(<DayCard {...defaultProps} meal={mockMeal} />)
-    const recipeBtn = screen.getByText('Zobacz przepis →')
-    fireEvent.click(recipeBtn)
+    const card = screen.getByTestId('day-card-mon')
+    fireEvent.click(card)
     expect(defaultProps.onMealClick).toHaveBeenCalledWith(mockMeal)
   })
-
-  // Menu functionality removed in new design - using context menu instead
 })
 
 // Vacation state UI removed in new design - vacation functionality handled via context menu
@@ -97,14 +89,11 @@ describe('DayCard - context menu (right-click)', () => {
     vi.clearAllMocks()
   })
 
-  it('calls onToggleVacation when menu "Oznacz jako wolny" is clicked on empty day', () => {
+  it('calls onToggleVacation via context menu on empty day (confirm = true)', () => {
+    window.confirm = vi.fn(() => true)
     render(<DayCard {...defaultProps} />)
-    // Click the menu button
-    const menuButton = screen.getByRole('button')
-    fireEvent.click(menuButton)
-    // Click "Oznacz jako wolny" option
-    const markFreeButton = screen.getByText('Oznacz jako wolny')
-    fireEvent.click(markFreeButton)
+    const card = screen.getByTestId('day-card-mon')
+    fireEvent.contextMenu(card)
     expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
   })
 

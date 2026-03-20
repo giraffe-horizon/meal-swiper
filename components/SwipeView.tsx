@@ -457,13 +457,58 @@ export default function SwipeView({
         <h3 className="font-headline text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4 px-2">
           Twój Tydzień
         </h3>
-        <DaySelector
-          weeklyPlan={weeklyPlan}
-          weekDates={weekDates}
-          selectedDay={currentDay}
-          onSelect={(day) => onDaySelect?.(day)}
-          showThumbnails
-        />
+        <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-xl border border-white/5">
+          {DAY_KEYS.map((day, idx) => {
+            const meal = weeklyPlan[day]
+            const isFree = weeklyPlan[`${day}_free`]
+            const isActive = currentDay === day
+            const shortNames = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt']
+
+            return (
+              <button
+                key={day}
+                onClick={() => !isFree && onDaySelect?.(day)}
+                disabled={!!isFree}
+                className="flex flex-col items-center gap-2"
+              >
+                <span
+                  className={`text-[10px] font-bold ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}
+                >
+                  {shortNames[idx]}
+                </span>
+                {meal ? (
+                  <div className="w-12 h-12 rounded-full border-2 border-primary overflow-hidden">
+                    {meal.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        alt={meal.nazwa}
+                        className="w-full h-full object-cover"
+                        src={meal.photo_url}
+                        onError={(e) => {
+                          ;(e.target as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-surface-container flex items-center justify-center">
+                        <span className="material-symbols-outlined text-on-surface-variant text-sm">
+                          restaurant
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : isFree ? (
+                  <div className="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center">
+                    <span className="text-lg">✈️</span>
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-full border border-dashed border-outline-variant flex items-center justify-center text-primary hover:bg-primary/5 transition-colors">
+                    <span className="material-symbols-outlined text-xl">add</span>
+                  </div>
+                )}
+              </button>
+            )
+          })}
+        </div>
       </section>
 
       {/* Meal Detail Modal */}

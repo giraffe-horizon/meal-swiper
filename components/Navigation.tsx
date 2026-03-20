@@ -23,7 +23,7 @@ const navItems = [
 export default function Navigation({ activeView, token }: NavigationProps) {
   return (
     <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-10">
-      <div className="fixed bottom-8 left-4 right-4 h-16 rounded-full bg-surface-container/80 backdrop-blur-xl border border-white/5 flex items-center justify-around shadow-[0px_40px_40px_rgba(0,0,0,0.4)]">
+      <div className="fixed bottom-8 left-4 right-4 h-16 rounded-full bg-[#1a211e]/80 backdrop-blur-xl border border-white/5 flex items-center justify-around shadow-[0px_40px_40px_rgba(0,0,0,0.4)]">
         {navItems.map(({ id, view, icon, label }) => {
           const isActive = activeView === id
           return (

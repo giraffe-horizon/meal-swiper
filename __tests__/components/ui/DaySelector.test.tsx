@@ -55,7 +55,7 @@ describe('DaySelector', () => {
     expect(onSelect).toHaveBeenCalledWith('mon')
   })
 
-  it('active day has ring styling', () => {
+  it('active day has primary bg styling', () => {
     render(
       <DaySelector
         weeklyPlan={emptyPlan}
@@ -65,7 +65,7 @@ describe('DaySelector', () => {
       />
     )
     const pnBtn = screen.getByText('Pn').closest('button')
-    expect(pnBtn?.className).toContain('ring-2')
+    expect(pnBtn?.className).toContain('bg-primary')
   })
 
   it('inactive day does not have ring styling', () => {
