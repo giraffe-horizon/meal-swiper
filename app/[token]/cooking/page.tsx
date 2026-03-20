@@ -57,10 +57,10 @@ export default function CookingPage() {
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center p-8">
           <div className="text-6xl mb-4">🍽️</div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+          <h2 className="text-2xl font-bold text-on-surface font-headline mb-2">
             Brak zaplanowanego posiłku
           </h2>
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-on-surface-variant font-body">
             Zaplanuj posiłki w zakładce Plan, aby zobaczyć przepis.
           </p>
         </div>

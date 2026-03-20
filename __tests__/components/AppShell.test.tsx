@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -81,17 +81,15 @@ describe('AppShell', () => {
     mockSetWeekOffset.mockClear()
   })
 
-  it('renders the header with logo icon', () => {
+  it('renders the header with Culinary Alchemist branding', () => {
     render(
       <AppShell>
         <div>Content</div>
       </AppShell>
     )
-    // New design has restaurant icon and week navigation
-    const restaurantIcon = screen.getByText('restaurant')
-    expect(restaurantIcon).toBeInTheDocument()
-    const logo = document.querySelector('.material-symbols-outlined')
-    expect(logo).toBeTruthy()
+    // New design has menu_book icon and "Culinary Alchemist" text
+    expect(screen.getByText('menu_book')).toBeInTheDocument()
+    expect(screen.getByText('Culinary Alchemist')).toBeInTheDocument()
   })
 
   it('renders children when not loading', () => {
@@ -122,7 +120,7 @@ describe('AppShell', () => {
     expect(nav.getAttribute('data-active')).toBe('plan')
   })
 
-  it('renders settings link', () => {
+  it('renders settings link in navigation', () => {
     render(
       <AppShell>
         <div />
@@ -133,31 +131,13 @@ describe('AppShell', () => {
     expect(settingsLink.getAttribute('href')).toBe('/test-token/settings')
   })
 
-  it('clicking prev week button decrements weekOffset', () => {
+  it('renders notification bell in header', () => {
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    // Find button containing chevron_left
-    const buttons = screen.getAllByRole('button')
-    const prevBtn = buttons.find((b) => b.textContent?.includes('chevron_left'))
-    expect(prevBtn).toBeTruthy()
-    fireEvent.click(prevBtn!)
-    expect(mockSetWeekOffset).toHaveBeenCalledWith(-1)
-  })
-
-  it('clicking next week button increments weekOffset', () => {
-    render(
-      <AppShell>
-        <div />
-      </AppShell>
-    )
-    const buttons = screen.getAllByRole('button')
-    const nextBtn = buttons.find((b) => b.textContent?.includes('chevron_right'))
-    expect(nextBtn).toBeTruthy()
-    fireEvent.click(nextBtn!)
-    expect(mockSetWeekOffset).toHaveBeenCalledWith(1)
+    expect(screen.getByText('notifications')).toBeInTheDocument()
   })
 
   it('shows LoadingSpinner when loading', () => {

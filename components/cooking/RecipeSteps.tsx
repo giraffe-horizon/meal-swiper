@@ -11,37 +11,39 @@ interface RecipeStepsProps {
 
 export default function RecipeSteps({ steps, checkedSteps = {}, onToggleStep }: RecipeStepsProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {steps.map((segments, i) => {
         const done = checkedSteps[i] ?? false
         return (
           <div
             key={i}
             onClick={() => onToggleStep?.(i)}
-            className={`flex gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+            className={`p-6 rounded-lg cursor-pointer transition-all ${
               done
-                ? 'bg-green-50 dark:bg-green-900/20 opacity-60'
-                : 'bg-slate-50 dark:bg-surface-dark/50 hover:bg-slate-100 dark:hover:bg-surface-dark'
+                ? 'bg-surface-container-low opacity-60'
+                : 'bg-surface-container-highest border border-primary/20 relative overflow-hidden'
             }`}
           >
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-sm font-bold transition-colors ${
-                done ? 'bg-green-500 text-white' : 'bg-primary/10 text-primary'
-              }`}
-            >
-              {done ? '✓' : i + 1}
+            <div className="flex gap-6">
+              <span
+                className={`font-headline font-black text-2xl ${
+                  done ? 'text-on-surface-variant/30' : 'text-primary/20'
+                }`}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p
+                className={`font-body text-on-surface leading-relaxed flex-1 ${done ? 'line-through text-on-surface-variant' : ''}`}
+              >
+                {segments.map((seg, j) =>
+                  seg.type === 'text' ? (
+                    <span key={j}>{seg.content}</span>
+                  ) : (
+                    <AmountBadge key={j} amount={seg.amount} />
+                  )
+                )}
+              </p>
             </div>
-            <p
-              className={`text-sm text-slate-700 dark:text-text-secondary-dark leading-relaxed flex-1 ${done ? 'line-through' : ''}`}
-            >
-              {segments.map((seg, j) =>
-                seg.type === 'text' ? (
-                  <span key={j}>{seg.content}</span>
-                ) : (
-                  <AmountBadge key={j} amount={seg.amount} />
-                )
-              )}
-            </p>
           </div>
         )
       })}

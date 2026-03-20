@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { Meal, DayKey, WeeklyPlan } from '@/types'
 import { useWeekDates } from '@/hooks/useWeekDates'
-import { DAY_KEYS, DAY_NAMES, formatDateShort } from '@/lib/utils'
+import { DAY_KEYS, DAY_NAMES, formatDateShort, getWeekDates, formatWeekRange } from '@/lib/utils'
 import MealModal from '@/components/MealModal'
 import DayCard from '@/components/plan/DayCard'
 import { useAppContext } from '@/lib/context'
@@ -23,12 +23,49 @@ export default function CalendarView({
   onRemoveMeal,
   onToggleVacation,
 }: CalendarViewProps) {
-  const { settings } = useAppContext()
+  const { settings, setWeekOffset } = useAppContext()
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null)
   const { weekDates } = useWeekDates(weekOffset)
 
+  const allWeekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset])
+  const weekRange = useMemo(() => formatWeekRange(allWeekDates), [allWeekDates])
+
+  // Calculate week number
+  const weekNumber = useMemo(() => {
+    const d = new Date(allWeekDates[0])
+    const startOfYear = new Date(d.getFullYear(), 0, 1)
+    const diff = d.getTime() - startOfYear.getTime()
+    return Math.ceil((diff / 86400000 + startOfYear.getDay() + 1) / 7)
+  }, [allWeekDates])
+
   return (
     <main className="max-w-2xl mx-auto px-6 pb-6">
+      {/* Week Navigation Header */}
+      <header className="mb-10">
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={() => setWeekOffset(weekOffset - 1)}
+            className="p-2 rounded-full bg-surface-container-low hover:bg-surface-container-high transition-colors"
+          >
+            <span className="material-symbols-outlined text-on-surface-variant">chevron_left</span>
+          </button>
+          <div className="text-center">
+            <h2 className="font-headline font-extrabold text-2xl tracking-tight text-on-surface">
+              {weekRange}
+            </h2>
+            <p className="font-label text-xs uppercase text-primary/70 font-bold">
+              Tydzień {weekNumber}
+            </p>
+          </div>
+          <button
+            onClick={() => setWeekOffset(weekOffset + 1)}
+            className="p-2 rounded-full bg-surface-container-low hover:bg-surface-container-high transition-colors"
+          >
+            <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+          </button>
+        </div>
+      </header>
+
       {/* Horizontal Calendar Scroll */}
       <div className="flex justify-between gap-2 overflow-x-auto pb-4 mb-10 hide-scrollbar">
         {DAY_KEYS.map((day, index) => {

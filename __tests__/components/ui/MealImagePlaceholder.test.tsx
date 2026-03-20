@@ -11,7 +11,7 @@ describe('MealImagePlaceholder', () => {
   it('renders grey background', () => {
     const { container } = render(<MealImagePlaceholder />)
     const wrapper = container.firstChild as HTMLElement
-    expect(wrapper.className).toContain('bg-slate-200')
+    expect(wrapper.className).toContain('bg-surface-container-high')
   })
 
   it('applies custom className to wrapper div', () => {

@@ -10,7 +10,6 @@ import SwipeStack from '@/components/swipe/SwipeStack'
 import SwipeActions from '@/components/swipe/SwipeActions'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import CategoryFilter from '@/components/swipe/CategoryFilter' // kept for future UX redesign
-import FridgeModeFilter from '@/components/swipe/FridgeModeFilter'
 import type { IngredientWithCategory } from '@/lib/fridge'
 import { useAppContext } from '@/lib/context'
 import { filterMealsByPreferences, type HouseholdConfig } from '@/lib/meal-filter'
@@ -62,13 +61,13 @@ export default function SwipeView({
   setCurrentSwipeIndexInContext,
   setShuffledMealsInContext,
   setSeenIdsInContext,
-  fridgeModeEnabled = false,
-  fridgeAllIngredients = [],
-  fridgeSelectedIngredients = [],
-  fridgeMatchingMealsCount = 0,
-  onToggleFridgeMode,
-  onToggleFridgeIngredient,
-  onClearFridgeIngredients,
+  fridgeModeEnabled: _fridgeModeEnabled = false,
+  fridgeAllIngredients: _fridgeAllIngredients = [],
+  fridgeSelectedIngredients: _fridgeSelectedIngredients = [],
+  fridgeMatchingMealsCount: _fridgeMatchingMealsCount = 0,
+  onToggleFridgeMode: _onToggleFridgeMode,
+  onToggleFridgeIngredient: _onToggleFridgeIngredient,
+  onClearFridgeIngredients: _onClearFridgeIngredients,
 }: SwipeViewProps) {
   const { settings } = useAppContext()
 
@@ -300,7 +299,7 @@ export default function SwipeView({
 
   if (showSuccess) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-background-light dark:bg-background-dark relative overflow-hidden">
+      <div className="flex-1 flex items-center justify-center bg-background relative overflow-hidden">
         {showConfetti && (
           <div className="absolute inset-0 pointer-events-none">
             {confettiItems.map((item) => (
@@ -322,15 +321,11 @@ export default function SwipeView({
         )}
         <div className="text-center z-10">
           <div className="text-6xl mb-4 animate-bounce">🎉</div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-text-primary-dark">
-            Wszystkie propozycje przejrzane!
-          </h2>
-          <p className="text-slate-600 dark:text-text-secondary-dark mt-2">
-            Nie ma więcej kart do przejrzenia
-          </p>
+          <h2 className="text-2xl font-bold text-on-surface">Wszystkie propozycje przejrzane!</h2>
+          <p className="text-on-surface-variant mt-2">Nie ma więcej kart do przejrzenia</p>
           <button
             onClick={handleReshuffle}
-            className="mt-6 px-6 py-3 bg-primary text-white rounded-full font-bold shadow-lg hover:bg-primary/90 transition-colors"
+            className="mt-6 px-6 py-3 bg-primary text-on-primary rounded-full font-bold shadow-[0_0_30px_rgba(105,221,150,0.3)] hover:bg-primary/90 transition-colors"
           >
             Losuj ponownie
           </button>
@@ -341,7 +336,7 @@ export default function SwipeView({
 
   if (!currentMeal) {
     return (
-      <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+      <div className="flex-1 flex flex-col bg-background overflow-hidden">
         <DaySelector
           weeklyPlan={weeklyPlan}
           weekDates={weekDates}
@@ -349,50 +344,32 @@ export default function SwipeView({
           onSelect={(day) => onDaySelect?.(day)}
           showThumbnails
         />
-        {/* <CategoryFilter ... /> hidden for UX redesign */}
-
-        {/* Fridge Mode Filter */}
-        {onToggleFridgeMode && (
-          <FridgeModeFilter
-            enabled={fridgeModeEnabled}
-            allIngredients={fridgeAllIngredients}
-            selectedIngredients={fridgeSelectedIngredients}
-            matchingMealsCount={fridgeMatchingMealsCount}
-            onToggle={onToggleFridgeMode}
-            onToggleIngredient={onToggleFridgeIngredient ?? (() => {})}
-            onClear={onClearFridgeIngredients ?? (() => {})}
-          />
-        )}
 
         {/* Compatibility Indicator */}
         {compatibilityStats.total > 0 && (
           <div className="mx-4 mb-3">
             {compatibilityStats.warning === 'none' ? (
-              <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800/30 rounded-xl">
+              <div className="flex items-center justify-between p-3 bg-error/10 border border-error/20 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-red-600 dark:text-red-400">
-                    warning
-                  </span>
+                  <span className="material-symbols-outlined text-error">warning</span>
                   <div>
-                    <p className="text-sm font-semibold text-red-800 dark:text-red-300">
-                      Brak pasujących posiłków
-                    </p>
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p className="text-sm font-semibold text-error">Brak pasujących posiłków</p>
+                    <p className="text-xs text-on-surface-variant">
                       Sprawdź swoje preferencje żywieniowe
                     </p>
                   </div>
                 </div>
                 <a
                   href="/settings"
-                  className="flex items-center gap-1 px-3 py-1.5 bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-error/20 text-error rounded-lg text-sm font-medium hover:bg-error/30 transition-colors"
                 >
                   <span className="material-symbols-outlined text-sm">settings</span>
                   <span className="hidden sm:inline">Ustawienia</span>
                 </a>
               </div>
             ) : (
-              <div className="flex items-center justify-center p-2 bg-slate-50 dark:bg-surface-dark/30 rounded-lg">
-                <span className="text-xs text-slate-600 dark:text-text-secondary-dark">
+              <div className="flex items-center justify-center p-2 bg-surface-container-low rounded-lg">
+                <span className="text-xs text-on-surface-variant">
                   <span className="font-semibold text-primary">
                     {compatibilityStats.compatible}
                   </span>
@@ -400,7 +377,7 @@ export default function SwipeView({
                   <span className="font-medium">{compatibilityStats.total}</span>
                   {' posiłków pasuje do preferencji'}
                   {compatibilityStats.warning === 'too_few' && (
-                    <span className="text-amber-600 dark:text-amber-400"> • Mało opcji</span>
+                    <span className="text-tertiary"> • Mało opcji</span>
                   )}
                 </span>
               </div>
@@ -409,18 +386,8 @@ export default function SwipeView({
         )}
 
         <div className="flex-1 flex items-center justify-center">
-          <div
-            className="text-center text-slate-500 dark:text-text-secondary-dark px-6"
-            data-testid="empty-state"
-          >
+          <div className="text-center text-on-surface-variant px-6" data-testid="empty-state">
             <p className="text-lg">Brak więcej posiłków</p>
-            {fridgeModeEnabled && fridgeSelectedIngredients.length > 0 && (
-              <p className="text-sm mt-2">
-                Żadne danie nie pasuje do wybranych składników.
-                <br />
-                Spróbuj dodać więcej składników lub wyczyść filtr.
-              </p>
-            )}
           </div>
         </div>
       </div>

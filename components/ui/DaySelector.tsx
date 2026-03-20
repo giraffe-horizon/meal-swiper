@@ -37,13 +37,13 @@ export default function DaySelector({
             className={`flex flex-col items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl transition-all ${
               isActive
                 ? 'bg-primary/20 ring-2 ring-primary shadow-sm'
-                : 'hover:bg-slate-100 dark:hover:bg-surface-dark'
+                : 'hover:bg-surface-container-low'
             } ${isFree ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             {showThumbnails && (
-              <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-surface-dark shrink-0">
+              <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center bg-surface-container-low shrink-0">
                 {meal ? (
-                  <div className="absolute inset-0 bg-slate-200 dark:bg-surface-dark flex items-center justify-center">
+                  <div className="absolute inset-0 bg-surface-container flex items-center justify-center">
                     {meal.photo_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -55,7 +55,7 @@ export default function DaySelector({
                         }}
                       />
                     ) : (
-                      <span className="material-symbols-outlined text-slate-400 text-sm">
+                      <span className="material-symbols-outlined text-on-surface-variant text-sm">
                         restaurant
                       </span>
                     )}
@@ -63,7 +63,7 @@ export default function DaySelector({
                 ) : isFree ? (
                   <span className="text-lg">✈️</span>
                 ) : (
-                  <span className="material-symbols-outlined text-slate-400 text-[20px]">
+                  <span className="material-symbols-outlined text-on-surface-variant text-[20px]">
                     restaurant_menu
                   </span>
                 )}
@@ -71,13 +71,15 @@ export default function DaySelector({
             )}
             <span
               className={`text-xs font-semibold ${
-                isActive ? 'text-primary' : 'text-slate-600 dark:text-text-secondary-dark'
+                isActive ? 'text-primary' : 'text-on-surface-variant'
               }`}
             >
               {shortName}
             </span>
             {dateLabel && (
-              <span className="text-[10px] text-slate-400 hidden sm:block">{dateLabel}</span>
+              <span className="text-[10px] text-on-surface-variant/60 hidden sm:block">
+                {dateLabel}
+              </span>
             )}
           </button>
         )
