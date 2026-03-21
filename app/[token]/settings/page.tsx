@@ -267,7 +267,7 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <input
-                      className="bg-transparent border-none p-0 font-headline text-xl font-bold text-on-surface focus:ring-0 w-full"
+                      className="bg-transparent border-none p-0 font-headline text-base font-bold text-on-surface focus:ring-0 w-full"
                       placeholder="Imię"
                       type="text"
                       value={person.name || `Osoba ${index + 1}`}
@@ -295,7 +295,7 @@ export default function SettingsPage() {
                     <label className="font-headline text-sm text-on-surface-variant">
                       Cel energetyczny
                     </label>
-                    <span className="font-label text-xl font-bold text-tertiary">
+                    <span className="font-label text-lg font-bold text-tertiary">
                       {person.kcal} <span className="text-xs uppercase">kcal</span>
                     </span>
                   </div>
@@ -311,7 +311,7 @@ export default function SettingsPage() {
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
                     <label className="font-headline text-sm text-on-surface-variant">Białko</label>
-                    <span className="font-label text-xl font-bold text-tertiary">
+                    <span className="font-label text-lg font-bold text-tertiary">
                       {person.protein} <span className="text-xs uppercase">g</span>
                     </span>
                   </div>
@@ -337,7 +337,7 @@ export default function SettingsPage() {
                     return (
                       <label
                         key={option.id}
-                        className={`relative flex items-center justify-center h-10 rounded-full cursor-pointer transition-all ${
+                        className={`relative flex items-center justify-center h-9 rounded-full cursor-pointer transition-all ${
                           isSelected
                             ? 'bg-primary text-on-primary'
                             : 'bg-surface-container-highest text-on-surface border border-outline-variant'
@@ -444,7 +444,7 @@ export default function SettingsPage() {
         {settings.people < 8 && (
           <button
             onClick={() => handlePeopleChange(1)}
-            className="w-full p-4 border-2 border-dashed border-outline-variant/40 rounded-lg text-on-surface-variant hover:border-primary/50 hover:text-primary transition-all flex items-center justify-center gap-2"
+            className="w-full p-4 border-2 border-dashed border-outline-variant/40 rounded-lg text-sm text-on-surface-variant hover:border-primary/50 hover:text-primary transition-all flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined">add</span>
             Dodaj osobę
@@ -473,20 +473,20 @@ export default function SettingsPage() {
                         onChange={(e) => setTenantName(e.target.value)}
                         onBlur={saveTenantName}
                         onKeyDown={(e) => e.key === 'Enter' && saveTenantName()}
-                        className="font-headline text-lg font-bold text-on-surface bg-transparent border-b border-primary focus:outline-none w-full"
+                        className="font-headline text-base font-bold text-on-surface bg-transparent border-b border-primary focus:outline-none w-full"
                         placeholder="Nazwa gospodarstwa"
                         autoFocus
                       />
                     ) : (
                       <h3
                         onClick={() => setIsEditingName(true)}
-                        className="font-headline text-lg font-bold text-on-surface cursor-pointer hover:text-primary"
+                        className="font-headline text-base font-bold text-on-surface cursor-pointer hover:text-primary"
                       >
                         {tenantName || 'Mój dom'}
                       </h3>
                     )}
                     {tenantCreatedAt && (
-                      <p className="text-on-surface-variant text-sm">
+                      <p className="text-on-surface-variant text-xs">
                         Utworzono {daysSinceCreation} dni temu
                       </p>
                     )}
@@ -504,8 +504,8 @@ export default function SettingsPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-surface-container-highest rounded-lg">
                   <div className="flex-1">
-                    <p className="text-on-surface-variant text-sm mb-1">Token gospodarstwa</p>
-                    <code className="font-mono text-sm text-on-surface bg-surface-container-low px-2 py-1 rounded break-all">
+                    <p className="text-on-surface-variant text-xs mb-1">Token gospodarstwa</p>
+                    <code className="font-mono text-xs text-on-surface bg-surface-container-low px-2 py-1 rounded break-all">
                       {tenantToken}
                     </code>
                   </div>
@@ -519,7 +519,7 @@ export default function SettingsPage() {
 
                 <button
                   onClick={shareHousehold}
-                  className="w-full flex items-center justify-center gap-3 py-3 px-6 bg-primary text-on-primary rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                  className="w-full flex items-center justify-center gap-3 py-3 px-6 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
                 >
                   <span className="material-symbols-outlined">share</span>
                   Udostępnij gospodarstwo

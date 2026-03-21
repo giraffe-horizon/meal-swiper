@@ -97,7 +97,7 @@ export default function CalendarView({
         {DAY_KEYS.map((day, index) => (
           <section key={day}>
             <div className="flex items-center gap-3 mb-4">
-              <span className="font-headline text-base font-bold text-on-surface">
+              <span className="font-headline text-sm font-semibold text-on-surface">
                 {DAY_NAMES[index]}
               </span>
               <div className="h-[1px] flex-grow bg-outline-variant/30"></div>

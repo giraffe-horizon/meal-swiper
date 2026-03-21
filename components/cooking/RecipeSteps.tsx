@@ -26,14 +26,14 @@ export default function RecipeSteps({ steps, checkedSteps = {}, onToggleStep }: 
           >
             <div className="flex gap-6">
               <span
-                className={`font-headline font-black text-2xl ${
+                className={`font-headline font-black text-lg ${
                   done ? 'text-on-surface-variant/30' : 'text-primary/20'
                 }`}
               >
                 {String(i + 1).padStart(2, '0')}
               </span>
               <p
-                className={`font-body text-on-surface leading-relaxed flex-1 ${done ? 'line-through text-on-surface-variant' : ''}`}
+                className={`font-body text-sm text-on-surface leading-relaxed flex-1 ${done ? 'line-through text-on-surface-variant' : ''}`}
               >
                 {segments.map((seg, j) =>
                   seg.type === 'text' ? (

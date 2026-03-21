@@ -38,10 +38,11 @@ function SwipeCard({
   return (
     <motion.div
       key={`card-${currentIndex}`}
-      className="absolute inset-x-0 top-0 bottom-0 bg-surface-container rounded-[20px] overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing select-none touch-none transition-transform duration-300 hover:rotate-1"
+      className="absolute inset-x-0 top-0 bottom-0 bg-surface-container rounded-[20px] overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing select-none touch-none transform-gpu will-change-transform"
       style={{ x, rotate, zIndex: 10 }}
       drag="x"
-      dragElastic={0.7}
+      dragElastic={0.5}
+      dragMomentum={false}
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={onDragEnd}
       onPointerDown={onPointerDown}

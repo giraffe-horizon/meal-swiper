@@ -233,7 +233,7 @@ export default function CookingView({
               <span className="text-primary text-[10px] font-label font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
                 {meal.kuchnia || 'Międzynarodowa'}
               </span>
-              <h1 className="font-headline text-3xl font-bold text-on-surface mt-1 leading-tight">
+              <h1 className="font-headline text-xl font-bold text-on-surface mt-1 leading-tight">
                 {meal.nazwa}
               </h1>
             </div>
@@ -278,7 +278,7 @@ export default function CookingView({
             {legacyData.scaledBase.length > 0 && (
               <section>
                 <div className="flex items-center gap-4 mb-6">
-                  <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                  <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
                     <span className="material-symbols-outlined text-primary text-[24px]">
                       grocery
                     </span>
@@ -314,7 +314,7 @@ export default function CookingView({
                           </div>
                           <div className="flex-1">
                             <span
-                              className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                              className={`text-sm text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
                             >
                               {ing.name}
                             </span>
@@ -339,7 +339,7 @@ export default function CookingView({
             {legacyData.scaledMeat.length > 0 && (
               <section>
                 <div className="flex items-center gap-4 mb-6">
-                  <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                  <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
                     <span className="material-symbols-outlined text-secondary text-[24px]">
                       set_meal
                     </span>
@@ -375,7 +375,7 @@ export default function CookingView({
                           </div>
                           <div className="flex-1">
                             <span
-                              className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                              className={`text-sm text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
                             >
                               {ing.name}
                             </span>
@@ -405,7 +405,7 @@ export default function CookingView({
             {variantData.sharedIngredients.length > 0 && (
               <section>
                 <div className="flex items-center gap-4 mb-6">
-                  <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                  <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
                     <span className="material-symbols-outlined text-primary text-[24px]">
                       grocery
                     </span>
@@ -441,7 +441,7 @@ export default function CookingView({
                           </div>
                           <div className="flex-1">
                             <span
-                              className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                              className={`text-sm text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
                             >
                               {ing.ingredient?.name || 'Unknown'}
                             </span>
@@ -469,7 +469,7 @@ export default function CookingView({
               return (
                 <section key={personInfo.person.name}>
                   <div className="flex items-center gap-4 mb-6">
-                    <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+                    <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
                       <span className="material-symbols-outlined text-secondary text-[24px]">
                         person
                       </span>
@@ -509,7 +509,7 @@ export default function CookingView({
                             </div>
                             <div className="flex-1">
                               <span
-                                className={`text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
+                                className={`text-sm text-on-surface font-semibold ${checked ? 'line-through opacity-60' : ''}`}
                               >
                                 {ing.ingredient?.name || 'Unknown'}
                               </span>
@@ -534,7 +534,7 @@ export default function CookingView({
             {/* Macros per person */}
             {variantData.personData.length > 0 && (
               <section className="bg-secondary-container rounded-xl p-6 border border-secondary-container/20">
-                <h3 className="font-headline text-lg font-bold text-on-secondary-container mb-4 flex items-center gap-3">
+                <h3 className="font-headline text-base font-bold text-on-secondary-container mb-4 flex items-center gap-3">
                   <span className="material-symbols-outlined text-[24px]">analytics</span>
                   Makroskładniki per osoba
                 </h3>
@@ -561,7 +561,7 @@ export default function CookingView({
           (variantData && variantData.steps.length > 0)) && (
           <section>
             <div className="flex items-center gap-4 mb-6">
-              <h2 className="font-headline text-lg font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
+              <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
                 <span className="material-symbols-outlined text-primary text-[24px]">
                   format_list_numbered
                 </span>
@@ -601,11 +601,11 @@ export default function CookingView({
         {/* Tips - works for both legacy and variant */}
         {((legacyData && legacyData.tips) || (variantData && variantData.tips)) && (
           <section className="bg-tertiary-container rounded-xl p-6 border border-tertiary-container/20">
-            <h2 className="font-headline text-lg font-bold text-on-tertiary-container mb-4 flex items-center gap-3">
+            <h2 className="font-headline text-base font-bold text-on-tertiary-container mb-4 flex items-center gap-3">
               <span className="material-symbols-outlined text-[24px]">lightbulb</span>
               Wskazówki szefa
             </h2>
-            <p className="text-on-tertiary-container/80 font-body leading-relaxed">
+            <p className="text-on-tertiary-container/80 font-body text-sm leading-relaxed">
               {legacyData?.tips || variantData?.tips}
             </p>
           </section>
