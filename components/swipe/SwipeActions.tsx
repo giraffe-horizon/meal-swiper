@@ -16,7 +16,7 @@ export default function SwipeActions({
   onSkipDay,
 }: SwipeActionsProps) {
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center gap-6">
       {/* Reject Button - X (44px) */}
       <button
         onClick={onLeft}
