@@ -85,7 +85,7 @@ export default function CalendarView({
                 {dayNames[index]}
               </span>
               <span className="font-headline text-[18px] font-black leading-none mt-1">
-                {formatDateShort(weekDates[index]).split('.')[0]}
+                {weekDates[index]?.getDate()}
               </span>
             </div>
           )

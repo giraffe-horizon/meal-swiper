@@ -48,7 +48,7 @@ export default function SwipeCard({
       onPointerUp={onPointerUp}
     >
       {/* Meal Photo - Exactly 280px height */}
-      <div className="w-full h-[280px] relative">
+      <div className="w-full h-[240px] relative">
         {showPlaceholder ? (
           <MealImagePlaceholder
             category={meal.category}
@@ -89,13 +89,13 @@ export default function SwipeCard({
       </div>
 
       {/* Info Section - Remaining height */}
-      <div className="w-full flex-1 bg-gradient-to-t from-surface-container via-surface-container/80 to-transparent p-6 flex flex-col justify-between">
+      <div className="w-full flex-1 bg-gradient-to-t from-surface-container via-surface-container/80 to-transparent p-4 flex flex-col justify-between">
         <div className="flex justify-between items-start">
           <div>
             <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
               {meal.kuchnia || 'Międzynarodowa'}
             </span>
-            <h2 className="font-headline text-2xl font-bold text-on-surface mt-1 line-clamp-2 text-ellipsis">
+            <h2 className="font-headline text-xl font-bold text-on-surface mt-1 line-clamp-2">
               {meal.nazwa}
             </h2>
           </div>
