@@ -131,13 +131,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       let shuffled = false
 
-      if (hasVariantMeals && hasNewPreferences) {
-        // Use variant-based filtering
+      if (hasVariantMeals) {
+        // Use variant-based meals (with or without filtering)
         const availableVariantMeals = mealsWithVariants.filter(
           (m) => !currentUsedIds.includes(m.id)
         )
         if (availableVariantMeals.length > 0) {
-          shuffleFilteredMeals(availableVariantMeals, settings.persons)
+          if (hasNewPreferences) {
+            // Apply preference filtering
+            shuffleFilteredMeals(availableVariantMeals, settings.persons)
+          } else {
+            // No preferences set, use all available meals without filtering
+            shuffleFilteredMeals(availableVariantMeals, [])
+          }
           shuffled = true
         }
       }

@@ -55,7 +55,7 @@ test.describe('Swipe flow', () => {
 
     const firstMeal = await page.locator('h2').first().textContent()
 
-    const skipBtn = page.getByText(/Pomiń ten dzień/)
+    const skipBtn = page.locator('button[title="Pomiń ten dzień"]')
     await expect(skipBtn).toBeVisible({ timeout: 5000 })
     await skipBtn.click()
 
@@ -111,10 +111,11 @@ test.describe('Shopping list flow', () => {
     await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(1000)
 
-    const checkbox = page.locator('input[type="checkbox"]').first()
-    await expect(checkbox).toBeVisible({ timeout: 8000 })
+    // Shopping items are clickable divs, not checkboxes
+    const shoppingItem = page.locator('[class*="cursor-pointer"]:has-text("•")').first()
+    await expect(shoppingItem).toBeVisible({ timeout: 8000 })
 
-    await checkbox.click()
+    await shoppingItem.click()
     // Wait for localStorage to be written
     await page
       .waitForFunction(() => {
@@ -127,6 +128,8 @@ test.describe('Shopping list flow', () => {
     await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(500)
 
-    await expect(page.locator('input[type="checkbox"]').first()).toBeChecked()
+    // Check that the first shopping item shows as checked (has check icon)
+    const firstItemCheck = page.locator('[class*="cursor-pointer"]:has-text("•")').first().locator('[class*="bg-primary"]')
+    await expect(firstItemCheck).toBeVisible()
   })
 })

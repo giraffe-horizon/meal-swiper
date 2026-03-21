@@ -42,14 +42,15 @@ export default function SwipeActions({
         </span>
       </button>
 
-      {/* Star Button - 56px yellow */}
+      {/* Skip Day Button */}
       <button
         onClick={onSkipDay}
         disabled={disabled}
-        title="Oznacz jako ulubione"
-        className="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center text-yellow-400 border border-yellow-400/20 hover:bg-yellow-400/10 transition-colors active:scale-90 duration-200 shadow-xl disabled:opacity-50"
+        title="Pomiń ten dzień"
+        className="px-4 py-2 bg-surface-container-highest flex items-center justify-center gap-2 text-on-surface border border-outline-variant hover:bg-surface-container transition-colors active:scale-90 duration-200 shadow-xl disabled:opacity-50 rounded-full"
       >
-        <span className="material-symbols-outlined !text-2xl">star</span>
+        <span className="material-symbols-outlined !text-lg">skip_next</span>
+        <span className="text-sm font-medium">Pomiń ten dzień</span>
       </button>
     </div>
   )

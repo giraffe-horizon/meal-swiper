@@ -173,21 +173,21 @@ describe('SwipeView', () => {
 
   it('shows skip day button (star icon) when currentDay is set', () => {
     render(<SwipeView {...defaultProps} />)
-    const starButton = screen.getByTitle('Oznacz jako ulubione')
+    const starButton = screen.getByTitle('Pomiń ten dzień')
     expect(starButton).toBeInTheDocument()
   })
 
   it('shows action buttons even when currentDay is null', () => {
     render(<SwipeView {...defaultProps} currentDay={null} />)
     // Action buttons are always shown in new design
-    const starButton = screen.getByTitle('Oznacz jako ulubione')
+    const starButton = screen.getByTitle('Pomiń ten dzień')
     expect(starButton).toBeInTheDocument()
   })
 
   it('calls onSkipDay when star button is clicked', () => {
     const onSkipDay = vi.fn()
     render(<SwipeView {...defaultProps} onSkipDay={onSkipDay} />)
-    fireEvent.click(screen.getByTitle('Oznacz jako ulubione'))
+    fireEvent.click(screen.getByTitle('Pomiń ten dzień'))
     expect(onSkipDay).toHaveBeenCalled()
   })
 })
