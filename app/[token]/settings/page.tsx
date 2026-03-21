@@ -260,8 +260,10 @@ export default function SettingsPage() {
             <article key={index} className="bg-surface-container rounded-lg p-6 space-y-6">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary text-2xl">person</span>
+                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center">
+                    <span className="text-on-primary font-headline font-black text-xl uppercase">
+                      {(person.name || `Osoba ${index + 1}`).charAt(0)}
+                    </span>
                   </div>
                   <div>
                     <input

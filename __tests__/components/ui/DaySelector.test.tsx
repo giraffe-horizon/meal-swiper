@@ -110,66 +110,29 @@ describe('DaySelector', () => {
     expect(onSelect).not.toHaveBeenCalled()
   })
 
-  it('renders thumbnails when showThumbnails is true', () => {
-    const plan = {
-      ...emptyPlan,
-      mon: {
-        id: '1',
-        nazwa: 'Test',
-        opis: '',
-        photo_url: 'https://example.com/photo.jpg',
-        prep_time: 20,
-        kcal_baza: 400,
-        kcal_z_miesem: 500,
-        bialko_baza: 15,
-        bialko_z_miesem: 25,
-        trudnosc: 'łatwe' as const,
-        kuchnia: 'polska',
-        category: 'makarony',
-        skladniki_baza: '[]',
-        skladniki_mieso: '[]',
-        przepis: '{}',
-        tags: [],
-      },
-    }
-    render(
-      <DaySelector
-        weeklyPlan={plan}
-        weekDates={weekDates}
-        selectedDay={null}
-        onSelect={vi.fn()}
-        showThumbnails
-      />
-    )
-    const img = screen.getByAltText('Test')
-    expect(img).toBeInTheDocument()
-  })
-
-  it('shows meal icon when showThumbnails=true and no meal', () => {
+  it('renders day number from date', () => {
     render(
       <DaySelector
         weeklyPlan={emptyPlan}
         weekDates={weekDates}
         selectedDay={null}
         onSelect={vi.fn()}
-        showThumbnails
       />
     )
-    const icons = screen.getAllByText('restaurant_menu')
-    expect(icons.length).toBeGreaterThan(0)
+    // weekDates[0] = March 4 → should show "4"
+    expect(screen.getByText('4')).toBeInTheDocument()
   })
 
-  it('shows airplane emoji for free day thumbnails', () => {
-    const freePlan = { ...emptyPlan, mon_free: true }
+  it('uses rounded-2xl for pill shape', () => {
     render(
       <DaySelector
-        weeklyPlan={freePlan}
+        weeklyPlan={emptyPlan}
         weekDates={weekDates}
-        selectedDay={null}
+        selectedDay="mon"
         onSelect={vi.fn()}
-        showThumbnails
       />
     )
-    expect(screen.getByText('✈️')).toBeInTheDocument()
+    const pnBtn = screen.getByText('Pn').closest('button')
+    expect(pnBtn?.className).toContain('rounded-2xl')
   })
 })

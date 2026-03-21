@@ -1,11 +1,13 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare'
 import type { NextRequest } from 'next/server'
-import { getShoppingChecked, saveShoppingChecked, type D1Database } from '@/lib/db'
+import { getShoppingChecked, saveShoppingChecked } from '@/lib/db'
 import { requireTenantId, extractTenantToken } from '@/lib/tenant'
+import { getDb } from '@/lib/get-db'
+
+// Use Node.js runtime for local SQLite compatibility
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
-  const { env } = await getCloudflareContext()
-  const db = (env as unknown as { DB: D1Database }).DB
+  const db = await getDb()
   const week = request.nextUrl.searchParams.get('week')
 
   if (!week) return Response.json({ error: 'week required' }, { status: 400 })
@@ -26,8 +28,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { env } = await getCloudflareContext()
-  const db = (env as unknown as { DB: D1Database }).DB
+  const db = await getDb()
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   const body = await request.json()

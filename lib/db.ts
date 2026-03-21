@@ -203,11 +203,12 @@ export async function saveShoppingChecked(
 // New variant architecture query functions
 
 export async function fetchAllMealsWithVariants(db: D1Database): Promise<MealWithVariants[]> {
-  // First, get all meals
+  // First, get all meals with legacy nutrition data
   const mealsResult = await db
     .prepare(
       `
-    SELECT id, nazwa, opis, photo_url, prep_time, trudnosc, kuchnia, category, przepis, tags, created_at
+    SELECT id, nazwa, opis, photo_url, prep_time, trudnosc, kuchnia, category, przepis, tags, created_at,
+           kcal_baza, kcal_z_miesem, bialko_baza, bialko_z_miesem
     FROM meals
     ORDER BY nazwa
   `
@@ -224,6 +225,10 @@ export async function fetchAllMealsWithVariants(db: D1Database): Promise<MealWit
       przepis: string
       tags: string
       created_at: string
+      kcal_baza: number
+      kcal_z_miesem: number
+      bialko_baza: number
+      bialko_z_miesem: number
     }>()
 
   // Then get all variants with their ingredients in a single query
@@ -352,9 +357,71 @@ export async function fetchAllMealsWithVariants(db: D1Database): Promise<MealWit
     }
   }
 
-  // Combine meals with their variants
-  return mealsResult.results.map(
-    (meal): MealWithVariants => ({
+  // Combine meals with their variants, with fallback for legacy meals
+  return mealsResult.results.map((meal): MealWithVariants => {
+    const existingVariants = variantsByMealId[meal.id] || []
+
+    // If no variants exist, create default variants from legacy meal data
+    let variants = existingVariants
+    if (variants.length === 0) {
+      variants = []
+
+      // Create vegetarian variant if it has nutrition data
+      if (meal.kcal_baza > 0) {
+        variants.push({
+          id: `${meal.id}-vegetarian`,
+          meal_id: meal.id,
+          name: 'Wersja wegetariańska',
+          description: 'Podstawowa wersja bez mięsa',
+          kcal: meal.kcal_baza,
+          protein: meal.bialko_baza,
+          carbs: Math.round((meal.kcal_baza * 0.5) / 4), // Rough estimate
+          fat: Math.round((meal.kcal_baza * 0.3) / 9), // Rough estimate
+          dietary_flags: ['vegetarian'],
+          is_default: meal.kcal_z_miesem === 0, // Default if no meat version
+          created_at: meal.created_at,
+          ingredients: [],
+        })
+      }
+
+      // Create meat variant if it has nutrition data
+      if (meal.kcal_z_miesem > 0) {
+        variants.push({
+          id: `${meal.id}-with-meat`,
+          meal_id: meal.id,
+          name: 'Wersja z mięsem',
+          description: 'Wersja z dodatkiem mięsa',
+          kcal: meal.kcal_z_miesem,
+          protein: meal.bialko_z_miesem,
+          carbs: Math.round((meal.kcal_z_miesem * 0.4) / 4), // Rough estimate
+          fat: Math.round((meal.kcal_z_miesem * 0.35) / 9), // Rough estimate
+          dietary_flags: [],
+          is_default: true, // Meat version is default when available
+          created_at: meal.created_at,
+          ingredients: [],
+        })
+      }
+
+      // If no nutrition data, create a basic default variant
+      if (variants.length === 0) {
+        variants.push({
+          id: `${meal.id}-default`,
+          meal_id: meal.id,
+          name: 'Wersja podstawowa',
+          description: 'Standardowa wersja posiłku',
+          kcal: 400, // Reasonable default
+          protein: 20, // Reasonable default
+          carbs: 50,
+          fat: 15,
+          dietary_flags: [],
+          is_default: true,
+          created_at: meal.created_at,
+          ingredients: [],
+        })
+      }
+    }
+
+    return {
       id: meal.id,
       nazwa: meal.nazwa,
       opis: meal.opis || '',
@@ -365,10 +432,10 @@ export async function fetchAllMealsWithVariants(db: D1Database): Promise<MealWit
       category: meal.category || '',
       przepis: meal.przepis || '{}',
       tags: JSON.parse(meal.tags || '[]'),
-      variants: variantsByMealId[meal.id] || [],
+      variants,
       created_at: meal.created_at,
-    })
-  )
+    }
+  })
 }
 
 export async function fetchAllIngredientsCatalog(db: D1Database): Promise<CatalogIngredient[]> {

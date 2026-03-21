@@ -119,32 +119,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Get currently used meal IDs directly from weeklyPlan
       const currentUsedIds = DAY_KEYS.map((d) => weeklyPlan[d]?.id).filter(Boolean) as string[]
 
-      queueMicrotask(() => {
-        // Check if we can use variant-based filtering
-        const hasNewPreferences = settings.persons.some(
-          (p) =>
-            p.dailyKcal ||
-            p.dailyProtein ||
-            p.diet?.length ||
-            p.cuisinePreferences?.length ||
-            p.excludedIngredients?.length
+      // Check if we can use variant-based filtering
+      const hasNewPreferences = settings.persons.some(
+        (p) =>
+          p.dailyKcal ||
+          p.dailyProtein ||
+          p.diet?.length ||
+          p.cuisinePreferences?.length ||
+          p.excludedIngredients?.length
+      )
+
+      let shuffled = false
+
+      if (hasVariantMeals && hasNewPreferences) {
+        // Use variant-based filtering
+        const availableVariantMeals = mealsWithVariants.filter(
+          (m) => !currentUsedIds.includes(m.id)
         )
-
-        if (hasVariantMeals && hasNewPreferences) {
-          // Use variant-based filtering
-          const availableVariantMeals = mealsWithVariants.filter(
-            (m) => !currentUsedIds.includes(m.id)
-          )
+        if (availableVariantMeals.length > 0) {
           shuffleFilteredMeals(availableVariantMeals, settings.persons)
-        } else if (hasLegacyMeals) {
-          // Fallback to legacy behavior
-          const available = meals.filter((m) => !currentUsedIds.includes(m.id))
-          shuffleMeals(available)
+          shuffled = true
         }
+      }
 
-        if (isWeekChange) setCurrentSwipeDay(null)
-      })
-      setLastInitWeekOffset(weekOffset)
+      // Fallback to legacy behavior if variant path didn't produce results
+      if (!shuffled && hasLegacyMeals) {
+        const available = meals.filter((m) => !currentUsedIds.includes(m.id))
+        if (available.length > 0) {
+          shuffleMeals(available)
+          shuffled = true
+        }
+      }
+
+      if (isWeekChange) setCurrentSwipeDay(null)
+      if (shuffled) setLastInitWeekOffset(weekOffset)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

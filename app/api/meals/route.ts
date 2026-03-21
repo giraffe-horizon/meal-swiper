@@ -1,13 +1,12 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { NextResponse } from 'next/server'
-import { fetchMealsFromD1, fetchAllMealsWithVariants, type D1Database } from '@/lib/db'
+import { fetchMealsFromD1, fetchAllMealsWithVariants } from '@/lib/db'
+import { getDb } from '@/lib/get-db'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 export async function GET(request: Request) {
   try {
-    const { env } = await getCloudflareContext()
-    const db = (env as unknown as { DB: D1Database }).DB
+    const db = await getDb()
 
     if (!db) {
       return NextResponse.json([])

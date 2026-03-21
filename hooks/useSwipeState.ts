@@ -49,7 +49,10 @@ export function useSwipeState() {
 
       // Apply filtering with new preferences
       const filterResult = filterMealsByPreferences(mealsWithVariants, { persons })
-      const availableMeals = filterResult.results.map((fm) => fm.meal)
+      const availableMeals =
+        filterResult.results.length > 0
+          ? filterResult.results.map((fm) => fm.meal)
+          : mealsWithVariants // Fallback: use all meals unfiltered
 
       // Store the filtered meals and preferences snapshot
       setFilteredMeals(filterResult.results)

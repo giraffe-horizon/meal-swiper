@@ -28,6 +28,9 @@ dist-ssr
 .env.local
 .dev.vars
 
+# Local SQLite database for development
+local.db
+
 # Next.js
 .next
 .vercel

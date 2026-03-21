@@ -342,7 +342,6 @@ export default function SwipeView({
           weekDates={weekDates}
           selectedDay={currentDay}
           onSelect={(day) => onDaySelect?.(day)}
-          showThumbnails
         />
 
         {/* Compatibility Indicator */}
