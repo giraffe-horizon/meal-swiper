@@ -114,7 +114,7 @@ function SwipeCard({
             <span className="font-label text-primary font-bold text-sm leading-tight">
               {Math.round(
                 (('kcal_baza' in meal
-                  ? meal.kcal_baza
+                  ? (meal.kcal_baza || meal.kcal_z_miesem || 0)
                   : meal.variants.find((v) => v.is_default)?.kcal || 0) *
                   people) /
                   2
@@ -128,7 +128,7 @@ function SwipeCard({
             <span className="font-label text-on-surface font-bold text-sm leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
-                  ? meal.bialko_baza
+                  ? (meal.bialko_baza || meal.bialko_z_miesem || 0)
                   : meal.variants.find((v) => v.is_default)?.protein || 0) *
                   people) /
                   2
@@ -142,7 +142,7 @@ function SwipeCard({
             <span className="font-label text-on-surface font-bold text-sm leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
-                  ? meal.bialko_baza * 0.6 // Rough estimate
+                  ? ((meal.bialko_baza || meal.bialko_z_miesem || 0) * 0.6)
                   : meal.variants.find((v) => v.is_default)?.fat ||
                     (meal.variants.find((v) => v.is_default)?.protein || 0) * 0.6 ||
                     0) *
