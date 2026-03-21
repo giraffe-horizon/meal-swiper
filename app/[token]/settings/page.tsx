@@ -529,40 +529,7 @@ export default function SettingsPage() {
           </section>
         )}
 
-        {/* Theme Selector */}
-        <section className="space-y-4">
-          <h3 className="font-headline text-sm text-on-surface-variant uppercase tracking-widest font-bold">
-            Wygląd aplikacji
-          </h3>
-          <div className="grid grid-cols-3 gap-3 p-1 bg-surface-container-low rounded-[20px]">
-            {[
-              { id: 'light', label: 'Jasny', icon: 'light_mode' },
-              { id: 'dark', label: 'Ciemny', icon: 'dark_mode' },
-              { id: 'system', label: 'System', icon: 'settings_brightness' },
-            ].map((themeOption) => {
-              const isActive = settings.theme === themeOption.id
-              return (
-                <button
-                  key={themeOption.id}
-                  onClick={() => setTheme(themeOption.id as 'light' | 'dark' | 'system')}
-                  className={`flex items-center justify-center gap-2 py-3 rounded-lg text-sm transition-all ${
-                    isActive
-                      ? 'bg-surface-container-highest text-primary shadow-sm font-bold'
-                      : 'text-on-surface-variant'
-                  }`}
-                >
-                  <span
-                    className="material-symbols-outlined text-lg"
-                    style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
-                  >
-                    {themeOption.icon}
-                  </span>
-                  {themeOption.label}
-                </button>
-              )
-            })}
-          </div>
-        </section>
+        {/* Theme — dark only for now */}
       </main>
     </div>
   )
