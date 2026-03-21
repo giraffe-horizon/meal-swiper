@@ -116,7 +116,7 @@ export default function MealModal({ meal, onClose }: MealModalProps) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
             </div>
 
-            <div className="p-4 sm:p-5 space-y-4 sm:space-y-5 pb-28">
+            <div className="p-4 sm:p-5 space-y-4 sm:space-y-5 pb-40">
               {/* Title + meta */}
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-on-surface font-headline">

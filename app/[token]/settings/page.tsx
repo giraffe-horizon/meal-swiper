@@ -217,7 +217,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="bg-background text-on-background font-body min-h-screen pb-32">
+    <div className="bg-background text-on-background font-body min-h-screen pb-40">
       <main className="max-w-2xl mx-auto px-6 pt-8 space-y-8">
         {/* Header Section */}
         <section>

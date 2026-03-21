@@ -37,7 +37,7 @@ export default function CookingPage() {
   const handleDaySelect = (day: DayKey) => setSelectedDay(day)
 
   return (
-    <div className="flex-1 overflow-y-auto min-h-0 pb-28">
+    <div className="flex-1 overflow-y-auto min-h-0 pb-40">
       <DaySelector
         weeklyPlan={weeklyPlan}
         weekDates={weekDates}

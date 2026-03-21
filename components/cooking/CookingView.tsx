@@ -270,7 +270,7 @@ export default function CookingView({
         </div>
       </div>
 
-      <div className="px-6 mt-8 space-y-12 pb-32 max-w-2xl mx-auto">
+      <div className="px-6 mt-8 space-y-12 pb-40 max-w-2xl mx-auto">
         {/* Legacy ingredients rendering */}
         {!isVariantMeal && legacyData && (
           <>

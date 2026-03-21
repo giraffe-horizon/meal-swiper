@@ -39,7 +39,7 @@ export default function CalendarView({
   }, [allWeekDates])
 
   return (
-    <main className="max-w-2xl mx-auto px-6 pb-32">
+    <main className="max-w-2xl mx-auto px-6 pb-40">
       {/* Week Navigation Header */}
       <header className="mb-10">
         <div className="flex items-center justify-between mb-6">
