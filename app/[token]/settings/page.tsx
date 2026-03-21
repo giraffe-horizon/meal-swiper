@@ -221,7 +221,7 @@ export default function SettingsPage() {
       <main className="max-w-2xl mx-auto px-6 pt-8 space-y-8">
         {/* Header Section */}
         <section>
-          <h1 className="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-4">
+          <h1 className="font-headline text-2xl font-extrabold tracking-tight text-on-surface mb-4">
             Preferencje domowników
           </h1>
           <p className="text-on-surface-variant text-sm font-body">

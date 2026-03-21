@@ -69,15 +69,15 @@ export default function CalendarView({
       {/* Horizontal Calendar Scroll */}
       <div className="flex justify-between gap-2 overflow-x-auto pb-4 mb-10 hide-scrollbar">
         {DAY_KEYS.map((day, index) => {
-          const isActive = weeklyPlan[day] !== null || weeklyPlan[`${day}_free`]
+          const hasContent = weeklyPlan[day] !== null || weeklyPlan[`${day}_free`]
           const dayNames = ['PON', 'WT', 'ŚR', 'CZW', 'PT']
           return (
             <div
               key={day}
               className={`flex flex-col items-center justify-center min-w-[56px] w-[56px] h-[56px] rounded-2xl cursor-pointer transition-colors ${
-                isActive
-                  ? 'bg-primary text-[#2A3D2C]'
-                  : 'bg-[#1C2E1F] text-white hover:bg-surface-container-high'
+                hasContent
+                  ? 'bg-primary text-on-primary'
+                  : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
               }`}
               onClick={() => onDayClick(day)}
             >

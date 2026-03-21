@@ -396,7 +396,7 @@ export default function SwipeView({
   const stackCards = activeMeals.slice(currentIndex, currentIndex + 3)
 
   return (
-    <main className="flex-1 flex flex-col items-center px-4 pt-6 pb-40 max-w-lg mx-auto w-full relative bg-background">
+    <main className="flex-1 flex flex-col items-center px-4 pt-3 pb-28 max-w-lg mx-auto w-full relative bg-background">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-on-primary px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
@@ -414,7 +414,7 @@ export default function SwipeView({
       )}
 
       {/* Matching Badge */}
-      <div className="mb-6 self-start">
+      <div className="mb-3 self-start">
         <div className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-[24px]">
           <span className="w-2 h-2 rounded-full bg-on-primary animate-pulse"></span>
           <span className="font-label text-xs font-bold uppercase tracking-wide">
@@ -441,7 +441,7 @@ export default function SwipeView({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-8 mt-8">
+      <div className="flex items-center gap-8 mt-4">
         <SwipeActions
           onLeft={handleSwipeLeft}
           onRight={handleSwipeRight}

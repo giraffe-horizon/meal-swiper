@@ -47,8 +47,8 @@ export default function SwipeCard({
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
     >
-      {/* Meal Photo - Exactly 280px height */}
-      <div className="w-full h-[240px] relative">
+      {/* Meal Photo - Compact 180px height */}
+      <div className="w-full h-[180px] relative">
         {showPlaceholder ? (
           <MealImagePlaceholder
             category={meal.category}
@@ -89,13 +89,13 @@ export default function SwipeCard({
       </div>
 
       {/* Info Section - Remaining height */}
-      <div className="w-full flex-1 bg-gradient-to-t from-surface-container via-surface-container/80 to-transparent p-4 flex flex-col justify-between">
+      <div className="w-full flex-1 bg-gradient-to-t from-surface-container via-surface-container/80 to-transparent p-3 flex flex-col justify-between">
         <div className="flex justify-between items-start">
           <div>
             <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
               {meal.kuchnia || 'Międzynarodowa'}
             </span>
-            <h2 className="font-headline text-xl font-bold text-on-surface mt-1 line-clamp-2">
+            <h2 className="font-headline text-lg font-bold text-on-surface mt-1 line-clamp-2">
               {meal.nazwa}
             </h2>
           </div>
@@ -106,12 +106,12 @@ export default function SwipeCard({
         </div>
 
         {/* Nutritional Highlights - 3 Equal Columns */}
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-3 gap-2 mt-2">
           <div className="flex flex-col text-center">
             <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
               KCAL
             </span>
-            <span className="font-label text-primary font-bold text-lg leading-tight">
+            <span className="font-label text-primary font-bold text-base leading-tight">
               {Math.round(
                 (('kcal_baza' in meal
                   ? meal.kcal_baza
@@ -125,7 +125,7 @@ export default function SwipeCard({
             <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
               BIAŁKO
             </span>
-            <span className="font-label text-on-surface font-bold text-lg leading-tight">
+            <span className="font-label text-on-surface font-bold text-base leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
                   ? meal.bialko_baza
@@ -139,7 +139,7 @@ export default function SwipeCard({
             <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
               TŁUSZCZE
             </span>
-            <span className="font-label text-on-surface font-bold text-lg leading-tight">
+            <span className="font-label text-on-surface font-bold text-base leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
                   ? meal.bialko_baza * 0.6 // Rough estimate
