@@ -75,7 +75,7 @@ describe('CalendarView', () => {
     expect(screen.getByTestId('day-card-fri')).toBeInTheDocument()
   })
 
-  it('shows "Dodaj posiłek" for empty days', () => {
+  it('shows "Dodaj" for empty days', () => {
     render(
       <CalendarView
         weeklyPlan={emptyPlan}
@@ -85,7 +85,7 @@ describe('CalendarView', () => {
         onToggleVacation={onToggleVacation}
       />
     )
-    const noPlanTexts = screen.getAllByText('Dodaj posiłek')
+    const noPlanTexts = screen.getAllByText('Dodaj')
     expect(noPlanTexts).toHaveLength(5)
   })
 

@@ -64,11 +64,11 @@ export default function SwipeStack({
             )
           }
 
-          // Background stack cards with stacking effect
+          // Background stack cards — same structure as front card, non-interactive
           return (
             <div
               key={`stack-${actualIndex}`}
-              className={`absolute inset-x-0 top-0 h-full bg-surface-container rounded-lg overflow-hidden pointer-events-none ${
+              className={`absolute inset-x-0 top-0 h-full bg-surface-container rounded-[20px] overflow-hidden pointer-events-none ${
                 stackIdx === 1
                   ? 'translate-y-2 scale-[0.96] opacity-70 blur-[0.5px]'
                   : 'translate-y-4 scale-[0.92] opacity-40 blur-[1px]'
@@ -77,21 +77,38 @@ export default function SwipeStack({
                 zIndex: 10 - stackIdx,
               }}
             >
-              {/* Full image background or placeholder */}
-              {meal.photo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={meal.nazwa}
-                  className="w-full h-full object-cover"
-                  src={meal.photo_url}
-                  draggable="false"
-                  onError={(e) => {
-                    ;(e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              ) : (
-                <MealImagePlaceholder className="w-full h-full" />
-              )}
+              {/* Photo */}
+              <div className="w-full h-[220px] relative">
+                {meal.photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    alt={meal.nazwa}
+                    className="w-full h-full object-cover"
+                    src={meal.photo_url}
+                    draggable="false"
+                    onError={(e) => {
+                      ;(e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                ) : (
+                  <MealImagePlaceholder
+                    category={meal.category}
+                    className="w-full h-full"
+                    iconSize="text-7xl"
+                  />
+                )}
+              </div>
+              {/* Info hint */}
+              <div className="w-full flex-1 p-3 pb-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
+                    {meal.kuchnia || 'Międzynarodowa'}
+                  </span>
+                </div>
+                <h2 className="font-headline text-base font-bold text-on-surface mt-1 line-clamp-2">
+                  {meal.nazwa}
+                </h2>
+              </div>
             </div>
           )
         })}

@@ -223,7 +223,7 @@ describe('SwipeView - onComplete fallback', () => {
   it('calls onComplete when star button clicked and no onSkipDay', () => {
     const onComplete = vi.fn()
     render(<SwipeView {...defaultProps} onComplete={onComplete} onSkipDay={undefined} />)
-    fireEvent.click(screen.getByTitle('Pomiń ten dzień'))
+    fireEvent.click(screen.getByTitle('Zapisz jako ulubione'))
     expect(onComplete).toHaveBeenCalled()
   })
 })

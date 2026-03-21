@@ -398,6 +398,7 @@ export default function SettingsPage() {
                   Wykluczone składniki
                 </label>
                 <div className="flex flex-wrap gap-2">
+                  {/* DB-backed excluded ingredients */}
                   {excludedIngredientObjects.map((ingredient) => (
                     <div
                       key={ingredient.id}
@@ -412,12 +413,41 @@ export default function SettingsPage() {
                       </span>
                     </div>
                   ))}
+                  {/* Free-text excluded ingredients */}
+                  {(person.excludedIngredients || [])
+                    .filter((id) => !ingredients.some((ing) => ing.id === id))
+                    .map((text) => (
+                      <div
+                        key={text}
+                        className="px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/30 flex items-center gap-1.5 text-xs text-on-surface-variant"
+                      >
+                        <span>{text}</span>
+                        <span
+                          className="material-symbols-outlined text-xs text-on-surface-variant cursor-pointer hover:text-error transition-colors"
+                          onClick={() => handleIngredientRemove(index, text)}
+                        >
+                          close
+                        </span>
+                      </div>
+                    ))}
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="Szukaj składnika..."
+                      placeholder="np. orzechy, gluten..."
                       value={ingredientSearch}
                       onChange={(e) => setIngredientSearch(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && ingredientSearch.trim()) {
+                          e.preventDefault()
+                          // Try to match a DB ingredient first, otherwise add as free text
+                          const match = filteredIngredients[0]
+                          if (match) {
+                            handleIngredientAdd(index, match.id)
+                          } else {
+                            handleIngredientAdd(index, ingredientSearch.trim())
+                          }
+                        }
+                      }}
                       className="px-3 py-1.5 rounded-full bg-surface-container-highest text-on-surface text-xs border border-dashed border-outline-variant/30 focus:ring-0 min-w-[120px]"
                     />
                     {ingredientSearch && filteredIngredients.length > 0 && (

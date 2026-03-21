@@ -27,7 +27,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <div className="h-dvh bg-background flex text-on-background">
       <div className="flex-1 lg:ml-20 w-full flex flex-col h-dvh">
         {/* Global Header — Emerald Hearth */}
-        <header className="shrink-0 flex items-center px-4 py-3 bg-surface z-10">
+        <header className="shrink-0 flex items-center px-4 h-12 bg-surface z-10">
           <div className="flex items-center gap-3">
             <span
               className="material-symbols-outlined text-[#3cb371] text-2xl"

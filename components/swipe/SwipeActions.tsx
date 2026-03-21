@@ -42,14 +42,19 @@ export default function SwipeActions({
         </span>
       </button>
 
-      {/* Star Button - Skip/Save for Later (44px) */}
+      {/* Star Button - Save as Favorite (44px) */}
       <button
         onClick={onSkipDay}
         disabled={disabled}
-        title="Pomiń ten dzień"
+        title="Zapisz jako ulubione"
         className="w-11 h-11 rounded-full bg-[#2A3D2C] flex items-center justify-center text-[#FACC15] shadow-xl hover:scale-105 transition-transform active:scale-90 duration-200 disabled:opacity-50"
       >
-        <span className="material-symbols-outlined !text-xl">star</span>
+        <span
+          className="material-symbols-outlined !text-xl"
+          style={{ fontVariationSettings: "'FILL' 1" }}
+        >
+          star
+        </span>
       </button>
     </div>
   )

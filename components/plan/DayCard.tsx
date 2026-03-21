@@ -69,19 +69,48 @@ export default function DayCard({
         data-testid={`day-card-${day}`}
         onContextMenu={handleContextMenu}
         onClick={() => onMealClick(meal)}
-        className="bg-surface-container rounded-[20px] overflow-hidden flex h-40 shadow-lg relative cursor-pointer"
+        className="bg-surface-container rounded-xl overflow-hidden flex items-center h-16 relative cursor-pointer group"
       >
+        {/* Thumbnail */}
+        <div className="w-12 h-12 min-w-[48px] rounded-lg overflow-hidden ml-2">
+          {meal.photo_url && !imgError ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={meal.photo_url}
+              alt={meal.nazwa}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <MealImagePlaceholder
+              category={meal.category}
+              className="w-full h-full"
+              iconSize="text-xl"
+            />
+          )}
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0 px-3">
+          <h3 className="font-headline text-sm font-bold leading-tight text-on-surface truncate">
+            {meal.nazwa}
+          </h3>
+          <span className="font-label text-[10px] uppercase tracking-widest text-primary font-bold">
+            {meal.category || meal.kuchnia || 'Posiłek'}
+          </span>
+        </div>
+
         {/* Context menu */}
-        <div className="absolute top-2 right-3 z-10">
+        <div className="pr-2 z-10">
           <div className="relative">
             <button
               onClick={(e) => {
                 e.stopPropagation()
                 setActiveMenu(!activeMenu)
               }}
-              className="p-1.5 bg-surface-container/80 backdrop-blur hover:bg-surface-container-high rounded-full transition-colors"
+              className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors opacity-0 group-hover:opacity-100"
             >
-              <span className="material-symbols-outlined text-on-surface text-lg">more_vert</span>
+              <span className="material-symbols-outlined text-on-surface-variant text-lg">more_vert</span>
             </button>
             {activeMenu && (
               <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-20">
@@ -117,59 +146,6 @@ export default function DayCard({
                 </button>
               </div>
             )}
-          </div>
-        </div>
-
-        <div className="w-1/3 relative overflow-hidden">
-          {meal.photo_url && !imgError ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={meal.photo_url}
-              alt={meal.nazwa}
-              className="w-full h-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <MealImagePlaceholder
-              category={meal.category}
-              className="w-full h-full"
-              iconSize="text-4xl"
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-surface-container/20"></div>
-        </div>
-        <div className="w-2/3 p-5 flex flex-col justify-between">
-          <div>
-            <span className="font-label text-[10px] uppercase tracking-widest text-primary font-bold mb-1 block">
-              {meal.category || 'Posiłek'}
-            </span>
-            <h3 className="font-headline text-xl font-bold leading-tight text-on-surface">
-              {meal.nazwa}
-            </h3>
-          </div>
-          <div className="flex gap-3">
-            <div className="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
-              <span
-                className="material-symbols-outlined text-tertiary text-sm"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                bolt
-              </span>
-              <span className="font-label text-xs text-on-surface font-bold">
-                {Math.round((meal.kcal_baza * people) / 2)} kcal
-              </span>
-            </div>
-            <div className="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
-              <span
-                className="material-symbols-outlined text-tertiary text-sm"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                fitness_center
-              </span>
-              <span className="font-label text-xs text-on-surface font-bold">
-                {Math.round((meal.bialko_baza * people) / 2)}g protein
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -228,12 +204,10 @@ export default function DayCard({
       data-testid={`day-card-${day}`}
       onClick={() => onDayClick(day)}
       onContextMenu={handleContextMenu}
-      className="w-full min-h-[80px] border-2 border-dashed border-outline-variant/40 rounded-[20px] flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group"
+      className="w-full h-16 border border-dashed border-outline-variant/30 rounded-xl flex items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group"
     >
-      <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
-        <span className="material-symbols-outlined">add</span>
-      </div>
-      <span className="font-body text-sm font-medium">Dodaj posiłek</span>
+      <span className="material-symbols-outlined text-lg group-hover:text-primary transition-colors">add</span>
+      <span className="font-body text-sm font-medium">Dodaj</span>
     </button>
   )
 }

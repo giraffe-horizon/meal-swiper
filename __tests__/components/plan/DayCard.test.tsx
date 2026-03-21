@@ -45,9 +45,9 @@ describe('DayCard - empty state', () => {
     expect(screen.getByTestId('day-card-mon')).toBeInTheDocument()
   })
 
-  it('shows "Dodaj posiłek" when no meal', () => {
+  it('shows "Dodaj" when no meal', () => {
     render(<DayCard {...defaultProps} />)
-    expect(screen.getByText('Dodaj posiłek')).toBeInTheDocument()
+    expect(screen.getByText('Dodaj')).toBeInTheDocument()
   })
 
   it('calls onDayClick when empty card is clicked', () => {
@@ -68,10 +68,9 @@ describe('DayCard - with meal', () => {
     expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument()
   })
 
-  it('renders meal details (kcal and protein)', () => {
+  it('renders meal category tag', () => {
     render(<DayCard {...defaultProps} meal={mockMeal} />)
-    expect(screen.getByText(/450 kcal/)).toBeInTheDocument()
-    expect(screen.getByText(/20g protein/)).toBeInTheDocument()
+    expect(screen.getByText('makarony')).toBeInTheDocument()
   })
 
   it('calls onMealClick when meal card clicked', () => {
