@@ -89,7 +89,7 @@ function SwipeCard({
       </div>
 
       {/* Info Section */}
-      <div className="w-full flex-1 p-3 flex flex-col justify-between">
+      <div className="w-full flex-1 p-3 pb-2 flex flex-col justify-between">
         <div>
           <div className="flex justify-between items-center">
             <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
@@ -106,7 +106,7 @@ function SwipeCard({
         </div>
 
         {/* Nutritional Highlights - 3 Equal Columns */}
-        <div className="grid grid-cols-3 gap-2 mt-2">
+        <div className="grid grid-cols-3 gap-2 mt-1">
           <div className="flex flex-col text-center">
             <span className="text-on-surface-variant text-[9px] uppercase tracking-wide font-semibold mb-1">
               KCAL

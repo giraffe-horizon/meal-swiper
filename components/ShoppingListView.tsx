@@ -176,9 +176,9 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
     <div className="bg-surface text-on-surface font-body min-h-screen pb-32">
       <main className="px-6 pt-6 max-w-2xl mx-auto">
         {!hasAnyItems ? (
-          <div className="flex flex-col items-center justify-center h-full py-20">
-            <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-6">
-              <span className="material-symbols-outlined text-4xl text-on-surface-variant">shopping_cart</span>
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+              <span className="material-symbols-outlined text-4xl text-primary">shopping_cart</span>
             </div>
             <h2 className="text-2xl font-bold text-on-surface mb-2">Brak listy zakupów</h2>
             <p className="text-on-surface-variant text-center">

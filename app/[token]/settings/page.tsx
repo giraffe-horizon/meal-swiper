@@ -328,16 +328,16 @@ export default function SettingsPage() {
 
               {/* Diet Radio Group */}
               <div className="space-y-3">
-                <label className="font-headline text-sm text-on-surface-variant">
+                <label className="text-sm font-bold text-on-surface">
                   Rodzaj diety
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   {DIET_OPTIONS.slice(0, 4).map((option) => {
                     const isSelected = currentDiet === option.id
                     return (
                       <label
                         key={option.id}
-                        className={`relative flex items-center justify-center p-3 rounded-[24px] cursor-pointer transition-all ${
+                        className={`relative flex items-center justify-center h-10 rounded-full cursor-pointer transition-all ${
                           isSelected
                             ? 'bg-primary text-on-primary'
                             : 'bg-surface-container-highest text-on-surface border border-outline-variant'
@@ -362,7 +362,7 @@ export default function SettingsPage() {
 
               {/* Cuisine Preference Chips */}
               <div className="space-y-3">
-                <label className="font-headline text-sm text-on-surface-variant">
+                <label className="text-sm font-bold text-on-surface">
                   Ulubione kuchnie
                 </label>
                 {cuisinesLoading ? (
@@ -375,16 +375,16 @@ export default function SettingsPage() {
                         <button
                           key={cuisine}
                           onClick={() => handleCuisineToggle(index, cuisine)}
-                          className={`px-4 py-2 rounded-[24px] text-sm font-semibold flex items-center gap-2 ${
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 border transition-all ${
                             isSelected
-                              ? 'bg-primary text-on-primary'
-                              : 'bg-surface-container-highest text-on-surface-variant'
+                              ? 'bg-primary/10 border-primary text-primary'
+                              : 'bg-surface-container border-outline-variant/30 text-on-surface-variant'
                           }`}
                         >
-                          {cuisine}
                           {isSelected && (
-                            <span className="material-symbols-outlined text-sm">check</span>
+                            <span className="material-symbols-outlined text-xs">check</span>
                           )}
+                          {cuisine}
                         </button>
                       )
                     })}
@@ -394,18 +394,18 @@ export default function SettingsPage() {
 
               {/* Excluded ingredients tags */}
               <div className="space-y-3">
-                <label className="font-headline text-sm text-on-surface-variant">
+                <label className="text-sm font-bold text-on-surface">
                   Wykluczone składniki
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {excludedIngredientObjects.map((ingredient) => (
                     <div
                       key={ingredient.id}
-                      className="px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant/30 flex items-center gap-2 text-sm"
+                      className="px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/30 flex items-center gap-1.5 text-xs text-on-surface-variant"
                     >
                       <span>{ingredient.name}</span>
                       <span
-                        className="material-symbols-outlined text-sm text-on-surface-variant cursor-pointer"
+                        className="material-symbols-outlined text-xs text-on-surface-variant cursor-pointer hover:text-error transition-colors"
                         onClick={() => handleIngredientRemove(index, ingredient.id)}
                       >
                         close
@@ -418,7 +418,7 @@ export default function SettingsPage() {
                       placeholder="Szukaj składnika..."
                       value={ingredientSearch}
                       onChange={(e) => setIngredientSearch(e.target.value)}
-                      className="px-3 py-1.5 rounded-lg bg-surface-container-highest text-primary text-sm font-bold border-none focus:ring-0 min-w-[120px]"
+                      className="px-3 py-1.5 rounded-full bg-surface-container-highest text-on-surface text-xs border border-dashed border-outline-variant/30 focus:ring-0 min-w-[120px]"
                     />
                     {ingredientSearch && filteredIngredients.length > 0 && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-surface-container-highest rounded-lg border border-outline-variant/30 shadow-lg z-10">

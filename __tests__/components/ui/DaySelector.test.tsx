@@ -133,6 +133,6 @@ describe('DaySelector', () => {
       />
     )
     const pnBtn = screen.getByText('PN').closest('button')
-    expect(pnBtn?.className).toContain('rounded-2xl')
+    expect(pnBtn?.className).toContain('rounded-xl')
   })
 })

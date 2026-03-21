@@ -74,17 +74,17 @@ export default function CalendarView({
           return (
             <div
               key={day}
-              className={`flex flex-col items-center justify-center min-w-[56px] w-[56px] h-[56px] rounded-2xl cursor-pointer transition-colors ${
+              className={`flex flex-col items-center justify-center min-w-[44px] w-[44px] h-[44px] rounded-xl cursor-pointer transition-colors ${
                 hasContent
                   ? 'bg-primary text-on-primary'
                   : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
               }`}
               onClick={() => onDayClick(day)}
             >
-              <span className="font-label text-[10px] font-bold uppercase leading-none">
+              <span className="font-label text-[9px] font-bold uppercase leading-none">
                 {dayNames[index]}
               </span>
-              <span className="font-headline text-[18px] font-black leading-none mt-1">
+              <span className="font-headline text-[15px] font-bold leading-none mt-0.5">
                 {weekDates[index]?.getDate()}
               </span>
             </div>
@@ -93,11 +93,11 @@ export default function CalendarView({
       </div>
 
       {/* Meal Grid */}
-      <div className="space-y-8">
+      <div className="space-y-5">
         {DAY_KEYS.map((day, index) => (
           <section key={day}>
             <div className="flex items-center gap-3 mb-4">
-              <span className="font-headline text-lg font-bold text-on-surface">
+              <span className="font-headline text-base font-bold text-on-surface">
                 {DAY_NAMES[index]}
               </span>
               <div className="h-[1px] flex-grow bg-outline-variant/30"></div>
