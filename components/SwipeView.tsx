@@ -424,7 +424,7 @@ export default function SwipeView({
       </div>
 
       {/* Tinder-style Card Stack */}
-      <div className="flex-1 min-h-0 relative">
+      <div className="flex-1 min-h-0 relative flex items-start justify-center">
         <SwipeStack
           stackCards={stackCards}
           currentIndex={currentIndex}

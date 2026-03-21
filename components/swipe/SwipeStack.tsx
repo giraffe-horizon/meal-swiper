@@ -34,7 +34,8 @@ export default function SwipeStack({
 }: SwipeStackProps) {
   return (
     <div
-      className="relative w-full max-w-sm h-full"
+      className="relative w-full max-w-sm"
+      style={{ height: 'min(100%, 480px)' }}
     >
       {stackCards
         .slice()
@@ -70,7 +71,7 @@ export default function SwipeStack({
           return (
             <div
               key={`stack-${actualIndex}`}
-              className={`absolute inset-0 bg-surface-container rounded-lg overflow-hidden pointer-events-none ${
+              className={`absolute inset-x-0 top-0 h-full bg-surface-container rounded-lg overflow-hidden pointer-events-none ${
                 stackIdx === 1
                   ? 'translate-y-2 scale-[0.96] opacity-70 blur-[0.5px]'
                   : 'translate-y-4 scale-[0.92] opacity-40 blur-[1px]'
