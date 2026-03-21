@@ -47,13 +47,12 @@ describe('DayCard - empty state', () => {
 
   it('shows "Dodaj" when no meal', () => {
     render(<DayCard {...defaultProps} />)
-    expect(screen.getByText('Dodaj')).toBeInTheDocument()
+    expect(screen.getByText('Dodaj posiłek')).toBeInTheDocument()
   })
 
   it('calls onDayClick when empty card is clicked', () => {
     render(<DayCard {...defaultProps} />)
-    const card = screen.getByTestId('day-card-mon')
-    fireEvent.click(card)
+    fireEvent.click(screen.getByText('Dodaj posiłek'))
     expect(defaultProps.onDayClick).toHaveBeenCalledWith('mon')
   })
 })

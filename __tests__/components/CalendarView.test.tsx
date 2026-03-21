@@ -85,7 +85,7 @@ describe('CalendarView', () => {
         onToggleVacation={onToggleVacation}
       />
     )
-    const noPlanTexts = screen.getAllByText('Dodaj')
+    const noPlanTexts = screen.getAllByText('Dodaj posiłek')
     expect(noPlanTexts).toHaveLength(5)
   })
 

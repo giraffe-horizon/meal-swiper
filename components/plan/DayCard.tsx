@@ -108,7 +108,7 @@ export default function DayCard({
                 e.stopPropagation()
                 setActiveMenu(!activeMenu)
               }}
-              className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors opacity-0 group-hover:opacity-100"
+              className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"
             >
               <span className="material-symbols-outlined text-on-surface-variant text-lg">more_vert</span>
             </button>
@@ -200,14 +200,21 @@ export default function DayCard({
 
   // Empty day view
   return (
-    <button
-      data-testid={`day-card-${day}`}
-      onClick={() => onDayClick(day)}
-      onContextMenu={handleContextMenu}
-      className="w-full h-16 border border-dashed border-outline-variant/30 rounded-xl flex items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group"
-    >
-      <span className="material-symbols-outlined text-lg group-hover:text-primary transition-colors">add</span>
-      <span className="font-body text-sm font-medium">Dodaj</span>
-    </button>
+    <div data-testid={`day-card-${day}`} className="flex gap-2" onContextMenu={handleContextMenu}>
+      <button
+        onClick={() => onDayClick(day)}
+        className="flex-1 h-14 border border-dashed border-outline-variant/30 rounded-xl flex items-center justify-center gap-1.5 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all"
+      >
+        <span className="material-symbols-outlined text-base">add</span>
+        <span className="font-body text-xs font-medium">Dodaj posiłek</span>
+      </button>
+      <button
+        onClick={() => onToggleVacation(day)}
+        className="h-14 px-3 border border-dashed border-outline-variant/30 rounded-xl flex items-center justify-center text-on-surface-variant hover:border-tertiary/50 transition-all"
+        title="Oznacz jako wolny dzień"
+      >
+        <span className="material-symbols-outlined text-base">flight</span>
+      </button>
+    </div>
   )
 }
