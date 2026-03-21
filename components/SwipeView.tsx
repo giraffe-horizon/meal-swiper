@@ -396,7 +396,7 @@ export default function SwipeView({
   const stackCards = activeMeals.slice(currentIndex, currentIndex + 3)
 
   return (
-    <main className="flex flex-col h-[calc(100dvh-48px-96px)] overflow-hidden px-4 py-2 max-w-lg mx-auto w-full relative bg-background">
+    <main className="flex flex-col items-center px-4 pt-2 pb-28 max-w-lg mx-auto w-full relative bg-background">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-on-primary px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
@@ -424,7 +424,7 @@ export default function SwipeView({
       </div>
 
       {/* Tinder-style Card Stack */}
-      <div className="flex-1 min-h-0 relative flex items-start justify-center">
+      <div className="relative w-full flex justify-center">
         <SwipeStack
           stackCards={stackCards}
           currentIndex={currentIndex}
@@ -441,7 +441,7 @@ export default function SwipeView({
       </div>
 
       {/* Action Buttons */}
-      <div className="shrink-0 flex items-center justify-center py-3">
+      <div className="flex items-center justify-center gap-6 py-4">
         <SwipeActions
           onLeft={handleSwipeLeft}
           onRight={handleSwipeRight}

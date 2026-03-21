@@ -33,10 +33,7 @@ export default function SwipeStack({
   people,
 }: SwipeStackProps) {
   return (
-    <div
-      className="relative w-full max-w-sm"
-      style={{ height: 'min(100%, 480px)' }}
-    >
+    <div className="relative w-full max-w-sm h-[420px]">
       {stackCards
         .slice()
         .reverse()

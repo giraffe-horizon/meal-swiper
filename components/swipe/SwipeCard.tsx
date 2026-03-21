@@ -38,7 +38,7 @@ function SwipeCard({
   return (
     <motion.div
       key={`card-${currentIndex}`}
-      className="absolute inset-x-0 top-0 bg-surface-container rounded-[20px] overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing select-none touch-none transition-transform duration-300 hover:rotate-1"
+      className="absolute inset-x-0 top-0 bottom-0 bg-surface-container rounded-[20px] overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing select-none touch-none transition-transform duration-300 hover:rotate-1"
       style={{ x, rotate, zIndex: 10 }}
       drag="x"
       dragElastic={0.7}
@@ -47,8 +47,8 @@ function SwipeCard({
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
     >
-      {/* Meal Photo - Compact 180px height */}
-      <div className="w-full h-[180px] relative">
+      {/* Meal Photo */}
+      <div className="w-full h-[220px] relative">
         {showPlaceholder ? (
           <MealImagePlaceholder
             category={meal.category}
@@ -88,21 +88,21 @@ function SwipeCard({
         </div>
       </div>
 
-      {/* Info Section - Remaining height */}
-      <div className="w-full flex-1 bg-gradient-to-t from-surface-container via-surface-container/80 to-transparent p-3 flex flex-col justify-between">
-        <div className="flex justify-between items-start">
-          <div>
+      {/* Info Section */}
+      <div className="w-full flex-1 p-3 flex flex-col justify-between">
+        <div>
+          <div className="flex justify-between items-center">
             <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
               {meal.kuchnia || 'Międzynarodowa'}
             </span>
-            <h2 className="font-headline text-base font-bold text-on-surface mt-1 line-clamp-2">
-              {meal.nazwa}
-            </h2>
+            <div className="flex items-center gap-1 text-on-surface bg-surface-container/60 px-2 py-1 rounded-md backdrop-blur-md whitespace-nowrap">
+              <span className="material-symbols-outlined text-sm">schedule</span>
+              <span className="font-label text-[11px] font-bold">{meal.prep_time} min</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1 text-on-surface bg-surface-container/60 px-2 py-1 rounded-md backdrop-blur-md whitespace-nowrap">
-            <span className="material-symbols-outlined text-sm">schedule</span>
-            <span className="font-label text-[11px] font-bold">{meal.prep_time} min</span>
-          </div>
+          <h2 className="font-headline text-base font-bold text-on-surface mt-1 line-clamp-2">
+            {meal.nazwa}
+          </h2>
         </div>
 
         {/* Nutritional Highlights - 3 Equal Columns */}
