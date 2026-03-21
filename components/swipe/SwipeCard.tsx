@@ -47,8 +47,8 @@ export default function SwipeCard({
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
     >
-      {/* Meal Photo - Top 60% */}
-      <div className="w-full h-[60%] relative">
+      {/* Meal Photo - Exactly 280px height */}
+      <div className="w-full h-[280px] relative">
         {showPlaceholder ? (
           <MealImagePlaceholder
             category={meal.category}
@@ -88,28 +88,30 @@ export default function SwipeCard({
         </div>
       </div>
 
-      {/* Info Section - Bottom 40% */}
-      <div className="w-full h-[40%] bg-[#1E2A1F] p-6 flex flex-col justify-between">
+      {/* Info Section - Remaining height */}
+      <div className="w-full flex-1 bg-gradient-to-t from-surface-container via-surface-container/80 to-transparent p-6 flex flex-col justify-between">
         <div className="flex justify-between items-start">
           <div>
             <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
               {meal.kuchnia || 'Międzynarodowa'}
             </span>
-            <h2 className="font-headline text-2xl font-bold text-white mt-1">{meal.nazwa}</h2>
+            <h2 className="font-headline text-2xl font-bold text-on-surface mt-1 line-clamp-2 text-ellipsis">
+              {meal.nazwa}
+            </h2>
           </div>
-          <div className="flex items-center gap-1 text-white bg-black/20 px-2 py-1 rounded-md backdrop-blur-md whitespace-nowrap">
+          <div className="flex items-center gap-1 text-on-surface bg-surface-container/60 px-2 py-1 rounded-md backdrop-blur-md whitespace-nowrap">
             <span className="material-symbols-outlined text-sm">schedule</span>
             <span className="font-label text-xs font-bold">{meal.prep_time} min</span>
           </div>
         </div>
 
-        {/* Nutritional Highlights with vertical dividers */}
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col">
-            <span className="text-white/70 text-[10px] uppercase font-semibold tracking-tighter">
+        {/* Nutritional Highlights - 3 Equal Columns */}
+        <div className="grid grid-cols-3 gap-4 mt-4">
+          <div className="flex flex-col text-center">
+            <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
               KCAL
             </span>
-            <span className="font-label text-[#4ADE80] font-bold text-lg leading-tight">
+            <span className="font-label text-primary font-bold text-lg leading-tight">
               {Math.round(
                 (('kcal_baza' in meal
                   ? meal.kcal_baza
@@ -119,28 +121,25 @@ export default function SwipeCard({
               )}
             </span>
           </div>
-          <div className="w-px h-8 bg-[#334433]"></div>
-          <div className="flex flex-col">
-            <span className="text-white/70 text-[10px] uppercase font-semibold tracking-tighter">
+          <div className="flex flex-col text-center">
+            <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
               BIAŁKO
             </span>
-            <span className="font-label text-white font-bold text-lg leading-tight">
+            <span className="font-label text-on-surface font-bold text-lg leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
                   ? meal.bialko_baza
                   : meal.variants.find((v) => v.is_default)?.protein || 0) *
                   people) /
                   2
-              )}
-              g
+              )}g
             </span>
           </div>
-          <div className="w-px h-8 bg-[#334433]"></div>
-          <div className="flex flex-col">
-            <span className="text-white/70 text-[10px] uppercase font-semibold tracking-tighter">
+          <div className="flex flex-col text-center">
+            <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
               TŁUSZCZE
             </span>
-            <span className="font-label text-white font-bold text-lg leading-tight">
+            <span className="font-label text-on-surface font-bold text-lg leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
                   ? meal.bialko_baza * 0.6 // Rough estimate
@@ -149,8 +148,7 @@ export default function SwipeCard({
                     0) *
                   people) /
                   2
-              )}
-              g
+              )}g
             </span>
           </div>
         </div>

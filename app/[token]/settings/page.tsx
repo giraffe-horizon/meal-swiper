@@ -221,9 +221,9 @@ export default function SettingsPage() {
       <main className="max-w-2xl mx-auto px-6 pt-8 space-y-8">
         {/* Header Section */}
         <section>
-          <h2 className="font-headline text-3xl font-extrabold tracking-tight text-on-surface mb-2">
+          <h1 className="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-4">
             Preferencje domowników
-          </h2>
+          </h1>
           <p className="text-on-surface-variant text-sm font-body">
             Dostosuj jadłospis do potrzeb każdego członka Twojej rodziny.
           </p>
@@ -257,11 +257,11 @@ export default function SettingsPage() {
           )
 
           return (
-            <article key={index} className="bg-surface-container rounded-lg p-6 space-y-6">
+            <article key={index} className="bg-surface-container rounded-[20px] p-6 space-y-6">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-on-primary font-headline font-black text-xl uppercase">
+                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-primary font-headline font-black text-xl uppercase">
                       {(person.name || `Osoba ${index + 1}`).charAt(0)}
                     </span>
                   </div>
@@ -331,16 +331,16 @@ export default function SettingsPage() {
                 <label className="font-headline text-sm text-on-surface-variant">
                   Rodzaj diety
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                  {DIET_OPTIONS.map((option) => {
+                <div className="grid grid-cols-2 gap-3">
+                  {DIET_OPTIONS.slice(0, 4).map((option) => {
                     const isSelected = currentDiet === option.id
                     return (
                       <label
                         key={option.id}
-                        className={`relative flex flex-col items-center justify-center p-3 rounded-xl cursor-pointer transition-all ${
+                        className={`relative flex items-center justify-center p-3 rounded-[24px] cursor-pointer transition-all ${
                           isSelected
-                            ? 'border-2 border-primary bg-primary/5'
-                            : 'border border-outline-variant bg-surface-container-low hover:bg-surface-container-high'
+                            ? 'bg-primary text-on-primary'
+                            : 'bg-surface-container-highest text-on-surface border border-outline-variant'
                         }`}
                       >
                         <input
@@ -351,9 +351,7 @@ export default function SettingsPage() {
                           checked={isSelected}
                           onChange={(e) => handleDietChange(index, e.target.value)}
                         />
-                        <span
-                          className={`text-sm font-semibold ${isSelected ? 'text-primary' : ''}`}
-                        >
+                        <span className="text-sm font-semibold">
                           {option.label}
                         </span>
                       </label>
@@ -377,7 +375,7 @@ export default function SettingsPage() {
                         <button
                           key={cuisine}
                           onClick={() => handleCuisineToggle(index, cuisine)}
-                          className={`px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 ${
+                          className={`px-4 py-2 rounded-[24px] text-sm font-semibold flex items-center gap-2 ${
                             isSelected
                               ? 'bg-primary text-on-primary'
                               : 'bg-surface-container-highest text-on-surface-variant'
@@ -461,7 +459,7 @@ export default function SettingsPage() {
             </h3>
 
             {/* Household name card */}
-            <div className="bg-surface-container rounded-lg p-6">
+            <div className="bg-surface-container rounded-[20px] p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center">
@@ -536,7 +534,7 @@ export default function SettingsPage() {
           <h3 className="font-headline text-sm text-on-surface-variant uppercase tracking-widest font-bold">
             Wygląd aplikacji
           </h3>
-          <div className="grid grid-cols-3 gap-3 p-1 bg-surface-container-low rounded-xl">
+          <div className="grid grid-cols-3 gap-3 p-1 bg-surface-container-low rounded-[20px]">
             {[
               { id: 'light', label: 'Jasny', icon: 'light_mode' },
               { id: 'dark', label: 'Ciemny', icon: 'dark_mode' },

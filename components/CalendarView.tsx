@@ -53,8 +53,8 @@ export default function CalendarView({
             <h2 className="font-headline font-extrabold text-2xl tracking-tight text-on-surface">
               {weekRange}
             </h2>
-            <p className="font-label text-xs uppercase text-primary/70 font-bold">
-              Tydzień {weekNumber}
+            <p className="font-label text-xs uppercase text-primary font-bold tracking-wide">
+              TYDZIEŃ {weekNumber}
             </p>
           </div>
           <button

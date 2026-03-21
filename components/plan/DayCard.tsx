@@ -69,7 +69,7 @@ export default function DayCard({
         data-testid={`day-card-${day}`}
         onContextMenu={handleContextMenu}
         onClick={() => onMealClick(meal)}
-        className="bg-surface-container rounded-lg overflow-hidden flex h-40 shadow-lg relative cursor-pointer"
+        className="bg-surface-container rounded-[20px] overflow-hidden flex h-40 shadow-lg relative cursor-pointer"
       >
         {/* Context menu */}
         <div className="absolute top-2 right-3 z-10">
@@ -228,7 +228,7 @@ export default function DayCard({
       data-testid={`day-card-${day}`}
       onClick={() => onDayClick(day)}
       onContextMenu={handleContextMenu}
-      className="w-full h-32 border-2 border-dashed border-outline-variant/40 rounded-lg flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group"
+      className="w-full h-32 border-2 border-dashed border-outline-variant/40 rounded-[20px] flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group"
     >
       <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
         <span className="material-symbols-outlined">add</span>

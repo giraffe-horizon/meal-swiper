@@ -52,7 +52,7 @@ input[type='range'] {
   background: transparent;
 }
 input[type='range']::-webkit-slider-runnable-track {
-  background: #2f3633;
+  background: #4ADE80;
   height: 6px;
   border-radius: 9999px;
 }
@@ -71,4 +71,12 @@ input[type='range']::-webkit-slider-thumb {
   background: rgba(26, 33, 30, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }

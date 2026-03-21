@@ -177,7 +177,9 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
       <main className="px-6 pt-6 max-w-2xl mx-auto">
         {!hasAnyItems ? (
           <div className="flex flex-col items-center justify-center h-full py-20">
-            <div className="text-6xl mb-4">🛒</div>
+            <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-6">
+              <span className="material-symbols-outlined text-4xl text-on-surface-variant">shopping_cart</span>
+            </div>
             <h2 className="text-2xl font-bold text-on-surface mb-2">Brak listy zakupów</h2>
             <p className="text-on-surface-variant text-center">
               Zaplanuj posiłki na tydzień, aby wygenerować listę.
@@ -187,35 +189,22 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
           <>
             {/* Progress Hero Section */}
             <section className="mb-10">
-              <div className="flex items-end justify-between mb-4">
+              <div className="flex items-end justify-between mb-6">
                 <div>
                   <span className="font-label text-tertiary text-sm font-bold tracking-widest uppercase">
-                    Postęp zakupów
+                    POSTĘP ZAKUPÓW
                   </span>
-                  <h2 className="font-headline text-4xl font-extrabold mt-1">
+                  <h2 className="font-headline text-4xl font-extrabold mt-2 text-on-surface">
                     {checkedCount}/{totalItems} kupione
                   </h2>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={checkAllItems}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-high text-on-surface font-semibold transition-all hover:opacity-90 active:scale-95"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">
-                      {allChecked ? 'check_box' : 'check_box_outline_blank'}
-                    </span>
-                    <span className="text-sm">
-                      {allChecked ? 'Odznacz wszystko' : 'Zaznacz wszystko'}
-                    </span>
-                  </button>
-                  <button
-                    onClick={shareList}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary-container text-on-primary-container font-semibold transition-all hover:opacity-90 active:scale-95"
-                  >
-                    <span className="material-symbols-outlined text-[20px]">share</span>
-                    <span className="text-sm">Udostępnij</span>
-                  </button>
-                </div>
+                <button
+                  onClick={shareList}
+                  className="flex items-center gap-2 px-6 py-3 rounded-[24px] bg-primary text-on-primary font-semibold transition-all hover:opacity-90 active:scale-95"
+                >
+                  <span className="material-symbols-outlined text-[20px]">share</span>
+                  <span className="text-sm font-bold">Udostępnij</span>
+                </button>
               </div>
               <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
                 <div
