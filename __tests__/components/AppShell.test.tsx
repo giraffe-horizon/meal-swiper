@@ -131,13 +131,13 @@ describe('AppShell', () => {
     expect(settingsLink.getAttribute('href')).toBe('/test-token/settings')
   })
 
-  it('renders notification bell in header', () => {
+  it('renders header without notification bell (removed for mobile)', () => {
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    expect(screen.getByText('notifications')).toBeInTheDocument()
+    expect(screen.queryByText('notifications')).not.toBeInTheDocument()
   })
 
   it('shows LoadingSpinner when loading', () => {

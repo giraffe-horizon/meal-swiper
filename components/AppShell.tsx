@@ -27,7 +27,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     <div className="h-dvh bg-background flex text-on-background">
       <div className="flex-1 lg:ml-20 w-full flex flex-col h-dvh">
         {/* Global Header — Emerald Hearth */}
-        <header className="shrink-0 flex items-center justify-between px-6 py-4 bg-surface z-10">
+        <header className="shrink-0 flex items-center px-4 py-3 bg-surface z-10">
           <div className="flex items-center gap-3">
             <span
               className="material-symbols-outlined text-[#3cb371] text-2xl"
@@ -39,16 +39,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
               Culinary Alchemist
             </h1>
           </div>
-          <div className="flex items-center gap-3">
-            <button className="text-emerald-100/50 hover:text-emerald-100/80 transition-colors">
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <div className="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 overflow-hidden flex items-center justify-center">
-              <span className="material-symbols-outlined text-on-surface-variant text-sm">
-                person
-              </span>
-            </div>
-          </div>
+          {/* Icons removed — too cramped on mobile */}
         </header>
 
         {/* Scrollable Content */}
