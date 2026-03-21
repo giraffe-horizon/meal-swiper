@@ -396,7 +396,7 @@ export default function SwipeView({
   const stackCards = activeMeals.slice(currentIndex, currentIndex + 3)
 
   return (
-    <main className="flex-1 flex flex-col items-center px-4 pt-6 pb-32 max-w-lg mx-auto w-full relative bg-background">
+    <main className="flex-1 flex flex-col items-center px-4 pt-6 pb-40 max-w-lg mx-auto w-full relative bg-background">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-on-primary px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
@@ -451,64 +451,43 @@ export default function SwipeView({
         />
       </div>
 
-      {/* Week Selector Section */}
-      <section className="w-full mt-10">
-        <h3 className="font-headline text-sm font-bold text-white uppercase tracking-widest mb-4 px-2">
-          TWÓJ TYDZIEŃ
-        </h3>
-        <div className="flex justify-between items-center bg-[#1A2B1D] p-3 rounded-2xl">
-          {DAY_KEYS.map((day, idx) => {
-            const meal = weeklyPlan[day]
-            const isFree = weeklyPlan[`${day}_free`]
-            const isActive = currentDay === day
-            const shortNames = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt']
-
-            return (
-              <button
-                key={day}
-                onClick={() => !isFree && onDaySelect?.(day)}
-                disabled={!!isFree}
-                className="flex flex-col items-center gap-2"
-              >
-                <span
-                  className={`text-[10px] font-bold uppercase ${isActive ? 'text-primary' : 'text-white/70'}`}
+      {/* Week Strip */}
+      <div className="w-full mt-6">
+        <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-on-surface mb-3">Twój Tydzień</h3>
+        <div className="bg-surface-container rounded-2xl p-3">
+          <div className="flex justify-between">
+            {['Pn', 'Wt', 'Śr', 'Cz', 'Pt'].map((day, i) => {
+              const dayKey = DAY_KEYS[i]
+              const planned = weeklyPlan[dayKey]
+              const isFree = weeklyPlan[`${dayKey}_free`]
+              return (
+                <button
+                  key={day}
+                  onClick={() => !isFree && onDaySelect?.(dayKey)}
+                  disabled={!!isFree}
+                  className="flex flex-col items-center gap-1.5"
                 >
-                  {shortNames[idx]}
-                </span>
-                {meal ? (
-                  <div className="w-11 h-11 rounded-full border-2 border-primary overflow-hidden">
-                    {meal.photo_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        alt={meal.nazwa}
-                        className="w-full h-full object-cover"
-                        src={meal.photo_url}
-                        onError={(e) => {
-                          ;(e.target as HTMLImageElement).style.display = 'none'
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-surface-container flex items-center justify-center">
-                        <span className="material-symbols-outlined text-on-surface-variant text-sm">
-                          restaurant
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ) : isFree ? (
-                  <div className="w-11 h-11 rounded-full bg-tertiary/20 flex items-center justify-center">
-                    <span className="text-lg">✈️</span>
-                  </div>
-                ) : (
-                  <div className="w-11 h-11 rounded-full border border-dashed border-white/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-colors">
-                    <span className="material-symbols-outlined text-xl">add</span>
-                  </div>
-                )}
-              </button>
-            )
-          })}
+                  <span className="text-[10px] text-on-surface-variant">{day}</span>
+                  {planned ? (
+                    <div className="w-11 h-11 rounded-full border-2 border-primary overflow-hidden">
+                      <img src={planned.photo_url} alt={planned.nazwa} className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display='none' }} />
+                    </div>
+                  ) : isFree ? (
+                    <div className="w-11 h-11 rounded-full bg-tertiary/20 flex items-center justify-center">
+                      <span className="text-lg">✈️</span>
+                    </div>
+                  ) : (
+                    <div className="w-11 h-11 rounded-full border-2 border-dashed border-[#3A5040] flex items-center justify-center">
+                      <span className="material-symbols-outlined text-on-surface-variant text-sm">add</span>
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* Meal Detail Modal */}
       <MealModal meal={modalMeal} onClose={() => setModalMeal(null)} />
