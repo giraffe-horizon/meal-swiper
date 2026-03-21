@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { motion, type MotionValue, type PanInfo } from 'framer-motion'
 import type { Meal, MealWithVariants } from '@/types'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
@@ -19,7 +19,7 @@ interface SwipeCardProps {
   totalCards: number
 }
 
-export default function SwipeCard({
+function SwipeCard({
   meal,
   x,
   rotate,
@@ -95,23 +95,23 @@ export default function SwipeCard({
             <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
               {meal.kuchnia || 'Międzynarodowa'}
             </span>
-            <h2 className="font-headline text-lg font-bold text-on-surface mt-1 line-clamp-2">
+            <h2 className="font-headline text-base font-bold text-on-surface mt-1 line-clamp-2">
               {meal.nazwa}
             </h2>
           </div>
           <div className="flex items-center gap-1 text-on-surface bg-surface-container/60 px-2 py-1 rounded-md backdrop-blur-md whitespace-nowrap">
             <span className="material-symbols-outlined text-sm">schedule</span>
-            <span className="font-label text-xs font-bold">{meal.prep_time} min</span>
+            <span className="font-label text-[11px] font-bold">{meal.prep_time} min</span>
           </div>
         </div>
 
         {/* Nutritional Highlights - 3 Equal Columns */}
         <div className="grid grid-cols-3 gap-2 mt-2">
           <div className="flex flex-col text-center">
-            <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
+            <span className="text-on-surface-variant text-[9px] uppercase tracking-wide font-semibold mb-1">
               KCAL
             </span>
-            <span className="font-label text-primary font-bold text-base leading-tight">
+            <span className="font-label text-primary font-bold text-sm leading-tight">
               {Math.round(
                 (('kcal_baza' in meal
                   ? meal.kcal_baza
@@ -122,10 +122,10 @@ export default function SwipeCard({
             </span>
           </div>
           <div className="flex flex-col text-center">
-            <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
+            <span className="text-on-surface-variant text-[9px] uppercase tracking-wide font-semibold mb-1">
               BIAŁKO
             </span>
-            <span className="font-label text-on-surface font-bold text-base leading-tight">
+            <span className="font-label text-on-surface font-bold text-sm leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
                   ? meal.bialko_baza
@@ -136,10 +136,10 @@ export default function SwipeCard({
             </span>
           </div>
           <div className="flex flex-col text-center">
-            <span className="text-on-surface-variant text-[10px] uppercase tracking-wide font-semibold mb-1">
+            <span className="text-on-surface-variant text-[9px] uppercase tracking-wide font-semibold mb-1">
               TŁUSZCZE
             </span>
-            <span className="font-label text-on-surface font-bold text-base leading-tight">
+            <span className="font-label text-on-surface font-bold text-sm leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
                   ? meal.bialko_baza * 0.6 // Rough estimate
@@ -156,3 +156,5 @@ export default function SwipeCard({
     </motion.div>
   )
 }
+
+export default memo(SwipeCard)

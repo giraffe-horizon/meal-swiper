@@ -42,7 +42,7 @@ export default function Navigation({ activeView, token }: NavigationProps) {
               >
                 {icon}
               </span>
-              <span className="font-body font-semibold text-[9px] tracking-wide leading-tight">
+              <span className="font-body font-semibold text-[10px] tracking-wide leading-tight">
                 {label}
               </span>
             </Link>

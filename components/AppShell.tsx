@@ -35,7 +35,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
             >
               menu_book
             </span>
-            <h1 className="font-headline font-bold text-xl uppercase tracking-tight text-primary">
+            <h1 className="font-headline font-bold text-base uppercase tracking-tight text-primary">
               Culinary Alchemist
             </h1>
           </div>

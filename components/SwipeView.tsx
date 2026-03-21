@@ -396,7 +396,7 @@ export default function SwipeView({
   const stackCards = activeMeals.slice(currentIndex, currentIndex + 3)
 
   return (
-    <main className="flex-1 flex flex-col items-center px-4 pt-3 pb-28 max-w-lg mx-auto w-full relative bg-background">
+    <main className="flex-1 flex flex-col h-full overflow-hidden px-4 py-2 max-w-lg mx-auto w-full relative bg-background">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-on-primary px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
@@ -414,17 +414,17 @@ export default function SwipeView({
       )}
 
       {/* Matching Badge */}
-      <div className="mb-3 self-start">
-        <div className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-[24px]">
+      <div className="mb-2 self-start">
+        <div className="inline-flex items-center gap-2 bg-primary text-on-primary px-3 py-1 rounded-[24px] h-7">
           <span className="w-2 h-2 rounded-full bg-on-primary animate-pulse"></span>
-          <span className="font-label text-xs font-bold uppercase tracking-wide">
+          <span className="font-label text-[11px] font-bold uppercase tracking-wide">
             {compatibilityStats.compatible} POSIŁKI PASUJĄ
           </span>
         </div>
       </div>
 
       {/* Tinder-style Card Stack */}
-      <div className="relative w-full aspect-[3/4] group">
+      <div className="relative w-full flex-1 group min-h-0">
         <SwipeStack
           stackCards={stackCards}
           currentIndex={currentIndex}
@@ -441,7 +441,7 @@ export default function SwipeView({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-8 mt-4">
+      <div className="flex items-center justify-center h-16 mt-2">
         <SwipeActions
           onLeft={handleSwipeLeft}
           onRight={handleSwipeRight}
@@ -452,9 +452,9 @@ export default function SwipeView({
       </div>
 
       {/* Week Strip */}
-      <div className="w-full mt-6">
-        <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-on-surface mb-3">Twój Tydzień</h3>
-        <div className="bg-surface-container rounded-2xl p-3">
+      <div className="w-full mt-4">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface mb-2">Twój Tydzień</h3>
+        <div className="bg-surface-container rounded-2xl px-3 py-2">
           <div className="flex justify-between">
             {['Pn', 'Wt', 'Śr', 'Cz', 'Pt'].map((day, i) => {
               const dayKey = DAY_KEYS[i]
@@ -467,19 +467,19 @@ export default function SwipeView({
                   disabled={!!isFree}
                   className="flex flex-col items-center gap-1.5"
                 >
-                  <span className="text-[10px] text-on-surface-variant">{day}</span>
+                  <span className="text-[9px] text-on-surface-variant">{day}</span>
                   {planned ? (
-                    <div className="w-11 h-11 rounded-full border-2 border-primary overflow-hidden">
+                    <div className="w-9 h-9 rounded-full border-2 border-primary overflow-hidden">
                       <img src={planned.photo_url} alt={planned.nazwa} className="w-full h-full object-cover"
                         onError={(e) => { (e.target as HTMLImageElement).style.display='none' }} />
                     </div>
                   ) : isFree ? (
-                    <div className="w-11 h-11 rounded-full bg-tertiary/20 flex items-center justify-center">
-                      <span className="text-lg">✈️</span>
+                    <div className="w-9 h-9 rounded-full bg-tertiary/20 flex items-center justify-center">
+                      <span className="text-sm">✈️</span>
                     </div>
                   ) : (
-                    <div className="w-11 h-11 rounded-full border-2 border-dashed border-[#3A5040] flex items-center justify-center">
-                      <span className="material-symbols-outlined text-on-surface-variant text-sm">add</span>
+                    <div className="w-9 h-9 rounded-full border-2 border-dashed border-[#3A5040] flex items-center justify-center">
+                      <span className="material-symbols-outlined text-on-surface-variant text-xs">add</span>
                     </div>
                   )}
                 </button>

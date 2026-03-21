@@ -50,7 +50,7 @@ export default function CalendarView({
             <span className="material-symbols-outlined text-on-surface-variant">chevron_left</span>
           </button>
           <div className="text-center">
-            <h2 className="font-headline font-extrabold text-2xl tracking-tight text-on-surface">
+            <h2 className="font-headline font-extrabold text-lg tracking-tight text-on-surface">
               {weekRange}
             </h2>
             <p className="font-label text-xs uppercase text-primary font-bold tracking-wide">

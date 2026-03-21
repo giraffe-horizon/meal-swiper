@@ -34,8 +34,7 @@ export default function SwipeStack({
 }: SwipeStackProps) {
   return (
     <div
-      className="relative w-full max-w-sm flex-1 min-h-0"
-      style={{ minHeight: '420px', maxHeight: 'calc(100vh - 320px)' }}
+      className="relative w-full max-w-sm h-full"
     >
       {stackCards
         .slice()
