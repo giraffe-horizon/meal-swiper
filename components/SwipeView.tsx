@@ -451,43 +451,7 @@ export default function SwipeView({
         />
       </div>
 
-      {/* Week Strip */}
-      <div className="w-full mt-4">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface mb-2">Twój Tydzień</h3>
-        <div className="bg-surface-container rounded-2xl px-3 py-2">
-          <div className="flex justify-between">
-            {['Pn', 'Wt', 'Śr', 'Cz', 'Pt'].map((day, i) => {
-              const dayKey = DAY_KEYS[i]
-              const planned = weeklyPlan[dayKey]
-              const isFree = weeklyPlan[`${dayKey}_free`]
-              return (
-                <button
-                  key={day}
-                  onClick={() => !isFree && onDaySelect?.(dayKey)}
-                  disabled={!!isFree}
-                  className="flex flex-col items-center gap-1.5"
-                >
-                  <span className="text-[9px] text-on-surface-variant">{day}</span>
-                  {planned ? (
-                    <div className="w-9 h-9 rounded-full border-2 border-primary overflow-hidden">
-                      <img src={planned.photo_url} alt={planned.nazwa} className="w-full h-full object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display='none' }} />
-                    </div>
-                  ) : isFree ? (
-                    <div className="w-9 h-9 rounded-full bg-tertiary/20 flex items-center justify-center">
-                      <span className="text-sm">✈️</span>
-                    </div>
-                  ) : (
-                    <div className="w-9 h-9 rounded-full border-2 border-dashed border-[#3A5040] flex items-center justify-center">
-                      <span className="material-symbols-outlined text-on-surface-variant text-xs">add</span>
-                    </div>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      </div>
+      {/* Week strip removed — too cramped on mobile */}
 
       {/* Meal Detail Modal */}
       <MealModal meal={modalMeal} onClose={() => setModalMeal(null)} />

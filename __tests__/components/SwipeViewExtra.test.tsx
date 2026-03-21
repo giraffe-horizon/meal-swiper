@@ -202,18 +202,10 @@ describe('SwipeView - keyboard navigation', () => {
   })
 })
 
-describe('SwipeView - day selection', () => {
-  it('shows day chips for all 5 days', () => {
+describe('SwipeView - day selection (removed)', () => {
+  it('week strip removed for mobile layout', () => {
     render(<SwipeView {...defaultProps} />)
-    expect(screen.getByText('Pn')).toBeInTheDocument()
-    expect(screen.getByText('Pt')).toBeInTheDocument()
-  })
-
-  it('calls onDaySelect when a day chip is clicked', () => {
-    const onDaySelect = vi.fn()
-    render(<SwipeView {...defaultProps} onDaySelect={onDaySelect} />)
-    fireEvent.click(screen.getByText('Wt'))
-    expect(onDaySelect).toHaveBeenCalledWith('tue')
+    expect(screen.queryByText('Twój Tydzień')).not.toBeInTheDocument()
   })
 })
 

@@ -162,13 +162,9 @@ describe('SwipeView', () => {
     expect(screen.getByText(/Dodano:/)).toBeInTheDocument()
   })
 
-  it('shows interactive day selector with day chips', () => {
+  it('does not show week strip (removed for mobile)', () => {
     render(<SwipeView {...defaultProps} />)
-    expect(screen.getByText('Pn')).toBeInTheDocument()
-    expect(screen.getByText('Wt')).toBeInTheDocument()
-    expect(screen.getByText('Śr')).toBeInTheDocument()
-    expect(screen.getByText('Cz')).toBeInTheDocument()
-    expect(screen.getByText('Pt')).toBeInTheDocument()
+    expect(screen.queryByText('Twój Tydzień')).not.toBeInTheDocument()
   })
 
   it('shows skip day button (star icon) when currentDay is set', () => {
