@@ -415,10 +415,10 @@ export default function SwipeView({
 
       {/* Matching Badge */}
       <div className="mb-6 self-start">
-        <div className="inline-flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-primary/10">
+        <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
           <span className="font-label text-sm font-bold text-primary tracking-wide">
-            {compatibilityStats.compatible} POSIŁKÓW PASUJE
+            {compatibilityStats.compatible} POSIŁKI PASUJĄ
           </span>
         </div>
       </div>
@@ -453,10 +453,10 @@ export default function SwipeView({
 
       {/* Week Selector Section */}
       <section className="w-full mt-10">
-        <h3 className="font-headline text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4 px-2">
-          Twój Tydzień
+        <h3 className="font-headline text-sm font-bold text-white uppercase tracking-widest mb-4 px-2">
+          TWÓJ TYDZIEŃ
         </h3>
-        <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-xl border border-white/5">
+        <div className="flex justify-between items-center bg-[#1A2B1D] p-3 rounded-2xl">
           {DAY_KEYS.map((day, idx) => {
             const meal = weeklyPlan[day]
             const isFree = weeklyPlan[`${day}_free`]
@@ -471,12 +471,12 @@ export default function SwipeView({
                 className="flex flex-col items-center gap-2"
               >
                 <span
-                  className={`text-[10px] font-bold ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}
+                  className={`text-[10px] font-bold uppercase ${isActive ? 'text-primary' : 'text-white/70'}`}
                 >
                   {shortNames[idx]}
                 </span>
                 {meal ? (
-                  <div className="w-12 h-12 rounded-full border-2 border-primary overflow-hidden">
+                  <div className="w-11 h-11 rounded-full border-2 border-primary overflow-hidden">
                     {meal.photo_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -496,11 +496,11 @@ export default function SwipeView({
                     )}
                   </div>
                 ) : isFree ? (
-                  <div className="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-full bg-tertiary/20 flex items-center justify-center">
                     <span className="text-lg">✈️</span>
                   </div>
                 ) : (
-                  <div className="w-12 h-12 rounded-full border border-dashed border-outline-variant flex items-center justify-center text-primary hover:bg-primary/5 transition-colors">
+                  <div className="w-11 h-11 rounded-full border border-dashed border-white/30 flex items-center justify-center text-primary hover:bg-primary/10 transition-colors">
                     <span className="material-symbols-outlined text-xl">add</span>
                   </div>
                 )}

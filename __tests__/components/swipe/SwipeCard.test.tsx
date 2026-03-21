@@ -86,7 +86,7 @@ describe('SwipeCard', () => {
   it('shows kcal info (per person avg)', () => {
     // kcal displayed: Math.round((450 * 2) / 2) = 450
     render(<SwipeCard {...defaultProps} />)
-    expect(screen.getByText('Kcal')).toBeInTheDocument()
+    expect(screen.getByText('KCAL')).toBeInTheDocument()
     expect(screen.getByText('450')).toBeInTheDocument()
   })
 
@@ -104,8 +104,8 @@ describe('SwipeCard', () => {
   it('shows nutritional information', () => {
     render(<SwipeCard {...defaultProps} currentIndex={2} totalCards={10} />)
     // New design shows nutritional info instead of card counter
-    expect(screen.getByText('Białko')).toBeInTheDocument()
-    expect(screen.getByText('Tłuszcze')).toBeInTheDocument()
+    expect(screen.getByText('BIAŁKO')).toBeInTheDocument()
+    expect(screen.getByText('TŁUSZCZE')).toBeInTheDocument()
   })
 
   it('calls onPointerDown when pressed', () => {

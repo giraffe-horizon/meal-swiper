@@ -23,28 +23,26 @@ export default function DaySelector({
       {DAY_KEYS.map((day, idx) => {
         const isFree = weeklyPlan[`${day}_free`]
         const isActive = selectedDay === day
-        const shortName = shortNames[idx]
+        const shortName = shortNames[idx].toUpperCase()
 
         return (
           <button
             key={day}
             onClick={() => !isFree && onSelect(day)}
             disabled={isFree}
-            className={`flex flex-col items-center justify-center min-w-[56px] py-3 px-3 rounded-2xl transition-all ${
+            className={`flex flex-col items-center justify-center min-w-[56px] w-[56px] h-[56px] rounded-2xl transition-all ${
               isActive
-                ? 'bg-primary text-on-primary'
-                : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
+                ? 'bg-primary text-[#2A3D2C]'
+                : 'bg-[#1C2E1F] text-white hover:bg-surface-container-high'
             } ${isFree ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
           >
-            <span
-              className={`font-label text-[10px] font-bold uppercase ${
-                isActive ? 'opacity-80' : ''
-              }`}
-            >
+            <span className="font-label text-[10px] font-bold uppercase leading-none">
               {shortName}
             </span>
             {weekDates[idx] && (
-              <span className="font-headline text-lg font-black">{weekDates[idx].getDate()}</span>
+              <span className="font-headline text-[18px] font-black leading-none mt-1">
+                {weekDates[idx].getDate()}
+              </span>
             )}
           </button>
         )

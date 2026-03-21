@@ -266,7 +266,7 @@ describe('SwipeView - no-meals screen DaySelector callback', () => {
     expect(screen.getByText('Brak więcej posiłków')).toBeInTheDocument()
 
     // Click a day chip in the DaySelector rendered on the no-meals screen
-    fireEvent.click(screen.getByText('Wt'))
+    fireEvent.click(screen.getByText('WT'))
     expect(onDaySelect).toHaveBeenCalledWith('tue')
   })
 })

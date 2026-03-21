@@ -34,11 +34,11 @@ describe('DaySelector', () => {
         onSelect={vi.fn()}
       />
     )
-    expect(screen.getByText('Pn')).toBeInTheDocument()
-    expect(screen.getByText('Wt')).toBeInTheDocument()
-    expect(screen.getByText('Śr')).toBeInTheDocument()
-    expect(screen.getByText('Cz')).toBeInTheDocument()
-    expect(screen.getByText('Pt')).toBeInTheDocument()
+    expect(screen.getByText('PN')).toBeInTheDocument()
+    expect(screen.getByText('WT')).toBeInTheDocument()
+    expect(screen.getByText('ŚR')).toBeInTheDocument()
+    expect(screen.getByText('CZ')).toBeInTheDocument()
+    expect(screen.getByText('PT')).toBeInTheDocument()
   })
 
   it('calls onSelect when day clicked', () => {
@@ -51,7 +51,7 @@ describe('DaySelector', () => {
         onSelect={onSelect}
       />
     )
-    fireEvent.click(screen.getByText('Pn'))
+    fireEvent.click(screen.getByText('PN'))
     expect(onSelect).toHaveBeenCalledWith('mon')
   })
 
@@ -64,7 +64,7 @@ describe('DaySelector', () => {
         onSelect={vi.fn()}
       />
     )
-    const pnBtn = screen.getByText('Pn').closest('button')
+    const pnBtn = screen.getByText('PN').closest('button')
     expect(pnBtn?.className).toContain('bg-primary')
   })
 
@@ -77,7 +77,7 @@ describe('DaySelector', () => {
         onSelect={vi.fn()}
       />
     )
-    const pnBtn = screen.getByText('Pn').closest('button')
+    const pnBtn = screen.getByText('PN').closest('button')
     expect(pnBtn?.className).not.toContain('ring-2')
   })
 
@@ -91,7 +91,7 @@ describe('DaySelector', () => {
         onSelect={vi.fn()}
       />
     )
-    const pnBtn = screen.getByText('Pn').closest('button')
+    const pnBtn = screen.getByText('PN').closest('button')
     expect(pnBtn).toBeDisabled()
   })
 
@@ -106,7 +106,7 @@ describe('DaySelector', () => {
         onSelect={onSelect}
       />
     )
-    fireEvent.click(screen.getByText('Pn'))
+    fireEvent.click(screen.getByText('PN'))
     expect(onSelect).not.toHaveBeenCalled()
   })
 
@@ -132,7 +132,7 @@ describe('DaySelector', () => {
         onSelect={vi.fn()}
       />
     )
-    const pnBtn = screen.getByText('Pn').closest('button')
+    const pnBtn = screen.getByText('PN').closest('button')
     expect(pnBtn?.className).toContain('rounded-2xl')
   })
 })

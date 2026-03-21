@@ -17,12 +17,12 @@ export default function SwipeActions({
 }: SwipeActionsProps) {
   return (
     <div className="flex items-center justify-center gap-6">
-      {/* Reject Button - X */}
+      {/* Reject Button - X (56px) */}
       <button
         onClick={onLeft}
         disabled={disabled}
         title="Pomiń tę propozycję"
-        className="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center text-error border border-error/20 hover:bg-error/10 transition-colors active:scale-90 duration-200 shadow-xl disabled:opacity-50"
+        className="w-14 h-14 rounded-full bg-[#2A3D2C] flex items-center justify-center text-error shadow-xl hover:scale-105 transition-transform active:scale-90 duration-200 disabled:opacity-50"
       >
         <span className="material-symbols-outlined !text-2xl">close</span>
       </button>
@@ -32,7 +32,7 @@ export default function SwipeActions({
         onClick={onRight}
         disabled={disabled}
         title="Dodaj do planu"
-        className="w-18 h-18 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-[0_0_30px_rgba(105,221,150,0.3)] hover:scale-105 transition-transform active:scale-90 duration-200 disabled:opacity-50"
+        className="w-[72px] h-[72px] rounded-full bg-primary flex items-center justify-center text-[#2A3D2C] shadow-[0_0_30px_rgba(105,221,150,0.3)] hover:scale-105 transition-transform active:scale-90 duration-200 disabled:opacity-50"
       >
         <span
           className="material-symbols-outlined !text-4xl"
@@ -42,15 +42,14 @@ export default function SwipeActions({
         </span>
       </button>
 
-      {/* Skip Day Button */}
+      {/* Star Button - Skip/Save for Later (56px) */}
       <button
         onClick={onSkipDay}
         disabled={disabled}
         title="Pomiń ten dzień"
-        className="px-4 py-2 bg-surface-container-highest flex items-center justify-center gap-2 text-on-surface border border-outline-variant hover:bg-surface-container transition-colors active:scale-90 duration-200 shadow-xl disabled:opacity-50 rounded-full"
+        className="w-14 h-14 rounded-full bg-[#2A3D2C] flex items-center justify-center text-[#FACC15] shadow-xl hover:scale-105 transition-transform active:scale-90 duration-200 disabled:opacity-50"
       >
-        <span className="material-symbols-outlined !text-lg">skip_next</span>
-        <span className="text-sm font-medium">Pomiń ten dzień</span>
+        <span className="material-symbols-outlined !text-2xl">star</span>
       </button>
     </div>
   )

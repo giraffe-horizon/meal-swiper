@@ -174,20 +174,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
 
   return (
     <div className="bg-surface text-on-surface font-body min-h-screen pb-32">
-      {/* TopAppBar */}
-      <header className="bg-background flex items-center justify-between px-6 py-4 w-full">
-        <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
-          <h1 className="font-headline font-bold tracking-tight text-xl uppercase text-primary">
-            Culinary Alchemist
-          </h1>
-        </div>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:opacity-80 transition-opacity active:scale-95 duration-150">
-          <span className="material-symbols-outlined text-primary">search</span>
-        </button>
-      </header>
-
-      <main className="px-6 mt-8 max-w-2xl mx-auto">
+      <main className="px-6 pt-6 max-w-2xl mx-auto">
         {!hasAnyItems ? (
           <div className="flex flex-col items-center justify-center h-full py-20">
             <div className="text-6xl mb-4">🛒</div>
