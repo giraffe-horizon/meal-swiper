@@ -1,218 +1,200 @@
 'use client'
 
-import { useState } from 'react'
-import type { Meal } from '@/types'
-import { scaleIngredient, scaleNutrition } from '@/lib/scaling'
-import { parseRecipe, enrichStepsStructured } from '@/lib/recipe'
+import { useState, useMemo } from 'react'
+import type { Meal, MealWithVariants, MealVariant, PersonSettings } from '@/types'
+import { calculatePersonScale, scaleIngredientAmount } from '@/lib/scaling'
 import RecipeSteps from '@/components/cooking/RecipeSteps'
 import CookingProgressBar from '@/components/cooking/CookingProgressBar'
-import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
+import CookingHero from '@/components/cooking/CookingHero'
+import IngredientSection from '@/components/cooking/IngredientSection'
+import IngredientRow from '@/components/cooking/IngredientRow'
+import { useCookingData } from '@/hooks/useCookingData'
+import Section from '@/components/ui/Section'
 
 interface CookingViewProps {
-  meal: Meal
+  meal: Meal | MealWithVariants
   people: number
   scaleFactor: number
+  persons?: PersonSettings[]
+  variantAssignment?: Record<string, MealVariant> | null
 }
 
-export default function CookingView({ meal, people, scaleFactor }: CookingViewProps) {
+export default function CookingView({
+  meal,
+  people,
+  scaleFactor,
+  persons = [],
+  variantAssignment,
+}: CookingViewProps) {
   const [checkedSteps, setCheckedSteps] = useState<Record<number, boolean>>({})
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({})
-  const [imgError, setImgError] = useState(false)
 
-  const { steps, tips, baseIngredients, meatIngredients } = parseRecipe(meal)
-  const scaledBase = baseIngredients.map((ing) => scaleIngredient(ing, scaleFactor))
-  const scaledMeat = meatIngredients.map((ing) => scaleIngredient(ing, scaleFactor))
-  const structuredSteps = enrichStepsStructured(steps, [...scaledBase, ...scaledMeat])
+  const { isVariantMeal, legacyData, variantData } = useCookingData(
+    meal,
+    scaleFactor,
+    persons,
+    variantAssignment
+  )
 
   const toggleStep = (i: number) => setCheckedSteps((prev) => ({ ...prev, [i]: !prev[i] }))
   const toggleIngredient = (key: string) =>
     setCheckedIngredients((prev) => ({ ...prev, [key]: !prev[key] }))
 
+  const heroStats = useMemo(() => {
+    const stats = [{ icon: 'schedule', label: `${meal.prep_time} min` }]
+    if (!isVariantMeal && legacyData) {
+      stats.push(
+        { icon: 'local_fire_department', label: `${legacyData.totalKcal} kcal` },
+        { icon: 'fitness_center', label: `${legacyData.totalProtein}g białka` }
+      )
+    }
+    if (isVariantMeal && variantData) {
+      stats.push({
+        icon: 'group',
+        label: variantData.hasSplit ? 'Split per osoba' : 'Wspólny wariant',
+      })
+    }
+    return stats
+  }, [meal.prep_time, isVariantMeal, legacyData, variantData])
+
+  const activeSteps = legacyData?.steps || variantData?.steps || []
+  const activeTips = legacyData?.tips || variantData?.tips
+
   return (
-    <div>
-      {/* Hero image */}
-      <div className="relative w-full" style={{ height: 'clamp(160px, 30vh, 280px)' }}>
-        {meal.photo_url && !imgError ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={meal.photo_url}
-            alt={meal.nazwa}
-            className="w-full h-full object-cover"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <MealImagePlaceholder
-            category={meal.category}
-            className="w-full h-full"
-            iconSize="text-7xl"
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-          <h1 className="text-2xl font-bold leading-tight">{meal.nazwa}</h1>
-          <div className="flex items-center gap-4 mt-2 text-sm text-white/80">
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">schedule</span>
-              {meal.prep_time} min
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
-              {scaleNutrition(meal.kcal_baza, scaleFactor)} kcal
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">fitness_center</span>
-              {scaleNutrition(meal.bialko_baza, scaleFactor)}g białka
-            </span>
-          </div>
-        </div>
-      </div>
+    <div className="bg-surface text-on-surface font-body min-h-screen">
+      <CookingHero meal={meal} stats={heroStats} />
 
-      <div className="p-4 space-y-6 pb-8">
-        {/* Składniki baza */}
-        {baseIngredients.length > 0 && (
-          <section>
-            <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">grocery</span>
-              Składniki ({people} {people === 1 ? 'osoby' : 'osób'})
-            </h2>
-            <div className="space-y-2">
-              {scaledBase.map((ing, i) => {
-                const key = `base-${i}`
-                const checked = checkedIngredients[key] ?? false
-                return (
-                  <label
-                    key={key}
-                    className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
-                      checked
-                        ? 'opacity-50 bg-slate-50 dark:bg-surface-dark/50'
-                        : 'hover:bg-slate-50 dark:hover:bg-surface-dark/30'
-                    }`}
-                    onClick={() => toggleIngredient(key)}
-                  >
+      <div className="px-6 mt-8 space-y-12 pb-nav-clearance max-w-2xl mx-auto">
+        {/* Legacy ingredients */}
+        {!isVariantMeal && legacyData && (
+          <>
+            <IngredientSection
+              icon="grocery"
+              title={`Składniki (${people} ${people === 1 ? 'osoby' : 'osób'})`}
+              items={legacyData.scaledBase.map((ing) => ({ name: ing.name, amount: ing.amount }))}
+              keyPrefix="base"
+              checkedIngredients={checkedIngredients}
+              onToggle={toggleIngredient}
+            />
+            <IngredientSection
+              icon="set_meal"
+              title="Opcja mięsna"
+              iconColor="text-secondary"
+              accentColor="secondary"
+              items={legacyData.scaledMeat.map((ing) => ({ name: ing.name, amount: ing.amount }))}
+              keyPrefix="meat"
+              checkedIngredients={checkedIngredients}
+              onToggle={toggleIngredient}
+            />
+          </>
+        )}
+
+        {/* Variant ingredients */}
+        {isVariantMeal && variantData && (
+          <>
+            <IngredientSection
+              icon="grocery"
+              title="WSPÓLNE"
+              items={variantData.sharedIngredients.map((ing) => ({
+                name: ing.ingredient?.name || 'Unknown',
+                amount: ing.totalDisplay,
+              }))}
+              keyPrefix="shared"
+              checkedIngredients={checkedIngredients}
+              onToggle={toggleIngredient}
+            />
+
+            {variantData.personData.map((personInfo, personIndex) => {
+              const uniqueIngredients = variantData.uniqueByVariant.get(personInfo.variant.id) || []
+              return (
+                <Section
+                  key={personInfo.person.name}
+                  title={`${personInfo.person.name} (${personInfo.resultKcal} kcal)`}
+                  icon={
+                    <span className="material-symbols-outlined text-secondary text-[24px]">
+                      person
+                    </span>
+                  }
+                >
+                  <div className="space-y-4">
+                    {uniqueIngredients.map((ing, i) => {
+                      const key = `person-${personIndex}-${i}`
+                      const scaledAmount = scaleIngredientAmount(
+                        ing,
+                        calculatePersonScale(personInfo.variant, personInfo.person).scale
+                      )
+                      return (
+                        <IngredientRow
+                          key={key}
+                          name={ing.ingredient?.name || 'Unknown'}
+                          amount={scaledAmount.display}
+                          checked={checkedIngredients[key] ?? false}
+                          onToggle={() => toggleIngredient(key)}
+                          accentColor="secondary"
+                        />
+                      )
+                    })}
+                  </div>
+                </Section>
+              )
+            })}
+
+            {variantData.personData.length > 0 && (
+              <section className="bg-secondary-container rounded-xl p-6 border border-secondary-container/20">
+                <h3 className="font-headline text-base font-bold text-on-secondary-container mb-4 flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[24px]">analytics</span>
+                  Makroskładniki per osoba
+                </h3>
+                <div className="space-y-3">
+                  {variantData.personData.map((personInfo) => (
                     <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                        checked
-                          ? 'bg-primary border-primary'
-                          : 'border-slate-300 dark:border-slate-600'
-                      }`}
+                      key={personInfo.person.name}
+                      className="text-on-secondary-container/80 font-body"
                     >
-                      {checked && (
-                        <span className="material-symbols-outlined text-white text-[14px]">
-                          check
-                        </span>
-                      )}
+                      <span className="font-semibold text-on-secondary-container">
+                        {personInfo.person.name}:
+                      </span>{' '}
+                      ~{personInfo.resultKcal} kcal · {personInfo.resultProtein}g białka
                     </div>
-                    <div className="flex-1 min-w-0 flex items-baseline">
-                      <span
-                        className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                      >
-                        {ing.name}
-                      </span>
-                      <span
-                        aria-hidden
-                        className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
-                      />
-                      <span
-                        className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
-                      >
-                        {ing.amount}
-                      </span>
-                    </div>
-                  </label>
-                )
-              })}
-            </div>
-          </section>
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
 
-        {/* Dokładka mięsna */}
-        {meatIngredients.length > 0 && (
-          <section>
-            <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-              <span className="material-symbols-outlined text-orange-500 text-[20px]">
-                set_meal
-              </span>
-              Opcja mięsna
-            </h2>
-            <div className="space-y-2">
-              {scaledMeat.map((ing, i) => {
-                const key = `meat-${i}`
-                const checked = checkedIngredients[key] ?? false
-                return (
-                  <label
-                    key={key}
-                    className={`flex items-center gap-3 py-2 px-3 rounded-lg cursor-pointer transition-colors ${
-                      checked
-                        ? 'opacity-50 bg-slate-50 dark:bg-surface-dark/50'
-                        : 'hover:bg-slate-50 dark:hover:bg-surface-dark/30'
-                    }`}
-                    onClick={() => toggleIngredient(key)}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                        checked
-                          ? 'bg-orange-500 border-orange-500'
-                          : 'border-slate-300 dark:border-slate-600'
-                      }`}
-                    >
-                      {checked && (
-                        <span className="material-symbols-outlined text-white text-[14px]">
-                          check
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0 flex items-baseline">
-                      <span
-                        className={`min-w-0 truncate text-sm text-slate-800 dark:text-text-primary-dark ${checked ? 'line-through' : ''}`}
-                      >
-                        {ing.name}
-                      </span>
-                      <span
-                        aria-hidden
-                        className="mx-1.5 flex-1 self-end mb-[3px] border-b border-dotted border-slate-300/70 dark:border-slate-600/70"
-                      />
-                      <span
-                        className={`text-sm text-slate-500 dark:text-text-secondary-dark font-bold shrink-0 ${checked ? 'line-through' : ''}`}
-                      >
-                        {ing.amount}
-                      </span>
-                    </div>
-                  </label>
-                )
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* Przepis — kroki */}
-        {steps.length > 0 && (
-          <section>
-            <h2 className="text-base font-bold text-slate-800 dark:text-text-primary-dark mb-3 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">
+        {/* Recipe steps */}
+        {activeSteps.length > 0 && (
+          <Section
+            title="Przepis"
+            icon={
+              <span className="material-symbols-outlined text-primary text-[24px]">
                 format_list_numbered
               </span>
-              Przepis
-            </h2>
+            }
+          >
             <CookingProgressBar
-              total={structuredSteps.length}
-              done={structuredSteps.filter((_, i) => checkedSteps[i]).length}
+              total={activeSteps.length}
+              done={activeSteps.filter((_, i) => checkedSteps[i]).length}
             />
             <RecipeSteps
-              steps={structuredSteps}
+              steps={activeSteps}
               checkedSteps={checkedSteps}
               onToggleStep={toggleStep}
             />
-          </section>
+          </Section>
         )}
 
-        {/* Wskazówki */}
-        {tips && (
-          <section className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-            <h2 className="text-sm font-bold text-amber-800 dark:text-amber-300 mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">lightbulb</span>
+        {/* Tips */}
+        {activeTips && (
+          <section className="bg-tertiary-container rounded-xl p-6 border border-tertiary-container/20">
+            <h2 className="font-headline text-base font-bold text-on-tertiary-container mb-4 flex items-center gap-3">
+              <span className="material-symbols-outlined text-[24px]">lightbulb</span>
               Wskazówki szefa
             </h2>
-            <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">{tips}</p>
+            <p className="text-on-tertiary-container/80 font-body text-sm leading-relaxed">
+              {activeTips}
+            </p>
           </section>
         )}
       </div>

@@ -12,22 +12,26 @@ test.describe('Category filter in swipe view', () => {
     await page.goto(`/${token}/swipe`)
     // SwipeView is dynamic({ ssr:false }) — wait for render (up to 30s)
     await page
-      .waitForSelector('button:has-text("Pn"), text="Brak więcej posiłków"', { timeout: 30000 })
+      .waitForSelector('h2, [data-testid="empty-state"]', { timeout: 30000 })
       .catch(() => null)
   })
 
-  test('shows day selector chips', async ({ page }) => {
-    // DaySelector buttons contain span with day abbrev + material icon text
-    // Use :has-text() substring match (not exact regex)
-    await expect(page.locator('button:has-text("Pn")').first()).toBeVisible({ timeout: 30000 })
-    await expect(page.locator('button:has-text("Wt")').first()).toBeVisible()
-    await expect(page.locator('button:has-text("Pt")').first()).toBeVisible()
+  test('shows compatibility indicator', async ({ page }) => {
+    // Swipe view shows a compatibility badge with "POSIŁKI PASUJĄ" text
+    const badge = page.getByText(/POSIŁKI PASUJĄ/)
+    const hasMeals = (await page.locator('h2').count()) > 0
+    if (hasMeals) {
+      await expect(badge).toBeVisible({ timeout: 30000 })
+    }
   })
 
-  test('can select different day chips', async ({ page }) => {
-    await expect(page.locator('button:has-text("Pn")').first()).toBeVisible({ timeout: 30000 })
-    await page.locator('button:has-text("Wt")').first().click()
-    await expect(page.locator('button:has-text("Wt")').first()).toBeVisible()
+  test('shows swipe action buttons', async ({ page }) => {
+    const hasMeals = (await page.locator('h2').count()) > 0
+    if (hasMeals) {
+      await expect(page.locator('button[title="Dodaj do planu"]')).toBeVisible({ timeout: 5000 })
+      await expect(page.locator('button[title="Pomiń tę propozycję"]')).toBeVisible()
+      await expect(page.locator('button[title="Zapisz jako ulubione"]')).toBeVisible()
+    }
   })
 
   test('swipe view shows meal cards or empty state', async ({ page }) => {
@@ -40,11 +44,16 @@ test.describe('Category filter in swipe view', () => {
     expect(hasMealCard > 0 || hasEmpty).toBe(true)
   })
 
-  test('shows "Pomiń ten dzień" button when day selected', async ({ page }) => {
-    const skipBtn = page.getByText(/Pomiń ten dzień/)
-    const isVisible = await skipBtn.isVisible().catch(() => false)
-    if (isVisible) {
-      await expect(skipBtn).toBeVisible()
+  test('empty state shows day selector', async ({ page }) => {
+    // DaySelector is shown only in empty state — this test verifies structure
+    const hasEmpty = await page
+      .getByText('Brak więcej posiłków')
+      .isVisible()
+      .catch(() => false)
+    if (hasEmpty) {
+      await expect(page.locator('button:has-text("PN")').first()).toBeVisible()
+      await expect(page.locator('button:has-text("WT")').first()).toBeVisible()
+      await expect(page.locator('button:has-text("PT")').first()).toBeVisible()
     }
   })
 })

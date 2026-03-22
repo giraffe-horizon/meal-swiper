@@ -1,12 +1,12 @@
 'use client'
 
 import type { MotionValue, PanInfo } from 'framer-motion'
-import type { Meal } from '@/types'
+import type { Meal, MealWithVariants } from '@/types'
 import SwipeCard from './SwipeCard'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
 interface SwipeStackProps {
-  stackCards: Meal[]
+  stackCards: (Meal | MealWithVariants)[]
   currentIndex: number
   totalCards: number
   x: MotionValue<number>
@@ -33,10 +33,7 @@ export default function SwipeStack({
   people,
 }: SwipeStackProps) {
   return (
-    <div
-      className="relative w-full max-w-sm flex-1 min-h-0"
-      style={{ minHeight: '420px', maxHeight: 'calc(100vh - 320px)' }}
-    >
+    <div className="relative w-full max-w-sm h-card">
       {stackCards
         .slice()
         .reverse()
@@ -67,62 +64,50 @@ export default function SwipeStack({
             )
           }
 
-          // Background stack cards — identical to top card
+          // Background stack cards — same structure as front card, non-interactive
           return (
             <div
               key={`stack-${actualIndex}`}
-              className="absolute inset-0 rounded-2xl shadow-xl overflow-hidden pointer-events-none"
+              className={`absolute inset-x-0 top-0 h-full bg-surface-container rounded-[20px] overflow-hidden pointer-events-none ${
+                stackIdx === 1
+                  ? 'translate-y-2 scale-[0.96] opacity-70 blur-[0.5px]'
+                  : 'translate-y-4 scale-[0.92] opacity-40 blur-[1px]'
+              }`}
               style={{
                 zIndex: 10 - stackIdx,
               }}
             >
-              {/* Full image background or placeholder */}
-              {meal.photo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={meal.nazwa}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  src={meal.photo_url}
-                  draggable="false"
-                  onError={(e) => {
-                    ;(e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              ) : (
-                <MealImagePlaceholder className="absolute inset-0 w-full h-full" />
-              )}
-
-              {/* Gradient overlay at bottom */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-
-              {/* Content at bottom — matching SwipeCard layout */}
-              <div className="absolute bottom-0 left-0 right-0 p-5 pb-6 text-white">
-                <div className="flex justify-between items-end">
-                  <div className="flex-1 min-w-0 mr-3">
-                    <h2 className="text-2xl font-bold leading-tight drop-shadow-lg">
-                      {meal.nazwa}
-                    </h2>
-                    <p className="text-slate-200 text-sm mt-1 line-clamp-2 drop-shadow">
-                      {meal.opis}
-                    </p>
-                    <div className="flex items-center gap-4 mt-3 text-sm font-medium text-slate-100">
-                      <div className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[18px]">schedule</span>
-                        <span>{meal.prep_time} min</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[18px]">
-                          local_fire_department
-                        </span>
-                        <span>{Math.round((meal.kcal_baza * people) / 2)} kcal</span>
-                        <span className="text-slate-300 text-xs">dla {people} os.</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-slate-800 rounded-full px-3 py-1 text-xs font-bold shrink-0">
-                    {actualIndex + 1}/{totalCards}
-                  </div>
+              {/* Photo */}
+              <div className="w-full h-card-image relative">
+                {meal.photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    alt={meal.nazwa}
+                    className="w-full h-full object-cover"
+                    src={meal.photo_url}
+                    draggable="false"
+                    onError={(e) => {
+                      ;(e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                ) : (
+                  <MealImagePlaceholder
+                    category={meal.category}
+                    className="w-full h-full"
+                    iconSize="text-7xl"
+                  />
+                )}
+              </div>
+              {/* Info hint */}
+              <div className="w-full flex-1 p-3 pb-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">
+                    {meal.kuchnia || 'Międzynarodowa'}
+                  </span>
                 </div>
+                <h2 className="font-headline text-base font-bold text-on-surface mt-1 line-clamp-2">
+                  {meal.nazwa}
+                </h2>
               </div>
             </div>
           )

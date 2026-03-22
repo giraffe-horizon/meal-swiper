@@ -43,7 +43,8 @@ const mocks = vi.hoisted(() => ({
 }))
 
 vi.mock('@/hooks/useMeals', () => ({
-  useMeals: () => ({ meals: mocks.meals, loading: false }),
+  useMeals: () => ({ meals: mocks.meals, loading: false, error: null, refetch: vi.fn() }),
+  useMealsWithVariants: () => ({ meals: [], loading: false, error: null, refetch: vi.fn() }),
 }))
 
 vi.mock('@/hooks/useWeeklyPlan', () => ({
@@ -86,6 +87,9 @@ vi.mock('@/hooks/useSwipeState', () => ({
     setCurrentSwipeIndex: vi.fn(),
     setSeenIds: vi.fn(),
     shuffleMeals: mocks.shuffleMeals,
+    shuffleFilteredMeals: vi.fn(),
+    getVariantAssignment: () => null,
+    filteredMeals: [],
     advanceIndex: vi.fn(),
     resetSwipe: vi.fn(),
   }),

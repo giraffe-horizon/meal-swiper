@@ -22,11 +22,13 @@ test.describe('Plan view - weekly calendar', () => {
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
 
-    const dateSpan = page
-      .locator('span')
-      .filter({ hasText: /\d+-\d+\.\d+/ })
+    // Week range is now displayed as "16 - 20 Marca" format in CalendarView header
+    const dateHeading = page
+      .locator('h2')
+      .filter({ hasText: /\d+\s*-\s*\d+/ })
       .first()
-    const initialText = await dateSpan.textContent()
+    await expect(dateHeading).toBeVisible({ timeout: 10000 })
+    const initialText = await dateHeading.textContent()
 
     await page
       .locator('button')
@@ -36,7 +38,7 @@ test.describe('Plan view - weekly calendar', () => {
       .click()
     await page.waitForTimeout(300)
 
-    const newText = await dateSpan.textContent()
+    const newText = await dateHeading.textContent()
     expect(newText).not.toBe(initialText)
 
     await page
@@ -47,22 +49,22 @@ test.describe('Plan view - weekly calendar', () => {
       .click()
     await page.waitForTimeout(300)
 
-    const backText = await dateSpan.textContent()
+    const backText = await dateHeading.textContent()
     expect(backText).toBe(initialText)
   })
 
-  test('empty day shows "Brak planu"', async ({ page }) => {
+  test('empty day shows add meal button', async ({ page }) => {
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
 
-    await expect(page.getByText('Brak planu').first()).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText('Dodaj posiłek').first()).toBeVisible({ timeout: 10000 })
   })
 
-  test('settings link is visible in header', async ({ page }) => {
+  test('settings link is visible in navigation', async ({ page }) => {
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
 
-    const settingsLink = page.locator('a[href*="/settings"]').first()
+    const settingsLink = page.locator('nav a[href*="/settings"]').first()
     await expect(settingsLink).toBeVisible()
   })
 

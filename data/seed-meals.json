@@ -1,0 +1,2751 @@
+[
+  {
+    "id": "pierogi-ruskie",
+    "nazwa": "Pierogi ruskie",
+    "opis": "Tradycyjne polskie pierogi z ziemniakami i twarogiem",
+    "photo_url": "https://images.unsplash.com/photo-1626804475297-41608ea09aeb?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 45,
+    "kcal_baza": 280,
+    "kcal_z_miesem": 280,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 12,
+    "trudnosc": "średnie",
+    "kuchnia": "polska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "mąka",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "ziemniaki",
+        "amount": "500g",
+        "category": "warzywa"
+      },
+      {
+        "name": "twaróg",
+        "amount": "200g",
+        "category": "nabiał"
+      },
+      {
+        "name": "cebula",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Ugotuj ziemniaki, odstaw do ostudzenia",
+        "Zrób ciasto z mąki, jajka i wody",
+        "Przygotuj farsz z ziemniaków, twarogu i cebuli",
+        "Lepiś pierogi i gotuj w osolonej wodzie"
+      ]
+    },
+    "tags": ["wegetariańskie", "tradycyjne"]
+  },
+  {
+    "id": "kotlet-schabowy",
+    "nazwa": "Kotlet schabowy",
+    "opis": "Klasyczny polski kotlet schabowy z ziemniakami i mizeria",
+    "photo_url": "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 30,
+    "kcal_baza": 0,
+    "kcal_z_miesem": 450,
+    "bialko_baza": 0,
+    "bialko_z_miesem": 35,
+    "trudnosc": "łatwe",
+    "kuchnia": "polska",
+    "category": "danie główne",
+    "skladniki_baza": [],
+    "skladniki_mieso": [
+      {
+        "name": "schab",
+        "amount": "4 kotlety",
+        "category": "mięso"
+      },
+      {
+        "name": "bułka tarta",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "jajka",
+        "amount": "2 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "ziemniaki",
+        "amount": "600g",
+        "category": "warzywa"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Rozbij kotlety młotkiem",
+        "Oprósz mąką, zanurz w jajku, obtocz w bułce",
+        "Smaż na złocisty kolor z obu stron",
+        "Podawaj z ziemniakami i mizeria"
+      ]
+    },
+    "tags": ["mięsne", "klasyczne"]
+  },
+  {
+    "id": "pasta-carbonara",
+    "nazwa": "Pasta Carbonara",
+    "opis": "Kremowa pasta z boczkiem, jajkami i parmezanem",
+    "photo_url": "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 20,
+    "kcal_baza": 380,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 15,
+    "bialko_z_miesem": 28,
+    "trudnosc": "średnie",
+    "kuchnia": "włoska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "makaron",
+        "amount": "400g",
+        "category": "suche"
+      },
+      {
+        "name": "jajka",
+        "amount": "3 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "parmezan",
+        "amount": "100g",
+        "category": "nabiał"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "boczek",
+        "amount": "200g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Gotuj makaron al dente",
+        "Smaż boczek do chrupkości",
+        "Ubij jajka z parmezanem",
+        "Wymieszaj gorący makaron z jajkami i boczkiem"
+      ]
+    },
+    "tags": ["włoskie", "szybkie"]
+  },
+  {
+    "id": "curry-z-kurczakiem",
+    "nazwa": "Curry z kurczakiem",
+    "opis": "Aromatyczne curry z kurczakiem i warzywami w mleku kokosowym",
+    "photo_url": "https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 35,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 35,
+    "trudnosc": "średnie",
+    "kuchnia": "azjatycka",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "mleko kokosowe",
+        "amount": "400ml",
+        "category": "inne"
+      },
+      {
+        "name": "curry",
+        "amount": "2 łyżki",
+        "category": "przyprawy"
+      },
+      {
+        "name": "cebula",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kurczak",
+        "amount": "500g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż cebulę i czosnek",
+        "Dodaj kawałki kurczaka i podsmażaj",
+        "Wsyp curry i warzywa",
+        "Zalej mlekiem kokosowym i duś 20 min"
+      ]
+    },
+    "tags": ["azjatyckie", "pikantne"]
+  },
+  {
+    "id": "risotto-grzybowe",
+    "nazwa": "Risotto grzybowe",
+    "opis": "Kremowe risotto z mieszanką grzybów leśnych",
+    "photo_url": "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 40,
+    "kcal_baza": 340,
+    "kcal_z_miesem": 340,
+    "bialko_baza": 14,
+    "bialko_z_miesem": 14,
+    "trudnosc": "trudne",
+    "kuchnia": "włoska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ryż arborio",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "grzyby leśne",
+        "amount": "300g",
+        "category": "warzywa"
+      },
+      {
+        "name": "bulion warzywny",
+        "amount": "1l",
+        "category": "inne"
+      },
+      {
+        "name": "parmezan",
+        "amount": "100g",
+        "category": "nabiał"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Podsmaż cebulę na maśle",
+        "Dodaj ryż i smaż 2 minuty",
+        "Stopniowo dodawaj gorący bulion",
+        "Mieszaj przez 20 min, na końcu grzyby i parmezan"
+      ]
+    },
+    "tags": ["wegetariańskie", "włoskie"]
+  },
+  {
+    "id": "pizza-margherita",
+    "nazwa": "Pizza Margherita",
+    "opis": "Klasyczna włoska pizza z mozzarellą, bazylią i pomidorami",
+    "photo_url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 420,
+    "kcal_z_miesem": 420,
+    "bialko_baza": 18,
+    "bialko_z_miesem": 18,
+    "trudnosc": "łatwe",
+    "kuchnia": "włoska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ciasto na pizzę",
+        "amount": "1 szt.",
+        "category": "suche"
+      },
+      {
+        "name": "sos pomidorowy",
+        "amount": "150ml",
+        "category": "inne"
+      },
+      {
+        "name": "mozzarella",
+        "amount": "200g",
+        "category": "nabiał"
+      },
+      {
+        "name": "bazylia",
+        "amount": "10 liści",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Rozłóż ciasto na blaszce",
+        "Posmaruj sosem pomidorowym",
+        "Dodaj pokrojone mozzarellę",
+        "Piecz 12-15 min w 220°C, dodaj bazylię"
+      ]
+    },
+    "tags": ["wegetariańskie", "włoskie", "szybkie"]
+  },
+  {
+    "id": "tacos-z-kurczakiem",
+    "nazwa": "Tacos z kurczakiem",
+    "opis": "Meksykańskie tacos z kurczakiem, awokado i salsą",
+    "photo_url": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 20,
+    "kcal_baza": 200,
+    "kcal_z_miesem": 380,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 28,
+    "trudnosc": "łatwe",
+    "kuchnia": "meksykańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "tortille",
+        "amount": "8 szt.",
+        "category": "suche"
+      },
+      {
+        "name": "awokado",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "pomidory",
+        "amount": "3 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "cebula",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kurczak",
+        "amount": "400g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Pokrój kurczaka w paski i przypraw",
+        "Smaż kurczaka na patelni 8-10 min",
+        "Przygotuj salsę z pomidorów i cebuli",
+        "Podgrzej tortille i nałóż składniki"
+      ]
+    },
+    "tags": ["meksykańskie", "szybkie"]
+  },
+  {
+    "id": "losos-z-grilla",
+    "nazwa": "Łosoś z grilla",
+    "opis": "Grillowany łosoś z ziemniakami i warzywami sezonowymi",
+    "photo_url": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 0,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 0,
+    "bialko_z_miesem": 38,
+    "trudnosc": "średnie",
+    "kuchnia": "skandynawska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ziemniaki młode",
+        "amount": "500g",
+        "category": "warzywa"
+      },
+      {
+        "name": "szparagi",
+        "amount": "300g",
+        "category": "warzywa"
+      },
+      {
+        "name": "cytryna",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "łosoś",
+        "amount": "600g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ziemniaki ugotuj z skórką do miękkości",
+        "Łosoś skrop cytryną i przypraw",
+        "Grilluj łosoś 4-5 min z każdej strony",
+        "Podawaj z młodymi ziemniakami i szparagami"
+      ]
+    },
+    "tags": ["zdrowe", "grillowane"]
+  },
+  {
+    "id": "pad-thai",
+    "nazwa": "Pad Thai",
+    "opis": "Tajski makaron ryżowy z krewetkami i orzeszkami",
+    "photo_url": "https://images.unsplash.com/photo-1559314809-0f31657df93b?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 15,
+    "kcal_baza": 350,
+    "kcal_z_miesem": 450,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 25,
+    "trudnosc": "średnie",
+    "kuchnia": "azjatycka",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "makaron ryżowy",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "orzeszki ziemne",
+        "amount": "100g",
+        "category": "inne"
+      },
+      {
+        "name": "kiełki fasoli",
+        "amount": "200g",
+        "category": "warzywa"
+      },
+      {
+        "name": "sos sojowy",
+        "amount": "3 łyżki",
+        "category": "przyprawy"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "krewetki",
+        "amount": "300g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Namocz makaron ryżowy w ciepłej wodzie",
+        "Smaż krewetki na wysokiej temperaturze",
+        "Dodaj makaron i warzywa, smaż 3-4 min",
+        "Posyp orzeszkami i podawaj z limonką"
+      ]
+    },
+    "tags": ["azjatyckie", "szybkie"]
+  },
+  {
+    "id": "ratatouille",
+    "nazwa": "Ratatouille",
+    "opis": "Francuskie danie z bakłażana, cukinii i pomidorów",
+    "photo_url": "https://images.unsplash.com/photo-1572441713132-51c75654db73?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 50,
+    "kcal_baza": 180,
+    "kcal_z_miesem": 180,
+    "bialko_baza": 6,
+    "bialko_z_miesem": 6,
+    "trudnosc": "średnie",
+    "kuchnia": "francuska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "bakłażan",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "cukinia",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "pomidory",
+        "amount": "4 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Pokrój wszystkie warzywa w kostkę",
+        "Podsmaż cebulę i czosnek na oliwie",
+        "Dodaj warzywa i duś 30-40 min",
+        "Dopraw ziołami prowansalskimi"
+      ]
+    },
+    "tags": ["wegetariańskie", "francuskie", "zdrowe"]
+  },
+  {
+    "id": "goulash-wegierski",
+    "nazwa": "Gulasz węgierski",
+    "opis": "Tradycyjny węgierski gulasz z wołowiną i papryką",
+    "photo_url": "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 90,
+    "kcal_baza": 0,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 0,
+    "bialko_z_miesem": 42,
+    "trudnosc": "trudne",
+    "kuchnia": "węgierska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ziemniaki",
+        "amount": "600g",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka słodka",
+        "amount": "3 łyżki",
+        "category": "przyprawy"
+      },
+      {
+        "name": "cebula",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "pomidory",
+        "amount": "3 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wołowina",
+        "amount": "800g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Pokrój wołowinę w kostkę i podsmaż",
+        "Dodaj cebulę i paprykę słodką",
+        "Zalej bulionem i duś 1 godzinę",
+        "Dodaj ziemniaki i gotuj kolejne 30 min"
+      ]
+    },
+    "tags": ["węgierskie", "duszone"]
+  },
+  {
+    "id": "bibimbap",
+    "nazwa": "Bibimbap",
+    "opis": "Koreański ryż z warzywami, jajkiem i kimchi",
+    "photo_url": "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 30,
+    "kcal_baza": 380,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 14,
+    "bialko_z_miesem": 28,
+    "trudnosc": "średnie",
+    "kuchnia": "koreańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ryż",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "kimchi",
+        "amount": "150g",
+        "category": "warzywa"
+      },
+      {
+        "name": "jajka",
+        "amount": "4 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "marchewka",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wołowina",
+        "amount": "300g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj ryż zgodnie z instrukcją",
+        "Pokrój wołowinę i marinatą sojową",
+        "Smaż mięso i warzywa osobno",
+        "Ułóż na ryżu, dodaj jajko sadzone"
+      ]
+    },
+    "tags": ["koreańskie", "zdrowe"]
+  },
+  {
+    "id": "bigos-staropolski",
+    "nazwa": "Bigos staropolski",
+    "opis": "Tradycyjny polski bigos z kapustą i mięsem",
+    "photo_url": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 120,
+    "kcal_baza": 280,
+    "kcal_z_miesem": 420,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 25,
+    "trudnosc": "trudne",
+    "kuchnia": "polska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "kapusta kiszona",
+        "amount": "800g",
+        "category": "warzywa"
+      },
+      {
+        "name": "kapusta świeża",
+        "amount": "400g",
+        "category": "warzywa"
+      },
+      {
+        "name": "grzyby suszone",
+        "amount": "50g",
+        "category": "warzywa"
+      },
+      {
+        "name": "cebula",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kiełbasa",
+        "amount": "300g",
+        "category": "mięso"
+      },
+      {
+        "name": "boczek",
+        "amount": "200g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Namocz grzyby, pokrój kapustę",
+        "Podsmaż cebulę i mięso",
+        "Dodaj kapustę i grzyby, duś 1.5 h",
+        "Dopraw według smaku i duś kolejne 30 min"
+      ]
+    },
+    "tags": ["polskie", "tradycyjne"]
+  },
+  {
+    "id": "chili-con-carne",
+    "nazwa": "Chili con carne",
+    "opis": "Meksykańskie chili z wołowiną i fasolą",
+    "photo_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 60,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 18,
+    "bialko_z_miesem": 38,
+    "trudnosc": "średnie",
+    "kuchnia": "meksykańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "fasola czerwona",
+        "amount": "400g",
+        "category": "inne"
+      },
+      {
+        "name": "pomidory w puszce",
+        "amount": "400g",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka chili",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "cebula",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wołowina mielona",
+        "amount": "500g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż cebulę i mięso mielone",
+        "Dodaj paprykę chili i przyprawy",
+        "Wsyp pomidory i fasolę",
+        "Duś 45 min na małym ogniu"
+      ]
+    },
+    "tags": ["meksykańskie", "pikantne"]
+  },
+  {
+    "id": "buddha-bowl",
+    "nazwa": "Buddha Bowl",
+    "opis": "Zdrowa miska z quinoa, awokado i warzywami",
+    "photo_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 420,
+    "kcal_z_miesem": 420,
+    "bialko_baza": 18,
+    "bialko_z_miesem": 18,
+    "trudnosc": "łatwe",
+    "kuchnia": "zdrowa",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "quinoa",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "awokado",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "brokuł",
+        "amount": "300g",
+        "category": "warzywa"
+      },
+      {
+        "name": "bataty",
+        "amount": "400g",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Ugotuj quinoa zgodnie z instrukcją",
+        "Upiecz bataty w kawałkach",
+        "Ugotuj brokuł na parze",
+        "Ułóż w miseczkach z awokado i tahini"
+      ]
+    },
+    "tags": ["wegetariańskie", "zdrowe", "bezglutenowe"]
+  },
+  {
+    "id": "moussaka",
+    "nazwa": "Moussaka",
+    "opis": "Grecka zapiekanka z bakłażana i mięsa mielonego",
+    "photo_url": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 75,
+    "kcal_baza": 180,
+    "kcal_z_miesem": 450,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 32,
+    "trudnosc": "trudne",
+    "kuchnia": "grecka",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "bakłażan",
+        "amount": "3 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "ser feta",
+        "amount": "200g",
+        "category": "nabiał"
+      },
+      {
+        "name": "pomidory w puszce",
+        "amount": "400g",
+        "category": "warzywa"
+      },
+      {
+        "name": "mleko",
+        "amount": "300ml",
+        "category": "nabiał"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "jagnięcina mielona",
+        "amount": "600g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Pokrój bakłażany i usmaż na złoto",
+        "Przygotuj sos mięsny z pomidorami",
+        "Ułóż warstwami w naczyniu żaroodpornym",
+        "Polej sosem beszamel i piecz 45 min"
+      ]
+    },
+    "tags": ["greckie", "zapiekane"]
+  },
+  {
+    "id": "tom-yum",
+    "nazwa": "Tom Yum",
+    "opis": "Tajska kwaśno-ostra zupa z krewetkami",
+    "photo_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 20,
+    "kcal_baza": 150,
+    "kcal_z_miesem": 280,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 22,
+    "trudnosc": "średnie",
+    "kuchnia": "tajska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "bulion warzywny",
+        "amount": "1l",
+        "category": "inne"
+      },
+      {
+        "name": "trawa cytrynowa",
+        "amount": "3 łodygi",
+        "category": "warzywa"
+      },
+      {
+        "name": "limonka",
+        "amount": "3 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "pieczarki",
+        "amount": "200g",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "krewetki",
+        "amount": "300g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Zagotuj bulion z trawą cytrynową",
+        "Dodaj pieczarki i krewetki",
+        "Dopraw pastą tom yum i sosem rybnym",
+        "Dodaj sok z limonki i listki kaffiru"
+      ]
+    },
+    "tags": ["tajskie", "pikantne", "zupa"]
+  },
+  {
+    "id": "coq-au-vin",
+    "nazwa": "Coq au vin",
+    "opis": "Francuska potrawka z kurczaka w czerwonym winie",
+    "photo_url": "https://images.unsplash.com/photo-1532636918583-2bb4825b2e18?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 90,
+    "kcal_baza": 0,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 0,
+    "bialko_z_miesem": 38,
+    "trudnosc": "trudne",
+    "kuchnia": "francuska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "wino czerwone",
+        "amount": "500ml",
+        "category": "inne"
+      },
+      {
+        "name": "cebulki perłowe",
+        "amount": "200g",
+        "category": "warzywa"
+      },
+      {
+        "name": "pieczarki",
+        "amount": "300g",
+        "category": "warzywa"
+      },
+      {
+        "name": "boczek",
+        "amount": "150g",
+        "category": "mięso"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kurczak",
+        "amount": "1.2kg",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż boczek i cebulki",
+        "Oprósz kurczaka mąką i usmaż",
+        "Zalej winem i dodaj zioła",
+        "Duś 45 min, dodaj pieczarki na końcu"
+      ]
+    },
+    "tags": ["francuskie", "duszone"]
+  },
+  {
+    "id": "pho-bo",
+    "nazwa": "Pho Bo",
+    "opis": "Wietnamska zupa z makaronem ryżowym i wołowiną",
+    "photo_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 45,
+    "kcal_baza": 200,
+    "kcal_z_miesem": 380,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 28,
+    "trudnosc": "średnie",
+    "kuchnia": "wietnamska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "makaron ryżowy",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "bulion warzywny",
+        "amount": "1.5l",
+        "category": "inne"
+      },
+      {
+        "name": "imbir",
+        "amount": "30g",
+        "category": "warzywa"
+      },
+      {
+        "name": "kolendra",
+        "amount": "20g",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wołowina",
+        "amount": "300g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Zagotuj bulion z kością wołową 2 godziny",
+        "Dodaj przyprawy: cynamon, anyż, goździki",
+        "Ugotuj makaron ryżowy osobno",
+        "Podawaj z cienkim wołowiną i świeżymi ziołami"
+      ]
+    },
+    "tags": ["wietnamskie", "zupa", "aromatyczne"]
+  },
+  {
+    "id": "shakshuka",
+    "nazwa": "Shakshuka",
+    "opis": "Jajka w sosie pomidorowym z papryką i cebulą",
+    "photo_url": "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 320,
+    "bialko_baza": 18,
+    "bialko_z_miesem": 18,
+    "trudnosc": "łatwe",
+    "kuchnia": "bliskowschodnia",
+    "category": "śniadanie",
+    "skladniki_baza": [
+      {
+        "name": "jajka",
+        "amount": "6 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "pomidory w puszce",
+        "amount": "400g",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka czerwona",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "cebula",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Podsmaż cebulę i paprykę na oliwie",
+        "Dodaj pomidory i przyprawy, duś 10 min",
+        "Wbij jajka do sosu i przykryj",
+        "Gotuj 5-7 min do ściągnięcia białek"
+      ]
+    },
+    "tags": ["wegetariańskie", "śniadanie", "jednogarniowe"]
+  },
+  {
+    "id": "pierogi-z-kapusta",
+    "nazwa": "Pierogi z kapustą i grzybami",
+    "opis": "Tradycyjne pierogi z kapustą kiszoną i grzybami",
+    "photo_url": "https://images.unsplash.com/photo-1626804475297-41608ea09aeb?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 60,
+    "kcal_baza": 290,
+    "kcal_z_miesem": 290,
+    "bialko_baza": 11,
+    "bialko_z_miesem": 11,
+    "trudnosc": "średnie",
+    "kuchnia": "polska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "mąka",
+        "amount": "400g",
+        "category": "suche"
+      },
+      {
+        "name": "kapusta kiszona",
+        "amount": "500g",
+        "category": "warzywa"
+      },
+      {
+        "name": "grzyby suszone",
+        "amount": "50g",
+        "category": "warzywa"
+      },
+      {
+        "name": "cebula",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Namocz grzyby, pokrój i podsmaż z cebulą",
+        "Duś kapustę z grzybami 30 min",
+        "Zrób ciasto pierożkowe, rozwałkuj",
+        "Nałóż farsz, zlepi i ugotuj w osolonej wodzie"
+      ]
+    },
+    "tags": ["wegetariańskie", "tradycyjne", "wigilia"]
+  },
+  {
+    "id": "ramen-miso",
+    "nazwa": "Ramen Miso",
+    "opis": "Japońska zupa z makaronem ramen i pastą miso",
+    "photo_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 35,
+    "kcal_baza": 380,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 16,
+    "bialko_z_miesem": 32,
+    "trudnosc": "średnie",
+    "kuchnia": "japońska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "makaron ramen",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "pasta miso",
+        "amount": "3 łyżki",
+        "category": "inne"
+      },
+      {
+        "name": "jajka",
+        "amount": "2 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "nori",
+        "amount": "2 arkusze",
+        "category": "inne"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wieprzowina",
+        "amount": "200g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Przygotuj bulion z kości wieprzowych",
+        "Wymieszaj pastę miso z bulionem",
+        "Ugotuj makaron ramen al dente",
+        "Podawaj z jajkiem na miękko i wieprzowiną"
+      ]
+    },
+    "tags": ["japońskie", "umami", "comfort food"]
+  },
+  {
+    "id": "falafel-bowl",
+    "nazwa": "Falafel Bowl",
+    "opis": "Miska z falafelem, hummusem i świeżymi warzywami",
+    "photo_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 40,
+    "kcal_baza": 450,
+    "kcal_z_miesem": 450,
+    "bialko_baza": 22,
+    "bialko_z_miesem": 22,
+    "trudnosc": "średnie",
+    "kuchnia": "bliskowschodnia",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ciecierzyca",
+        "amount": "400g",
+        "category": "inne"
+      },
+      {
+        "name": "tahina",
+        "amount": "3 łyżki",
+        "category": "inne"
+      },
+      {
+        "name": "pomidory koktajlowe",
+        "amount": "200g",
+        "category": "warzywa"
+      },
+      {
+        "name": "ogórek",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Namocz ciecierzycę przez noc",
+        "Zmiksuj z ziołami i przyprawami",
+        "Uformuj kulki i usmaż na głębokim oleju",
+        "Podawaj z hummusem i świeżymi warzywami"
+      ]
+    },
+    "tags": ["wegańskie", "białko roślinne", "zdrowe"]
+  },
+  {
+    "id": "gulasz-z-kluskami",
+    "nazwa": "Gulasz wegierski z kluskami",
+    "opis": "Węgierski gulasz z wołowiną i ziemniakami",
+    "photo_url": "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 120,
+    "kcal_baza": 0,
+    "kcal_z_miesem": 580,
+    "bialko_baza": 0,
+    "bialko_z_miesem": 45,
+    "trudnosc": "trudne",
+    "kuchnia": "węgierska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ziemniaki",
+        "amount": "800g",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka słodka",
+        "amount": "4 łyżki",
+        "category": "przyprawy"
+      },
+      {
+        "name": "pomidory w puszce",
+        "amount": "400g",
+        "category": "warzywa"
+      },
+      {
+        "name": "kminek",
+        "amount": "1 łyżka",
+        "category": "przyprawy"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wołowina",
+        "amount": "1kg",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Pokrój wołowinę w duże kawałki",
+        "Podsmaż z cebulą i papryką słodką",
+        "Zalej bulionem, duś 2 godziny",
+        "Dodaj ziemniaki na końcu, gotuj 30 min"
+      ]
+    },
+    "tags": ["węgierskie", "duszone", "comfort food"]
+  },
+  {
+    "id": "sushi-nigiri",
+    "nazwa": "Nigiri Sushi",
+    "opis": "Klasyczne japońskie sushi z łososiem i tuńczykiem",
+    "photo_url": "https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 60,
+    "kcal_baza": 0,
+    "kcal_z_miesem": 320,
+    "bialko_baza": 0,
+    "bialko_z_miesem": 24,
+    "trudnosc": "trudne",
+    "kuchnia": "japońska",
+    "category": "przystawka",
+    "skladniki_baza": [
+      {
+        "name": "ryż sushi",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "ocet ryżowy",
+        "amount": "3 łyżki",
+        "category": "inne"
+      },
+      {
+        "name": "wasabi",
+        "amount": "20g",
+        "category": "przyprawy"
+      },
+      {
+        "name": "sos sojowy",
+        "amount": "100ml",
+        "category": "inne"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "łosoś sashimi",
+        "amount": "200g",
+        "category": "mięso"
+      },
+      {
+        "name": "tuńczyk sashimi",
+        "amount": "150g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj ryż sushi, dopraw octem",
+        "Pokrój rybę w cienkie plastry",
+        "Uformuj ryż w małe poduszeczki",
+        "Nałóż rybę na ryż z odrobiną wasabi"
+      ]
+    },
+    "tags": ["japońskie", "ryba", "eleganckie"]
+  },
+  {
+    "id": "barszcz-bialy",
+    "nazwa": "Biały barszcz z kiełbasą",
+    "opis": "Tradycyjny polski biały barszcz z kiełbasą",
+    "photo_url": "https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 30,
+    "kcal_baza": 180,
+    "kcal_z_miesem": 380,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 22,
+    "trudnosc": "łatwe",
+    "kuchnia": "polska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "żurek",
+        "amount": "500ml",
+        "category": "inne"
+      },
+      {
+        "name": "śmietana",
+        "amount": "200ml",
+        "category": "nabiał"
+      },
+      {
+        "name": "czosnek",
+        "amount": "4 ząbki",
+        "category": "warzywa"
+      },
+      {
+        "name": "majeranek",
+        "amount": "1 łyżka",
+        "category": "przyprawy"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kiełbasa biała",
+        "amount": "300g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż kiełbasę i czosnek",
+        "Dodaj żurek i bulion",
+        "Gotuj 15 min na małym ogniu",
+        "Na końcu dodaj śmietanę i przyprawy"
+      ]
+    },
+    "tags": ["polskie", "tradycyjne", "kwaśne"]
+  },
+  {
+    "id": "korean-bbq",
+    "nazwa": "Korean BBQ Bulgogi",
+    "opis": "Koreańska wołowina bulgogi z ryżem i kimchi",
+    "photo_url": "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 45,
+    "kcal_baza": 0,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 0,
+    "bialko_z_miesem": 40,
+    "trudnosc": "średnie",
+    "kuchnia": "koreańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ryż",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "kimchi",
+        "amount": "200g",
+        "category": "warzywa"
+      },
+      {
+        "name": "sos sojowy",
+        "amount": "100ml",
+        "category": "inne"
+      },
+      {
+        "name": "sezam",
+        "amount": "2 łyżki",
+        "category": "inne"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wołowina",
+        "amount": "500g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Pokrój wołowinę w cienkie paski",
+        "Zamarynuj w sosie sojowym, czosnku i gruszce",
+        "Smaż na bardzo gorącej patelni 3-4 min",
+        "Podawaj z ryżem, kimchi i sezamem"
+      ]
+    },
+    "tags": ["koreańskie", "bbq", "pikantne"]
+  },
+  {
+    "id": "caprese-salad",
+    "nazwa": "Sałatka Caprese",
+    "opis": "Włoska sałatka z mozzarellą, pomidorami i bazylią",
+    "photo_url": "https://images.unsplash.com/photo-1572441713132-51071997c9d2?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 15,
+    "kcal_baza": 280,
+    "kcal_z_miesem": 280,
+    "bialko_baza": 16,
+    "bialko_z_miesem": 16,
+    "trudnosc": "łatwe",
+    "kuchnia": "włoska",
+    "category": "sałatka",
+    "skladniki_baza": [
+      {
+        "name": "mozzarella di bufala",
+        "amount": "250g",
+        "category": "nabiał"
+      },
+      {
+        "name": "pomidory malinowe",
+        "amount": "400g",
+        "category": "warzywa"
+      },
+      {
+        "name": "bazylia",
+        "amount": "20 liści",
+        "category": "warzywa"
+      },
+      {
+        "name": "oliwa extra virgin",
+        "amount": "4 łyżki",
+        "category": "inne"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Pokrój pomidory i mozzarellę w plastry",
+        "Ułóż naprzemian na talerzu",
+        "Dodaj listki bazylii między plastry",
+        "Skrop oliwą i octem balsamicznym"
+      ]
+    },
+    "tags": ["wegetariańskie", "świeże", "włoskie"]
+  },
+  {
+    "id": "thai-green-curry",
+    "nazwa": "Zielone Curry Tajskie",
+    "opis": "Tajskie curry z zielonym chili i kurczakiem",
+    "photo_url": "https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 30,
+    "kcal_baza": 350,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 35,
+    "trudnosc": "średnie",
+    "kuchnia": "tajska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "mleko kokosowe",
+        "amount": "400ml",
+        "category": "inne"
+      },
+      {
+        "name": "pasta zielone curry",
+        "amount": "3 łyżki",
+        "category": "przyprawy"
+      },
+      {
+        "name": "bakłażan tajski",
+        "amount": "200g",
+        "category": "warzywa"
+      },
+      {
+        "name": "liście kaffiru",
+        "amount": "6 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kurczak",
+        "amount": "400g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż pastę curry na oleju",
+        "Dodaj kawałki kurczaka, smaż 5 min",
+        "Zalej mlekiem kokosowym",
+        "Duś z warzywami 15 min, dodaj liście kaffiru"
+      ]
+    },
+    "tags": ["tajskie", "kokosowe", "pikantne"]
+  },
+  {
+    "id": "greek-moussaka",
+    "nazwa": "Grecka Moussaka",
+    "opis": "Grecka zapiekanka z bakłażana i jagnięciny",
+    "photo_url": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 90,
+    "kcal_baza": 200,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 38,
+    "trudnosc": "trudne",
+    "kuchnia": "grecka",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "bakłażan",
+        "amount": "3 duże",
+        "category": "warzywa"
+      },
+      {
+        "name": "ser feta",
+        "amount": "200g",
+        "category": "nabiał"
+      },
+      {
+        "name": "mleko",
+        "amount": "500ml",
+        "category": "nabiał"
+      },
+      {
+        "name": "oregano",
+        "amount": "2 łyżki",
+        "category": "przyprawy"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "jagnięcina mielona",
+        "amount": "600g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Pokrój i posoliź bakłażany, pozostaw na 30 min",
+        "Usmaż jagnięcinę z cebulą i pomidorami",
+        "Ułóż warstwami: bakłażan, mięso, bakłażan",
+        "Zalej beszamelem, posyp fetą, piecz 45 min"
+      ]
+    },
+    "tags": ["greckie", "zapiekane", "comfort food"]
+  },
+  {
+    "id": "vietnamese-spring-rolls",
+    "nazwa": "Wietnamskie Spring Rolls",
+    "opis": "Świeże wietnamskie sajgonki z krewetkami",
+    "photo_url": "https://images.unsplash.com/photo-1559314809-0f31657df93b?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 180,
+    "kcal_z_miesem": 220,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 18,
+    "trudnosc": "średnie",
+    "kuchnia": "wietnamska",
+    "category": "przystawka",
+    "skladniki_baza": [
+      {
+        "name": "papier ryżowy",
+        "amount": "12 szt.",
+        "category": "inne"
+      },
+      {
+        "name": "sałata masłowa",
+        "amount": "6 liści",
+        "category": "warzywa"
+      },
+      {
+        "name": "mięta",
+        "amount": "20 liści",
+        "category": "warzywa"
+      },
+      {
+        "name": "makaron ryżowy",
+        "amount": "100g",
+        "category": "suche"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "krewetki",
+        "amount": "200g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj krewetki i makaron ryżowy",
+        "Namocz papier ryżowy w ciepłej wodzie",
+        "Nałóż sałatę, krewetki, makaron i zioła",
+        "Zwiń ciasno, podawaj z sosem orzechowym"
+      ]
+    },
+    "tags": ["wietnamskie", "świeże", "lekkie"]
+  },
+  {
+    "id": "mexican-enchiladas",
+    "nazwa": "Enchiladas Mexicanas",
+    "opis": "Meksykańskie naleśniki z kurczakiem i sosem chili",
+    "photo_url": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 40,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 15,
+    "bialko_z_miesem": 32,
+    "trudnosc": "średnie",
+    "kuchnia": "meksykańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "tortille kukurydziane",
+        "amount": "8 szt.",
+        "category": "suche"
+      },
+      {
+        "name": "ser cheddar",
+        "amount": "200g",
+        "category": "nabiał"
+      },
+      {
+        "name": "sos enchilada",
+        "amount": "300ml",
+        "category": "inne"
+      },
+      {
+        "name": "śmietana",
+        "amount": "150ml",
+        "category": "nabiał"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kurczak",
+        "amount": "400g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj i pokrusz kurczaka",
+        "Nałóż kurczaka i ser na tortille",
+        "Zwiń i ułóż w naczyniu żaroodpornym",
+        "Polej sosem enchilada, posyp serem, piecz 25 min"
+      ]
+    },
+    "tags": ["meksykańskie", "zapiekane", "pikantne"]
+  },
+  {
+    "id": "spaghetti-bolognese",
+    "nazwa": "Spaghetti Bolognese",
+    "opis": "Klasyczne włoskie spaghetti z sosem mięsno-pomidorowym",
+    "photo_url": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 45,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 32,
+    "trudnosc": "łatwe",
+    "kuchnia": "włoska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "spaghetti",
+        "amount": "400g",
+        "category": "suche"
+      },
+      {
+        "name": "sos pomidorowy",
+        "amount": "400ml",
+        "category": "inne"
+      },
+      {
+        "name": "cebula",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "marchewka",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "mięso mielone wołowe",
+        "amount": "500g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż drobno pokrojoną cebulę i marchewkę",
+        "Dodaj mięso mielone i smaż do zarumienienia",
+        "Wlej sos pomidorowy i duś 30 min",
+        "Ugotuj spaghetti al dente i podawaj z sosem"
+      ]
+    },
+    "tags": ["włoskie", "klasyczne"]
+  },
+  {
+    "id": "tom-yum-goong",
+    "nazwa": "Tom Yum Goong",
+    "opis": "Tajska kwaśno-ostra zupa z krewetkami",
+    "photo_url": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 20,
+    "kcal_baza": 120,
+    "kcal_z_miesem": 220,
+    "bialko_baza": 4,
+    "bialko_z_miesem": 18,
+    "trudnosc": "średnie",
+    "kuchnia": "tajska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "bulion warzywny",
+        "amount": "1l",
+        "category": "inne"
+      },
+      {
+        "name": "trawa cytrynowa",
+        "amount": "3 łodygi",
+        "category": "przyprawy"
+      },
+      {
+        "name": "limonka",
+        "amount": "3 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "pieczarki",
+        "amount": "200g",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "krewetki",
+        "amount": "400g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Zagotuj bulion z trawą cytrynową",
+        "Dodaj pokrojone pieczarki",
+        "Wrzuć krewetki na 3 minuty",
+        "Dopraw sokiem z limonki i pastą chili"
+      ]
+    },
+    "tags": ["tajskie", "ostre", "zupa"]
+  },
+  {
+    "id": "quiche-lorraine",
+    "nazwa": "Quiche Lorraine",
+    "opis": "Francuska tarta z jajkami, boczkiem i serem",
+    "photo_url": "https://images.unsplash.com/photo-1571197119861-1619602d8372?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 60,
+    "kcal_baza": 380,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 16,
+    "bialko_z_miesem": 24,
+    "trudnosc": "średnie",
+    "kuchnia": "francuska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ciasto kruche",
+        "amount": "1 szt.",
+        "category": "suche"
+      },
+      {
+        "name": "jajka",
+        "amount": "4 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "śmietana",
+        "amount": "200ml",
+        "category": "nabiał"
+      },
+      {
+        "name": "ser gruyere",
+        "amount": "150g",
+        "category": "nabiał"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "boczek wędzony",
+        "amount": "200g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Wyłóż ciasto do formy i nakłuj widelcem",
+        "Podsmaż boczek do chrupkości",
+        "Ubij jajka ze śmietaną",
+        "Nałóż boczek i ser, zalej masą, piecz 35 min"
+      ]
+    },
+    "tags": ["francuskie", "zapiekane"]
+  },
+  {
+    "id": "buddha-bowl-quinoa",
+    "nazwa": "Buddha Bowl",
+    "opis": "Kolorowa miska z quinoa, awokado i warzywami",
+    "photo_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 420,
+    "kcal_z_miesem": 420,
+    "bialko_baza": 18,
+    "bialko_z_miesem": 18,
+    "trudnosc": "łatwe",
+    "kuchnia": "fusion",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "quinoa",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "awokado",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "brokuły",
+        "amount": "300g",
+        "category": "warzywa"
+      },
+      {
+        "name": "marchewka",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Ugotuj quinoa zgodnie z instrukcją",
+        "Ugotuj brokuły na parze",
+        "Zetrzyj marchewkę na tarce",
+        "Ułóż wszystko w misce, polej tahini"
+      ]
+    },
+    "tags": ["wegetariańskie", "zdrowe", "kolorowe"]
+  },
+  {
+    "id": "chili-con-carne-pikantne",
+    "nazwa": "Chili con Carne",
+    "opis": "Meksykańskie pikantne danie z fasolą i wołowiną",
+    "photo_url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 90,
+    "kcal_baza": 280,
+    "kcal_z_miesem": 450,
+    "bialko_baza": 15,
+    "bialko_z_miesem": 35,
+    "trudnosc": "łatwe",
+    "kuchnia": "meksykańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "fasola czerwona",
+        "amount": "400g",
+        "category": "suche"
+      },
+      {
+        "name": "pomidory z puszki",
+        "amount": "400g",
+        "category": "inne"
+      },
+      {
+        "name": "cebula",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka chili",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wołowina mielona",
+        "amount": "600g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż cebulę do zeszklenia",
+        "Dodaj mięso i smaż do zarumienienia",
+        "Wrzuć pomidory, fasolę i przyprawy",
+        "Duś na małym ogniu 60 minut"
+      ]
+    },
+    "tags": ["meksykańskie", "ostre", "duszone"]
+  },
+  {
+    "id": "sushi-california-roll",
+    "nazwa": "California Roll",
+    "opis": "Sushi z krabem, awokado i ogórkiem",
+    "photo_url": "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 40,
+    "kcal_baza": 250,
+    "kcal_z_miesem": 320,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 16,
+    "trudnosc": "trudne",
+    "kuchnia": "japońska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ryż do sushi",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "nori",
+        "amount": "6 arkuszy",
+        "category": "inne"
+      },
+      {
+        "name": "awokado",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "ogórek",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "surimi krab",
+        "amount": "200g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj ryż do sushi z octem ryżowym",
+        "Pokrój awokado i ogórka w paski",
+        "Rozmieś ryż na nori, dodaj składniki",
+        "Zwiń w mata bambusowa i pokrój"
+      ]
+    },
+    "tags": ["japońskie", "surowe", "elegant"]
+  },
+  {
+    "id": "piernik-staropolski",
+    "nazwa": "Piernik staropolski",
+    "opis": "Tradycyjny polski piernik z miodem i przyprawami",
+    "photo_url": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 120,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 320,
+    "bialko_baza": 6,
+    "bialko_z_miesem": 6,
+    "trudnosc": "średnie",
+    "kuchnia": "polska",
+    "category": "deser",
+    "skladniki_baza": [
+      {
+        "name": "mąka żytnia",
+        "amount": "400g",
+        "category": "suche"
+      },
+      {
+        "name": "miód",
+        "amount": "200g",
+        "category": "inne"
+      },
+      {
+        "name": "jajka",
+        "amount": "2 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "przyprawa do piernika",
+        "amount": "2 łyżki",
+        "category": "przyprawy"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Rozgrzej miód z przyprawami",
+        "Wymieszaj z mąką i jajkami",
+        "Wymieszaj ciasto i odstaw na noc",
+        "Uformuj i piecz 45 min w 180°C"
+      ]
+    },
+    "tags": ["polskie", "słodkie", "tradycyjne"]
+  },
+  {
+    "id": "ramen-miso-klasyczny",
+    "nazwa": "Ramen Miso",
+    "opis": "Japońska zupa z makaronem, miso i jajkiem",
+    "photo_url": "https://images.unsplash.com/photo-1555126634-323283e090fa?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 35,
+    "kcal_baza": 380,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 16,
+    "bialko_z_miesem": 32,
+    "trudnosc": "średnie",
+    "kuchnia": "japońska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "makaron ramen",
+        "amount": "2 porcje",
+        "category": "suche"
+      },
+      {
+        "name": "pasta miso",
+        "amount": "3 łyżki",
+        "category": "przyprawy"
+      },
+      {
+        "name": "jajka",
+        "amount": "2 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "nori",
+        "amount": "2 arkusze",
+        "category": "inne"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wieprzowina",
+        "amount": "300g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj rosół z mięsem przez 2 godziny",
+        "Rozpuść miso w bulionei",
+        "Ugotuj makaron i jajka na miękko",
+        "Ułóż w misce z mięsem i warzywami"
+      ]
+    },
+    "tags": ["japońskie", "zupa", "comfort food"]
+  },
+  {
+    "id": "greek-salad",
+    "nazwa": "Sałatka grecka",
+    "opis": "Tradycyjna sałatka z fetą, oliwkami i pomidorami",
+    "photo_url": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 15,
+    "kcal_baza": 280,
+    "kcal_z_miesem": 280,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 12,
+    "trudnosc": "łatwe",
+    "kuchnia": "grecka",
+    "category": "sałatka",
+    "skladniki_baza": [
+      {
+        "name": "pomidory",
+        "amount": "4 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "ogórek",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "feta",
+        "amount": "200g",
+        "category": "nabiał"
+      },
+      {
+        "name": "oliwki kalamata",
+        "amount": "100g",
+        "category": "inne"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Pokrój pomidory i ogórki w kostkę",
+        "Dodaj pokruszoną fetę i oliwki",
+        "Polej oliwą z oliwek i octem",
+        "Posyp oregano i podawaj"
+      ]
+    },
+    "tags": ["greckie", "świeże", "zdrowe"]
+  },
+  {
+    "id": "moroccan-tagine",
+    "nazwa": "Tajin marokański",
+    "opis": "Aromatyczne danie z jagnięciną i suszonymi owocami",
+    "photo_url": "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 150,
+    "kcal_baza": 220,
+    "kcal_z_miesem": 480,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 38,
+    "trudnosc": "trudne",
+    "kuchnia": "marokańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "morele suszone",
+        "amount": "150g",
+        "category": "owoce"
+      },
+      {
+        "name": "cebula",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "cynamon",
+        "amount": "1 łyżeczka",
+        "category": "przyprawy"
+      },
+      {
+        "name": "imbir",
+        "amount": "2 cm",
+        "category": "przyprawy"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "jagnięcina",
+        "amount": "800g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Pokrój mięso w kostkę i przypraw",
+        "Podsmaż z cebulą do zarumienienia",
+        "Dodaj przyprawy i suszone owoce",
+        "Duś w tajinie 2 godziny"
+      ]
+    },
+    "tags": ["marokańskie", "egzotyczne", "długo duszone"]
+  },
+  {
+    "id": "korean-kimchi-jjigae",
+    "nazwa": "Kimchi Jjigae",
+    "opis": "Koreańska pikantna zupa z kimchi i tofu",
+    "photo_url": "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 180,
+    "kcal_z_miesem": 320,
+    "bialko_baza": 12,
+    "bialko_z_miesem": 25,
+    "trudnosc": "łatwe",
+    "kuchnia": "koreańska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "kimchi",
+        "amount": "300g",
+        "category": "warzywa"
+      },
+      {
+        "name": "tofu",
+        "amount": "200g",
+        "category": "nabiał"
+      },
+      {
+        "name": "cebula",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "czosnek",
+        "amount": "3 ząbki",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "wieprzowina",
+        "amount": "200g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż pokrojone kimchi z cebulą",
+        "Dodaj mięso i smaż 5 minut",
+        "Zalej wodą i gotuj 15 minut",
+        "Dodaj tofu na ostatnie 5 minut"
+      ]
+    },
+    "tags": ["koreańskie", "pikantne", "fermentowane"]
+  },
+  {
+    "id": "italian-tiramisu",
+    "nazwa": "Tiramisu",
+    "opis": "Klasyczny włoski deser z mascarpone i kawą",
+    "photo_url": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 30,
+    "kcal_baza": 420,
+    "kcal_z_miesem": 420,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 8,
+    "trudnosc": "średnie",
+    "kuchnia": "włoska",
+    "category": "deser",
+    "skladniki_baza": [
+      {
+        "name": "biszkopty savoiardi",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "mascarpone",
+        "amount": "500g",
+        "category": "nabiał"
+      },
+      {
+        "name": "jajka",
+        "amount": "4 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "kawa espresso",
+        "amount": "300ml",
+        "category": "napoje"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Ubij żółtka z cukrem do białości",
+        "Wymieszaj z mascarpone",
+        "Ubij białka na sztywno i dodaj",
+        "Ułóż warstwy z biszkoptami i kremem"
+      ]
+    },
+    "tags": ["włoskie", "słodkie", "kawowe"]
+  },
+  {
+    "id": "indian-dal",
+    "nazwa": "Dal z soczewicą",
+    "opis": "Indyjski dal z żółtej soczewicy z kurkumą i imbirem",
+    "photo_url": "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 30,
+    "kcal_baza": 280,
+    "kcal_z_miesem": 280,
+    "bialko_baza": 18,
+    "bialko_z_miesem": 18,
+    "trudnosc": "łatwe",
+    "kuchnia": "indyjska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "soczewica żółta",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "kurkuma",
+        "amount": "1 łyżeczka",
+        "category": "przyprawy"
+      },
+      {
+        "name": "imbir",
+        "amount": "3 cm",
+        "category": "przyprawy"
+      },
+      {
+        "name": "czosnek",
+        "amount": "4 ząbki",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Ugotuj soczewicę z kurkumą do miękkości",
+        "Podsmaż czosnek i imbir na maśle klarowanym",
+        "Dodaj do soczewicy i wymieszaj",
+        "Dopraw solą i kolendrą"
+      ]
+    },
+    "tags": ["indyjskie", "wegetariańskie", "białko roślinne"]
+  },
+  {
+    "id": "spanish-paella",
+    "nazwa": "Paella Valenciana",
+    "opis": "Tradycyjna hiszpańska paella z kurczakiem i owoce morza",
+    "photo_url": "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 45,
+    "kcal_baza": 380,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 15,
+    "bialko_z_miesem": 35,
+    "trudnosc": "trudne",
+    "kuchnia": "hiszpańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ryż bomba",
+        "amount": "400g",
+        "category": "suche"
+      },
+      {
+        "name": "szafran",
+        "amount": "0.5g",
+        "category": "przyprawy"
+      },
+      {
+        "name": "bulion kurczy",
+        "amount": "1l",
+        "category": "inne"
+      },
+      {
+        "name": "papryka",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kurczak",
+        "amount": "600g",
+        "category": "mięso"
+      },
+      {
+        "name": "krewetki",
+        "amount": "300g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż kurczaka w paellera",
+        "Dodaj warzywa i smaż 5 minut",
+        "Wsyp ryż i zalej bulionem z szafranem",
+        "Gotuj 20 min, dodaj krewetki na końcu"
+      ]
+    },
+    "tags": ["hiszpańskie", "owoce morza", "eleganckie"]
+  },
+  {
+    "id": "zurek",
+    "nazwa": "Żurek",
+    "opis": "Tradycyjna polska zupa na zakwasie z białą kiełbasą i jajkiem",
+    "photo_url": "https://images.unsplash.com/photo-1607530543338-8e23c4a0e6e4?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 60,
+    "kcal_baza": 220,
+    "kcal_z_miesem": 380,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 22,
+    "trudnosc": "średnie",
+    "kuchnia": "polska",
+    "category": "zupa",
+    "skladniki_baza": [
+      {
+        "name": "zakwas żurowy",
+        "amount": "500ml",
+        "category": "inne"
+      },
+      {
+        "name": "ziemniaki",
+        "amount": "4 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "jajka",
+        "amount": "4 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "chrzan",
+        "amount": "2 łyżki",
+        "category": "przyprawy"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "biała kiełbasa",
+        "amount": "400g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj bulion z warzywami",
+        "Dodaj zakwas żurowy i zagotuj",
+        "Ugotuj ziemniaki i jajka osobno",
+        "Pokrój kiełbasę, dodaj do zupy z ziemniakami i jajkami"
+      ]
+    },
+    "tags": ["polskie", "zupa", "tradycyjne"]
+  },
+  {
+    "id": "placki-ziemniaczane",
+    "nazwa": "Placki ziemniaczane",
+    "opis": "Chrupiące placki z tartych ziemniaków podawane ze śmietaną",
+    "photo_url": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 40,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 320,
+    "bialko_baza": 8,
+    "bialko_z_miesem": 8,
+    "trudnosc": "łatwe",
+    "kuchnia": "polska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ziemniaki",
+        "amount": "1kg",
+        "category": "warzywa"
+      },
+      {
+        "name": "cebula",
+        "amount": "1 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "jajko",
+        "amount": "1 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "mąka",
+        "amount": "3 łyżki",
+        "category": "suche"
+      },
+      {
+        "name": "śmietana",
+        "amount": "200ml",
+        "category": "nabiał"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Zetrzyj ziemniaki i cebulę na drobnej tarce",
+        "Odciśnij nadmiar wody",
+        "Dodaj jajko i mąkę, wymieszaj",
+        "Smaż na rozgrzanym oleju z obu stron na złoty kolor",
+        "Podawaj ze śmietaną lub gulaszem"
+      ]
+    },
+    "tags": ["polskie", "wegetariańskie", "chrupiące"]
+  },
+  {
+    "id": "golabki",
+    "nazwa": "Gołąbki",
+    "opis": "Kapusta faszerowana mięsem mielonym i ryżem w sosie pomidorowym",
+    "photo_url": "https://images.unsplash.com/photo-1604908177453-7462950a6a3b?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 90,
+    "kcal_baza": 180,
+    "kcal_z_miesem": 380,
+    "bialko_baza": 6,
+    "bialko_z_miesem": 28,
+    "trudnosc": "średnie",
+    "kuchnia": "polska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "kapusta włoska",
+        "amount": "1 główka",
+        "category": "warzywa"
+      },
+      {
+        "name": "ryż",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "passata pomidorowa",
+        "amount": "500ml",
+        "category": "inne"
+      },
+      {
+        "name": "cebula",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "mięso mielone wieprzowo-wołowe",
+        "amount": "500g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Zblanszuj liście kapusty w osolonej wodzie",
+        "Wymieszaj mięso z ugotowanym ryżem i cebulą",
+        "Zawiń farsz w liście kapusty",
+        "Ułóż w garnku, zalej passatą",
+        "Duś pod przykryciem 60 minut"
+      ]
+    },
+    "tags": ["polskie", "duszone", "tradycyjne"]
+  },
+  {
+    "id": "nalesniki",
+    "nazwa": "Naleśniki z serem",
+    "opis": "Cienkie naleśniki z nadzieniem twarogowym, podawane z dżemem",
+    "photo_url": "https://images.unsplash.com/photo-1519676867240-f03562e64548?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 35,
+    "kcal_baza": 340,
+    "kcal_z_miesem": 340,
+    "bialko_baza": 16,
+    "bialko_z_miesem": 16,
+    "trudnosc": "łatwe",
+    "kuchnia": "polska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "mąka",
+        "amount": "250g",
+        "category": "suche"
+      },
+      {
+        "name": "mleko",
+        "amount": "500ml",
+        "category": "nabiał"
+      },
+      {
+        "name": "jajka",
+        "amount": "3 szt.",
+        "category": "nabiał"
+      },
+      {
+        "name": "twaróg",
+        "amount": "500g",
+        "category": "nabiał"
+      },
+      {
+        "name": "cukier waniliowy",
+        "amount": "2 saszetki",
+        "category": "suche"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Wymieszaj mąkę, mleko i jajka na gładkie ciasto",
+        "Smaż cienkie naleśniki na patelni",
+        "Przygotuj nadzienie z twarogu, cukru i wanilii",
+        "Nałóż farsz, zwiń naleśniki",
+        "Podawaj z dżemem lub owocami"
+      ]
+    },
+    "tags": ["polskie", "wegetariańskie", "słodkie"]
+  },
+  {
+    "id": "lasagne",
+    "nazwa": "Lasagne",
+    "opis": "Klasyczna włoska zapiekanka z makaronem, mięsem i beszamelem",
+    "photo_url": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 90,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 18,
+    "bialko_z_miesem": 35,
+    "trudnosc": "średnie",
+    "kuchnia": "włoska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "makaron lasagne",
+        "amount": "300g",
+        "category": "suche"
+      },
+      {
+        "name": "pomidory krojone",
+        "amount": "800g",
+        "category": "warzywa"
+      },
+      {
+        "name": "mleko",
+        "amount": "500ml",
+        "category": "nabiał"
+      },
+      {
+        "name": "masło",
+        "amount": "50g",
+        "category": "nabiał"
+      },
+      {
+        "name": "mąka",
+        "amount": "50g",
+        "category": "suche"
+      },
+      {
+        "name": "ser żółty",
+        "amount": "200g",
+        "category": "nabiał"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "mięso mielone wołowe",
+        "amount": "500g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Podsmaż mięso z cebulą, dodaj pomidory i duś 30 min",
+        "Przygotuj beszamel: rozpuść masło, dodaj mąkę i mleko",
+        "Układaj warstwami: makaron, sos mięsny, beszamel",
+        "Posyp serem i zapiekaj 40 min w 180°C"
+      ]
+    },
+    "tags": ["włoskie", "zapiekane", "comfort food"]
+  },
+  {
+    "id": "bruschetta",
+    "nazwa": "Bruschetta",
+    "opis": "Chrupiące grzanki z pomidorami, bazylią i oliwą z oliwek",
+    "photo_url": "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 15,
+    "kcal_baza": 220,
+    "kcal_z_miesem": 220,
+    "bialko_baza": 6,
+    "bialko_z_miesem": 6,
+    "trudnosc": "łatwe",
+    "kuchnia": "włoska",
+    "category": "przekąska",
+    "skladniki_baza": [
+      {
+        "name": "bagietka",
+        "amount": "1 szt.",
+        "category": "suche"
+      },
+      {
+        "name": "pomidory",
+        "amount": "4 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "bazylia",
+        "amount": "1 pęczek",
+        "category": "zioła"
+      },
+      {
+        "name": "oliwa z oliwek",
+        "amount": "3 łyżki",
+        "category": "inne"
+      },
+      {
+        "name": "czosnek",
+        "amount": "2 ząbki",
+        "category": "warzywa"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Pokrój bagietkę w plastry i opiecz",
+        "Pokrój pomidory w kostkę, wymieszaj z bazylią i oliwą",
+        "Natrzyj grzanki czosnkiem",
+        "Nałóż mieszankę pomidorową na grzanki"
+      ]
+    },
+    "tags": ["włoskie", "wegetariańskie", "przekąska"]
+  },
+  {
+    "id": "stir-fry-tofu",
+    "nazwa": "Stir-fry z tofu",
+    "opis": "Smażone tofu z warzywami w sosie sojowo-imbirowym",
+    "photo_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 25,
+    "kcal_baza": 320,
+    "kcal_z_miesem": 320,
+    "bialko_baza": 22,
+    "bialko_z_miesem": 22,
+    "trudnosc": "łatwe",
+    "kuchnia": "azjatycka",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "tofu twarde",
+        "amount": "400g",
+        "category": "inne"
+      },
+      {
+        "name": "brokuły",
+        "amount": "200g",
+        "category": "warzywa"
+      },
+      {
+        "name": "papryka",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "sos sojowy",
+        "amount": "3 łyżki",
+        "category": "przyprawy"
+      },
+      {
+        "name": "imbir",
+        "amount": "2 cm",
+        "category": "przyprawy"
+      },
+      {
+        "name": "ryż jaśminowy",
+        "amount": "200g",
+        "category": "suche"
+      }
+    ],
+    "skladniki_mieso": [],
+    "przepis": {
+      "kroki": [
+        "Pokrój tofu w kostkę i osusz papierowym ręcznikiem",
+        "Podsmaż tofu na patelni do złotego koloru",
+        "Dodaj warzywa i smaż 3-4 minuty",
+        "Wlej sos sojowy z imbirem, wymieszaj",
+        "Podawaj na ryżu jaśminowym"
+      ]
+    },
+    "tags": ["azjatyckie", "wegańskie", "szybkie"]
+  },
+  {
+    "id": "burrito-bowl",
+    "nazwa": "Burrito Bowl",
+    "opis": "Meksykańska miska z ryżem, fasolą, awokado i salsą",
+    "photo_url": "https://images.unsplash.com/photo-1543352634-a1c51d9f1fa7?w=400&h=300&fit=crop&crop=center",
+    "prep_time": 30,
+    "kcal_baza": 380,
+    "kcal_z_miesem": 520,
+    "bialko_baza": 14,
+    "bialko_z_miesem": 32,
+    "trudnosc": "łatwe",
+    "kuchnia": "meksykańska",
+    "category": "danie główne",
+    "skladniki_baza": [
+      {
+        "name": "ryż",
+        "amount": "200g",
+        "category": "suche"
+      },
+      {
+        "name": "fasola czarna",
+        "amount": "400g",
+        "category": "suche"
+      },
+      {
+        "name": "awokado",
+        "amount": "2 szt.",
+        "category": "warzywa"
+      },
+      {
+        "name": "kukurydza",
+        "amount": "200g",
+        "category": "warzywa"
+      },
+      {
+        "name": "salsa",
+        "amount": "200ml",
+        "category": "inne"
+      },
+      {
+        "name": "limonka",
+        "amount": "2 szt.",
+        "category": "owoce"
+      }
+    ],
+    "skladniki_mieso": [
+      {
+        "name": "kurczak",
+        "amount": "400g",
+        "category": "mięso"
+      }
+    ],
+    "przepis": {
+      "kroki": [
+        "Ugotuj ryż z limonką i kolendrą",
+        "Podsmaż kurczaka z przyprawami meksykańskimi",
+        "Podgrzej fasolę czarną",
+        "Ułóż w misce: ryż, fasola, kurczak, awokado, kukurydza",
+        "Polej salsą i wyciśnij limonkę"
+      ]
+    },
+    "tags": ["meksykańskie", "zdrowe", "kolorowe"]
+  }
+]

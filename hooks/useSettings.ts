@@ -14,8 +14,28 @@ function getStorageKey(): string {
 export const DEFAULT_SETTINGS: AppSettings = {
   people: 2,
   persons: [
-    { name: 'Osoba 1', kcal: 2000, protein: 120 },
-    { name: 'Osoba 2', kcal: 1800, protein: 100 },
+    {
+      name: 'Osoba 1',
+      kcal: 2000,
+      protein: 120,
+      dailyKcal: 2000,
+      dailyProtein: 120,
+      mealsPerDay: 3,
+      diet: [],
+      cuisinePreferences: [],
+      excludedIngredients: [],
+    },
+    {
+      name: 'Osoba 2',
+      kcal: 1800,
+      protein: 100,
+      dailyKcal: 1800,
+      dailyProtein: 100,
+      mealsPerDay: 3,
+      diet: [],
+      cuisinePreferences: [],
+      excludedIngredients: [],
+    },
   ],
   theme: 'system',
 }

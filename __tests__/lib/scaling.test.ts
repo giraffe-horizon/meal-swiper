@@ -60,6 +60,12 @@ describe('scaling', () => {
       const result = computeScaleFactor(persons, 3)
       expect(result).toBe(1) // (3 * 2000) / (3 * 2000) = 1
     })
+
+    it('handles zero basePeople safely (edge case)', () => {
+      const persons: PersonSettings[] = [{ name: 'Person 1', kcal: 2000, protein: 120 }]
+      const result = computeScaleFactor(persons, 0)
+      expect(result).toBe(1) // Should fallback to 1 instead of dividing by zero
+    })
   })
 
   describe('computePersonRatio', () => {

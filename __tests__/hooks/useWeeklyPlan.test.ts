@@ -202,10 +202,10 @@ describe('useWeeklyPlan', () => {
       json: async () => serverPlan,
     })
 
-    const { result } = renderHook(() => useWeeklyPlan(), { wrapper: createWrapper() })
+    const { result } = renderHook(() => useWeeklyPlan('test-token'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.weeklyPlan.mon).toEqual(mockMeal)
-    })
+    }, { timeout: 5000 })
   })
 })

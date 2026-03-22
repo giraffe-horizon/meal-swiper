@@ -25,12 +25,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pl">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
-          rel="stylesheet"
-        />
-      </head>
+      <head />
       <body>
         {children}
         <Script id="register-sw" strategy="afterInteractive">
@@ -39,10 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(
                   function(registration) {
-                    console.log('Service Worker registration successful with scope: ', registration.scope);
+                    console.debug('Service Worker registration successful with scope: ', registration.scope);
                   },
                   function(err) {
-                    console.log('Service Worker registration failed: ', err);
+                    console.error('Service Worker registration failed: ', err);
                   }
                 );
               });

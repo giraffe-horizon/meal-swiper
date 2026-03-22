@@ -4,8 +4,18 @@ import Navigation from '@/components/Navigation'
 
 // Mock next/link to render as a plain anchor
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: { children: React.ReactNode; href: string; [key: string]: unknown }) => (
-    <a href={href} {...props}>{children}</a>
+  default: ({
+    children,
+    href,
+    ...props
+  }: {
+    children: React.ReactNode
+    href: string
+    [key: string]: unknown
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
   ),
 }))
 
@@ -18,10 +28,10 @@ describe('Navigation', () => {
     expect(link).toHaveAttribute('href', '/plan')
   })
 
-  it('"Propozycje" link points to /swipe', () => {
+  it('"Swipe" link points to /swipe', () => {
     render(<Navigation activeView="plan" />)
 
-    const swipeLinks = screen.getAllByText('Propozycje')
+    const swipeLinks = screen.getAllByText('Swipe')
     const link = swipeLinks[0].closest('a')
     expect(link).toHaveAttribute('href', '/swipe')
   })
@@ -34,20 +44,20 @@ describe('Navigation', () => {
     expect(link).toHaveAttribute('href', '/shopping')
   })
 
-  it('active view has bold font', () => {
+  it('active view has semibold font', () => {
     render(<Navigation activeView="plan" />)
 
     const planLabels = screen.getAllByText('Plan')
-    const hasBold = planLabels.some(el => el.classList.contains('font-bold'))
-    expect(hasBold).toBe(true)
+    const hasSemibold = planLabels.some((el) => el.classList.contains('font-semibold'))
+    expect(hasSemibold).toBe(true)
   })
 
-  it('inactive view does not have font-bold', () => {
+  it('inactive view also has semibold font', () => {
     render(<Navigation activeView="plan" />)
 
-    const propLabels = screen.getAllByText('Propozycje')
-    propLabels.forEach(el => {
-      expect(el.classList.contains('font-bold')).toBe(false)
-    })
+    const swipeLabels = screen.getAllByText('Swipe')
+    // All navigation items have font-semibold in the new design
+    const hasSemibold = swipeLabels.some((el) => el.classList.contains('font-semibold'))
+    expect(hasSemibold).toBe(true)
   })
 })

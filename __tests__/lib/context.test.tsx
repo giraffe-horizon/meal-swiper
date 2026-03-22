@@ -29,6 +29,14 @@ vi.mock('@/hooks/useMeals', () => ({
   useMeals: () => ({
     meals: [],
     loading: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
+  useMealsWithVariants: () => ({
+    meals: [],
+    loading: false,
+    error: null,
+    refetch: vi.fn(),
   }),
 }))
 
@@ -80,6 +88,9 @@ vi.mock('@/hooks/useSwipeState', () => ({
     setCurrentSwipeIndex: vi.fn(),
     setSeenIds: vi.fn(),
     shuffleMeals: mockShuffleMeals,
+    shuffleFilteredMeals: vi.fn(),
+    getVariantAssignment: () => null,
+    filteredMeals: [],
     advanceIndex: vi.fn(),
     resetSwipe: vi.fn(),
   }),
@@ -118,9 +129,7 @@ describe('AppProvider / useAppContext', () => {
 
   it('throws if useAppContext used outside provider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    expect(() => render(<ConsumerComponent />)).toThrow(
-      'useAppContext must be used within AppProvider'
-    )
+    expect(() => render(<ConsumerComponent />)).toThrow('must be used within')
     spy.mockRestore()
   })
 
@@ -171,7 +180,7 @@ const testMeal = {
   kcal_z_miesem: 400,
   bialko_baza: 10,
   bialko_z_miesem: 20,
-  trudnosc: 'łatwe',
+  trudnosc: 'łatwe' as const,
   kuchnia: 'polska',
   category: 'makarony',
   skladniki_baza: '[]',

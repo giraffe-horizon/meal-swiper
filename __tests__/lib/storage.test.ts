@@ -40,6 +40,7 @@ describe('storage', () => {
         bialko_z_miesem: 25,
         trudnosc: 'łatwe' as const,
         kuchnia: 'polska',
+        category: 'obiad',
         skladniki_baza: '[]',
         skladniki_mieso: '[]',
         przepis: '{}',

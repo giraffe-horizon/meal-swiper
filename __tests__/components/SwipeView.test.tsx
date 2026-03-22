@@ -48,6 +48,7 @@ const mockMeal: Meal = {
   bialko_z_miesem: 30,
   trudnosc: 'łatwe',
   kuchnia: 'włoska',
+  category: 'obiad',
   skladniki_baza: '[]',
   skladniki_mieso: '[]',
   przepis: '{}',
@@ -80,7 +81,6 @@ const defaultProps = {
   currentDay: 'mon' as const,
   onComplete: vi.fn(),
   weeklyPlan: defaultPlan,
-  onSkipAll: vi.fn(),
   onSkipDay: vi.fn(),
   shuffledMealsFromContext: [mockMeal, mockMeal2],
   currentSwipeIndexFromContext: 0,
@@ -161,29 +161,28 @@ describe('SwipeView', () => {
     expect(screen.getByText(/Dodano:/)).toBeInTheDocument()
   })
 
-  it('shows interactive day selector with day chips', () => {
+  it('does not show week strip (removed for mobile)', () => {
     render(<SwipeView {...defaultProps} />)
-    expect(screen.getByText('Pn')).toBeInTheDocument()
-    expect(screen.getByText('Wt')).toBeInTheDocument()
-    expect(screen.getByText('Śr')).toBeInTheDocument()
-    expect(screen.getByText('Cz')).toBeInTheDocument()
-    expect(screen.getByText('Pt')).toBeInTheDocument()
+    expect(screen.queryByText('Twój Tydzień')).not.toBeInTheDocument()
   })
 
-  it('shows "Pomiń ten dzień" button when currentDay is set', () => {
+  it('shows skip day button (star icon) when currentDay is set', () => {
     render(<SwipeView {...defaultProps} />)
-    expect(screen.getByText(/Pomiń ten dzień/)).toBeInTheDocument()
+    const starButton = screen.getByTitle('Zapisz jako ulubione')
+    expect(starButton).toBeInTheDocument()
   })
 
-  it('does not show "Pomiń ten dzień" when currentDay is null', () => {
+  it('shows action buttons even when currentDay is null', () => {
     render(<SwipeView {...defaultProps} currentDay={null} />)
-    expect(screen.queryByText(/Pomiń ten dzień/)).not.toBeInTheDocument()
+    // Action buttons are always shown in new design
+    const starButton = screen.getByTitle('Zapisz jako ulubione')
+    expect(starButton).toBeInTheDocument()
   })
 
-  it('calls onSkipDay when "Pomiń ten dzień" is clicked', () => {
+  it('calls onSkipDay when star button is clicked', () => {
     const onSkipDay = vi.fn()
     render(<SwipeView {...defaultProps} onSkipDay={onSkipDay} />)
-    fireEvent.click(screen.getByText(/Pomiń ten dzień/))
+    fireEvent.click(screen.getByTitle('Zapisz jako ulubione'))
     expect(onSkipDay).toHaveBeenCalled()
   })
 })

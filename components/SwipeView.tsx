@@ -1,38 +1,37 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useMotionValue, useTransform, animate, type PanInfo } from 'framer-motion'
-import type { Meal, DayKey, WeeklyPlan } from '@/types'
-import { DAY_KEYS, DAY_NAMES_MAP, getWeekDates } from '@/lib/utils'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import type { Meal, DayKey, WeeklyPlan, MealWithVariants } from '@/types'
+import { DAY_NAMES_MAP } from '@/lib/utils'
+import { toMealForModal } from '@/lib/meal-convert'
 import MealModal from '@/components/MealModal'
 import DaySelector from '@/components/ui/DaySelector'
 import SwipeStack from '@/components/swipe/SwipeStack'
 import SwipeActions from '@/components/swipe/SwipeActions'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import CategoryFilter from '@/components/swipe/CategoryFilter' // kept for future UX redesign
+import CompatibilityIndicator from '@/components/swipe/CompatibilityIndicator'
 import { useAppContext } from '@/lib/context'
+import { useSwipeGestures } from '@/hooks/useSwipeGestures'
+import { useSwipeNavigation } from '@/hooks/useSwipeNavigation'
+import { useSwipeToast } from '@/hooks/useSwipeToast'
 
-interface SwipeViewProps {
-  meals: Meal[]
-  onSwipeRight: (meal: Meal) => void
+export interface SwipeViewProps {
+  meals: (Meal | MealWithVariants)[]
+  onSwipeRight: (meal: Meal | MealWithVariants) => void
   currentDay: DayKey | null
   onComplete: () => void
   weeklyPlan: WeeklyPlan
-  onSkipAll: () => void
   onSkipDay?: () => void
   weekOffset?: number
   weekDates?: Date[]
   onDaySelect?: (day: DayKey) => void
   allDaysFilled?: boolean
-  shuffledMealsFromContext?: Meal[]
+  shuffledMealsFromContext?: (Meal | MealWithVariants)[]
   currentSwipeIndexFromContext?: number
   seenIdsFromContext?: string[]
   setCurrentSwipeIndexInContext?: (index: number) => void
-  setShuffledMealsInContext?: (meals: Meal[]) => void
+  setShuffledMealsInContext?: (meals: (Meal | MealWithVariants)[]) => void
   setSeenIdsInContext?: (ids: string[]) => void
 }
-
-const SWIPE_THRESHOLD = 120
 
 export default function SwipeView({
   meals,
@@ -53,187 +52,83 @@ export default function SwipeView({
   setSeenIdsInContext,
 }: SwipeViewProps) {
   const { settings } = useAppContext()
-
-  const seenIds = seenIdsFromContext
-  const shuffledMeals = useMemo(
-    () => (shuffledMealsFromContext.length > 0 ? shuffledMealsFromContext : []),
-    [shuffledMealsFromContext]
-  )
-
-  const activeMeals = shuffledMeals
-  const currentIndex = currentSwipeIndexFromContext
-
-  const [reshuffleToast, setReshuffleToast] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [showConfetti, setShowConfetti] = useState(false)
-  const [confettiItems] = useState(() =>
-    [...Array(50)].map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      delay: Math.random() * 2,
-      duration: 2 + Math.random() * 2,
-      size: 20 + Math.random() * 20,
-      emoji: ['🎉', '🎊', '✨', '🌟', '💫'][Math.floor(Math.random() * 5)],
-    }))
-  )
-  const [showToast, setShowToast] = useState(false)
-  const [toastText, setToastText] = useState('')
-  const [isAnimating, setIsAnimating] = useState(false)
   const [modalMeal, setModalMeal] = useState<Meal | null>(null)
-
-  const x = useMotionValue(0)
-  const rotate = useTransform(x, [-300, 0, 300], [-18, 0, 18])
-  const likeOpacity = useTransform(x, [0, SWIPE_THRESHOLD], [0, 1])
-  const nopeOpacity = useTransform(x, [-SWIPE_THRESHOLD, 0], [1, 0])
-
-  const weekDatesComputed = useMemo(() => getWeekDates(weekOffset), [weekOffset])
-  const weekDates = weekDatesProp ?? weekDatesComputed
-  const currentMeal = activeMeals[currentIndex]
-
-  const usedMealIds = useMemo(
-    () => DAY_KEYS.map((d) => weeklyPlan[d]?.id).filter(Boolean) as string[],
-    [weeklyPlan]
-  )
-
-  const shuffleArray = useCallback(<T,>(array: T[]): T[] => {
-    const shuffled = [...array]
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
-    return shuffled
-  }, [])
-
-  const nextCard = useCallback(() => {
-    if (currentIndex >= shuffledMeals.length - 1) {
-      if (allDaysFilled) {
-        setShowConfetti(true)
-        setShowSuccess(true)
-        setTimeout(() => onComplete?.(), 2000)
-      } else {
-        const maxSeen = Math.max(0, meals.length - 3)
-        const currentMealId = shuffledMeals[currentIndex]?.id
-        const updatedSeen = currentMealId ? [...seenIds, currentMealId].slice(-maxSeen) : seenIds
-        setSeenIdsInContext?.(updatedSeen)
-        const fresh = meals.filter(
-          (m) => !updatedSeen.includes(m.id) && !usedMealIds.includes(m.id)
-        )
-        const old = meals.filter((m) => updatedSeen.includes(m.id) && !usedMealIds.includes(m.id))
-        x.set(0)
-        setShuffledMealsInContext?.([
-          ...shuffledMeals,
-          ...shuffleArray(fresh),
-          ...shuffleArray(old),
-        ])
-        setCurrentSwipeIndexInContext?.(currentIndex + 1)
-        setReshuffleToast(true)
-        setTimeout(() => setReshuffleToast(false), 2000)
-      }
-    } else {
-      x.set(0)
-      setCurrentSwipeIndexInContext?.(currentIndex + 1)
-    }
-    setIsAnimating(false)
-  }, [
-    currentIndex,
-    shuffledMeals,
-    allDaysFilled,
-    onComplete,
-    x,
+  const toast = useSwipeToast()
+  const nav = useSwipeNavigation({
     meals,
-    seenIds,
-    usedMealIds,
-    setSeenIdsInContext,
-    setShuffledMealsInContext,
+    weeklyPlan,
+    weekOffset,
+    weekDatesProp,
+    allDaysFilled,
+    shuffledMealsFromContext,
+    currentSwipeIndexFromContext,
+    seenIdsFromContext,
     setCurrentSwipeIndexInContext,
-    shuffleArray,
-  ])
-
-  const trackSeen = useCallback(
-    (mealId: string) => {
-      const maxSeen = Math.max(0, meals.length - 3)
-      setSeenIdsInContext?.([...seenIds, mealId].slice(-maxSeen))
-    },
-    [meals.length, seenIds, setSeenIdsInContext]
+    setShuffledMealsInContext,
+    setSeenIdsInContext,
+    onComplete,
+    onSkipDay,
+  })
+  const { onSwipeRightRef, onSwipeLeftRef, ...gestures } = useSwipeGestures({
+    modalOpen: !!modalMeal,
+  })
+  const ncb = useMemo(
+    () => ({
+      onSuccess: toast.triggerSuccess,
+      onReshuffle: toast.showReshuffleToast,
+      resetX: gestures.resetX,
+      setAnimating: gestures.setIsAnimating,
+    }),
+    [toast.triggerSuccess, toast.showReshuffleToast, gestures.resetX, gestures.setIsAnimating]
   )
 
   const handleSwipeRight = useCallback(() => {
-    if (!currentMeal || isAnimating) return
-    setIsAnimating(true)
-    trackSeen(currentMeal.id)
-    const day = currentDay ? DAY_NAMES_MAP[currentDay] : 'Wybierz dzień'
-    setToastText(`Dodano: ${currentMeal.nazwa} do: ${day}`)
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 2000)
-    animate(x, 600, { duration: 0.3 }).then(() => {
-      onSwipeRight(currentMeal)
-      nextCard()
+    if (!nav.currentMeal || gestures.isAnimating) return
+    gestures.setIsAnimating(true)
+    nav.trackSeen(nav.currentMeal.id)
+    toast.showAddToast(
+      `Dodano: ${nav.currentMeal.nazwa} do: ${currentDay ? DAY_NAMES_MAP[currentDay] : 'Wybierz dzień'}`
+    )
+    const meal = nav.currentMeal
+    gestures.animateSwipe('right').then(() => {
+      onSwipeRight(meal)
+      nav.nextCard(ncb)
     })
-  }, [currentMeal, currentDay, isAnimating, x, onSwipeRight, nextCard, trackSeen])
+  }, [nav, gestures, currentDay, toast, onSwipeRight, ncb])
 
   const handleSwipeLeft = useCallback(() => {
-    if (isAnimating || !currentMeal) return
-    setIsAnimating(true)
-    trackSeen(currentMeal.id)
-    animate(x, -600, { duration: 0.3 }).then(() => nextCard())
-  }, [isAnimating, x, nextCard, currentMeal, trackSeen])
-
-  const handleDragEnd = useCallback(
-    (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-      if (isAnimating) return
-      const offset = info.offset.x
-      if (Math.abs(offset) > SWIPE_THRESHOLD) {
-        if (offset > 0) handleSwipeRight()
-        else handleSwipeLeft()
-      } else {
-        animate(x, 0, { type: 'spring', stiffness: 500, damping: 30 })
-      }
-    },
-    [isAnimating, handleSwipeRight, handleSwipeLeft, x]
-  )
-
-  const [dragStartX, setDragStartX] = useState(0)
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    setDragStartX(e.clientX)
-  }, [])
-  const handleCardTap = useCallback(
-    (e: React.PointerEvent) => {
-      if (Math.abs(e.clientX - dragStartX) < 10 && currentMeal) {
-        setModalMeal(currentMeal)
-      }
-    },
-    [dragStartX, currentMeal]
-  )
-
-  const handleSkipDay = useCallback(() => {
-    if (onSkipDay) onSkipDay()
-    else onComplete()
-  }, [onSkipDay, onComplete])
+    if (gestures.isAnimating || !nav.currentMeal) return
+    gestures.setIsAnimating(true)
+    nav.trackSeen(nav.currentMeal.id)
+    gestures.animateSwipe('left').then(() => nav.nextCard(ncb))
+  }, [gestures, nav, ncb])
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (modalMeal) return
-      if (e.key === 'ArrowLeft') handleSwipeLeft()
-      if (e.key === 'ArrowRight') handleSwipeRight()
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [handleSwipeLeft, handleSwipeRight, modalMeal])
+    onSwipeRightRef.current = handleSwipeRight
+    onSwipeLeftRef.current = handleSwipeLeft
+  }, [handleSwipeRight, handleSwipeLeft, onSwipeRightRef, onSwipeLeftRef])
+
+  const handleCardTap = useCallback(
+    (e: React.PointerEvent) => {
+      if (Math.abs(e.clientX - gestures.dragStartX) < 10 && nav.currentMeal)
+        setModalMeal(toMealForModal(nav.currentMeal))
+    },
+    [gestures.dragStartX, nav.currentMeal]
+  )
 
   const handleReshuffle = useCallback(() => {
-    setShowSuccess(false)
-    setShowConfetti(false)
+    toast.resetSuccess()
     setCurrentSwipeIndexInContext?.(0)
-    x.set(0)
-    setIsAnimating(false)
-  }, [x, setCurrentSwipeIndexInContext])
+    gestures.resetX()
+    gestures.setIsAnimating(false)
+  }, [toast, setCurrentSwipeIndexInContext, gestures])
 
-  if (showSuccess) {
+  if (toast.showSuccess) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-background-light dark:bg-background-dark relative overflow-hidden">
-        {showConfetti && (
+      <div className="flex-1 flex items-center justify-center bg-background relative overflow-hidden">
+        {toast.showConfetti && (
           <div className="absolute inset-0 pointer-events-none">
-            {confettiItems.map((item) => (
+            {toast.confettiItems.map((item) => (
               <div
                 key={item.id}
                 className="absolute animate-bounce"
@@ -252,15 +147,11 @@ export default function SwipeView({
         )}
         <div className="text-center z-10">
           <div className="text-6xl mb-4 animate-bounce">🎉</div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-text-primary-dark">
-            Wszystkie propozycje przejrzane!
-          </h2>
-          <p className="text-slate-600 dark:text-text-secondary-dark mt-2">
-            Nie ma więcej kart do przejrzenia
-          </p>
+          <h2 className="text-2xl font-bold text-on-surface">Wszystkie propozycje przejrzane!</h2>
+          <p className="text-on-surface-variant mt-2">Nie ma więcej kart do przejrzenia</p>
           <button
             onClick={handleReshuffle}
-            className="mt-6 px-6 py-3 bg-primary text-white rounded-full font-bold shadow-lg hover:bg-primary/90 transition-colors"
+            className="mt-6 px-6 py-3 bg-primary text-on-primary rounded-full font-bold shadow-[0_0_30px_rgba(105,221,150,0.3)] hover:bg-primary/90 transition-colors"
           >
             Losuj ponownie
           </button>
@@ -269,19 +160,22 @@ export default function SwipeView({
     )
   }
 
-  if (!currentMeal) {
+  if (!nav.currentMeal) {
     return (
-      <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+      <div className="flex-1 flex flex-col bg-background overflow-hidden">
         <DaySelector
           weeklyPlan={weeklyPlan}
-          weekDates={weekDates}
+          weekDates={nav.weekDates}
           selectedDay={currentDay}
           onSelect={(day) => onDaySelect?.(day)}
-          showThumbnails
         />
-        {/* <CategoryFilter ... /> hidden for UX redesign */}
+        <CompatibilityIndicator
+          compatible={nav.compatibilityStats.compatible}
+          total={nav.compatibilityStats.total}
+          warning={nav.compatibilityStats.warning}
+        />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center text-slate-500 dark:text-text-secondary-dark px-6" data-testid="empty-state">
+          <div className="text-center text-on-surface-variant px-6" data-testid="empty-state">
             <p className="text-lg">Brak więcej posiłków</p>
           </div>
         </div>
@@ -289,65 +183,54 @@ export default function SwipeView({
     )
   }
 
-  const stackCards = activeMeals.slice(currentIndex, currentIndex + 3)
-
+  const stackCards = nav.activeMeals.slice(nav.currentIndex, nav.currentIndex + 3)
   return (
-    <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark overflow-hidden relative">
-      {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-white px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
+    <main className="flex flex-col items-center justify-center gap-3 px-4 py-2 max-w-lg mx-auto w-full relative bg-background h-[calc(100dvh-theme(height.header))]">
+      {toast.showToast && (
+        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-on-primary px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
           <span className="material-symbols-outlined text-[18px]">check_circle</span>
-          <span className="font-semibold truncate">{toastText}</span>
+          <span className="font-semibold truncate">{toast.toastText}</span>
         </div>
       )}
-
-      {/* Reshuffle Toast */}
-      {reshuffleToast && (
-        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-slate-700 text-white px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
+      {toast.reshuffleToast && (
+        <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-surface-container text-on-surface px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
           <span>🔄</span>
           <span className="font-semibold">Nowe propozycje!</span>
         </div>
       )}
-
-      {/* Day Selector */}
-      <DaySelector
-        weeklyPlan={weeklyPlan}
-        weekDates={weekDates}
-        selectedDay={currentDay}
-        onSelect={(day) => onDaySelect?.(day)}
-        showThumbnails
-      />
-
-      {/* Category & Cuisine Filter — hidden for UX redesign */}
-      {/* <CategoryFilter ... /> */}
-
-      {/* Card Stack Area */}
-      <div className="flex-1 flex flex-col items-center px-4 pb-2 relative min-h-0">
+      <div className="shrink-0 mb-2 self-start">
+        <div className="inline-flex items-center gap-2 bg-primary text-on-primary px-3 py-1 rounded-[24px] h-7">
+          <span className="w-2 h-2 rounded-full bg-on-primary animate-pulse"></span>
+          <span className="font-label text-[11px] font-bold uppercase tracking-wide">
+            {nav.compatibilityStats.compatible} POSIŁKI PASUJĄ
+          </span>
+        </div>
+      </div>
+      <div className="relative w-full flex justify-center">
         <SwipeStack
           stackCards={stackCards}
-          currentIndex={currentIndex}
-          totalCards={activeMeals.length}
-          x={x}
-          rotate={rotate}
-          likeOpacity={likeOpacity}
-          nopeOpacity={nopeOpacity}
-          onDragEnd={handleDragEnd}
-          onPointerDown={handlePointerDown}
+          currentIndex={nav.currentIndex}
+          totalCards={nav.activeMeals.length}
+          x={gestures.x}
+          rotate={gestures.rotate}
+          likeOpacity={gestures.likeOpacity}
+          nopeOpacity={gestures.nopeOpacity}
+          onDragEnd={gestures.handleDragEnd}
+          onPointerDown={gestures.handlePointerDown}
           onPointerUp={handleCardTap}
           people={settings.people}
         />
-
+      </div>
+      <div className="flex items-center justify-center gap-6 py-4">
         <SwipeActions
           onLeft={handleSwipeLeft}
           onRight={handleSwipeRight}
-          disabled={isAnimating}
-          currentDay={currentDay}
-          onSkipDay={handleSkipDay}
+          disabled={gestures.isAnimating}
+          _currentDay={currentDay}
+          onSkipDay={nav.handleSkipDay}
         />
       </div>
-
-      {/* Meal Detail Modal */}
       <MealModal meal={modalMeal} onClose={() => setModalMeal(null)} />
-    </div>
+    </main>
   )
 }

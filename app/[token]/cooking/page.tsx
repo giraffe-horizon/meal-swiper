@@ -24,7 +24,7 @@ function getDefaultDay(weeklyPlan: ReturnType<typeof useAppContext>['weeklyPlan'
 }
 
 export default function CookingPage() {
-  const { weeklyPlan, weekOffset, settings, scaleFactor } = useAppContext()
+  const { weeklyPlan, weekOffset, settings, scaleFactor, getVariantAssignment } = useAppContext()
   const { weekDates } = useWeekDates(weekOffset)
 
   const defaultDay = useMemo(() => getDefaultDay(weeklyPlan), [weeklyPlan])
@@ -32,11 +32,12 @@ export default function CookingPage() {
 
   const effectiveDay = selectedDay && weeklyPlan[selectedDay] ? selectedDay : defaultDay
   const meal = effectiveDay ? weeklyPlan[effectiveDay] : null
+  const variantAssignment = meal ? getVariantAssignment(meal.id) : null
 
   const handleDaySelect = (day: DayKey) => setSelectedDay(day)
 
   return (
-    <div className="flex-1 overflow-y-auto min-h-0">
+    <div className="flex-1 overflow-y-auto min-h-0 pb-nav-clearance">
       <DaySelector
         weeklyPlan={weeklyPlan}
         weekDates={weekDates}
@@ -50,14 +51,16 @@ export default function CookingPage() {
           meal={meal}
           people={settings.people}
           scaleFactor={scaleFactor}
+          persons={settings.persons}
+          variantAssignment={variantAssignment}
         />
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center p-8">
           <div className="text-6xl mb-4">🍽️</div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+          <h2 className="text-2xl font-bold text-on-surface font-headline mb-2">
             Brak zaplanowanego posiłku
           </h2>
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-on-surface-variant font-body">
             Zaplanuj posiłki w zakładce Plan, aby zobaczyć przepis.
           </p>
         </div>
