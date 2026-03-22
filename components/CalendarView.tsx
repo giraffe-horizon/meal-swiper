@@ -41,7 +41,7 @@ export default function CalendarView({
   return (
     <main className="max-w-2xl mx-auto px-6 pb-40">
       {/* Week Navigation Header */}
-      <header className="mb-10">
+      <header className="mb-5">
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => setWeekOffset(weekOffset - 1)}
@@ -67,7 +67,7 @@ export default function CalendarView({
       </header>
 
       {/* Horizontal Calendar Scroll */}
-      <div className="flex justify-between gap-2 overflow-x-auto pb-4 mb-10 hide-scrollbar">
+      <div className="flex justify-between gap-2 overflow-x-auto pb-4 mb-5 hide-scrollbar">
         {DAY_KEYS.map((day, index) => {
           const hasContent = weeklyPlan[day] !== null || weeklyPlan[`${day}_free`]
           const dayNames = ['PON', 'WT', 'ŚR', 'CZW', 'PT']

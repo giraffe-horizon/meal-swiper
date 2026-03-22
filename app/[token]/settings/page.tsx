@@ -11,7 +11,7 @@ import { filterMealsByPreferences } from '@/lib/meal-filter'
 const DIET_OPTIONS = [
   { id: 'none', label: 'Brak', flags: [] as DietaryFlag[] },
   { id: 'vegetarian', label: 'Wege', flags: ['vegetarian'] as DietaryFlag[] },
-  { id: 'vegan', label: 'Wega', flags: ['vegan'] as DietaryFlag[] },
+  { id: 'vegan', label: 'Wegańska', flags: ['vegan'] as DietaryFlag[] },
   { id: 'gluten_free', label: 'Bezglut.', flags: ['gluten_free'] as DietaryFlag[] },
   { id: 'dairy_free', label: 'Bez laktozy', flags: ['dairy_free'] as DietaryFlag[] },
 ] as const
