@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Card from '@/components/ui/Card'
 
 interface HouseholdSectionProps {
   tenantToken: string
@@ -63,7 +64,7 @@ export default function HouseholdSection({ tenantToken }: HouseholdSectionProps)
       <h3 className="font-headline text-sm text-on-surface-variant uppercase tracking-widest font-bold">
         Twoje gospodarstwo
       </h3>
-      <div className="bg-surface-container rounded-[20px] p-6">
+      <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center">
@@ -126,7 +127,7 @@ export default function HouseholdSection({ tenantToken }: HouseholdSectionProps)
             Udostępnij gospodarstwo
           </button>
         </div>
-      </div>
+      </Card>
     </section>
   )
 }

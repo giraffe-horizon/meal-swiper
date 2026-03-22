@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from 'react'
 import type { PersonSettings, DietaryFlag, CatalogIngredient } from '@/types'
+import Card from '@/components/ui/Card'
+import SliderField from '@/components/ui/SliderField'
 
 const DIET_OPTIONS = [
   { id: 'none', label: 'Brak', flags: [] as DietaryFlag[] },
@@ -99,7 +101,7 @@ export default function PersonCard({
   }
 
   return (
-    <article className="bg-surface-container rounded-[20px] p-6 space-y-6">
+    <Card className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
@@ -132,40 +134,22 @@ export default function PersonCard({
 
       {/* Nutrients Sliders */}
       <div className="space-y-6">
-        <div className="space-y-3">
-          <div className="flex justify-between items-end">
-            <label className="font-headline text-sm text-on-surface-variant">
-              Cel energetyczny
-            </label>
-            <span className="font-label text-lg font-bold text-tertiary">
-              {person.kcal} <span className="text-xs uppercase">kcal</span>
-            </span>
-          </div>
-          <input
-            className="w-full"
-            max="4000"
-            min="1200"
-            type="range"
-            value={person.kcal}
-            onChange={(e) => handleKcalChange(parseInt(e.target.value))}
-          />
-        </div>
-        <div className="space-y-3">
-          <div className="flex justify-between items-end">
-            <label className="font-headline text-sm text-on-surface-variant">Białko</label>
-            <span className="font-label text-lg font-bold text-tertiary">
-              {person.protein} <span className="text-xs uppercase">g</span>
-            </span>
-          </div>
-          <input
-            className="w-full"
-            max="250"
-            min="40"
-            type="range"
-            value={person.protein}
-            onChange={(e) => handleProteinChange(parseInt(e.target.value))}
-          />
-        </div>
+        <SliderField
+          label="Cel energetyczny"
+          value={person.kcal}
+          unit="kcal"
+          min={1200}
+          max={4000}
+          onChange={handleKcalChange}
+        />
+        <SliderField
+          label="Białko"
+          value={person.protein}
+          unit="g"
+          min={40}
+          max={250}
+          onChange={handleProteinChange}
+        />
       </div>
 
       {/* Diet Radio Group */}
@@ -297,6 +281,6 @@ export default function PersonCard({
           </div>
         </div>
       </div>
-    </article>
+    </Card>
   )
 }

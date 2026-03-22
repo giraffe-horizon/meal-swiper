@@ -1,6 +1,7 @@
 'use client'
 
 import IngredientRow from './IngredientRow'
+import Section from '@/components/ui/Section'
 
 interface IngredientItem {
   name: string
@@ -31,14 +32,10 @@ export default function IngredientSection({
   if (items.length === 0) return null
 
   return (
-    <section>
-      <div className="flex items-center gap-4 mb-6">
-        <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
-          <span className={`material-symbols-outlined ${iconColor} text-[24px]`}>{icon}</span>
-          {title}
-        </h2>
-        <div className="h-[1px] w-full bg-outline-variant/30"></div>
-      </div>
+    <Section
+      title={title}
+      icon={<span className={`material-symbols-outlined ${iconColor} text-[24px]`}>{icon}</span>}
+    >
       <div className="space-y-4">
         {items.map((ing, i) => {
           const key = `${keyPrefix}-${i}`
@@ -54,6 +51,6 @@ export default function IngredientSection({
           )
         })}
       </div>
-    </section>
+    </Section>
   )
 }

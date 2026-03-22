@@ -9,6 +9,7 @@ import CookingHero from '@/components/cooking/CookingHero'
 import IngredientSection from '@/components/cooking/IngredientSection'
 import IngredientRow from '@/components/cooking/IngredientRow'
 import { useCookingData } from '@/hooks/useCookingData'
+import Section from '@/components/ui/Section'
 
 interface CookingViewProps {
   meal: Meal | MealWithVariants
@@ -106,16 +107,15 @@ export default function CookingView({
             {variantData.personData.map((personInfo, personIndex) => {
               const uniqueIngredients = variantData.uniqueByVariant.get(personInfo.variant.id) || []
               return (
-                <section key={personInfo.person.name}>
-                  <div className="flex items-center gap-4 mb-6">
-                    <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
-                      <span className="material-symbols-outlined text-secondary text-[24px]">
-                        person
-                      </span>
-                      {personInfo.person.name} ({personInfo.resultKcal} kcal)
-                    </h2>
-                    <div className="h-[1px] w-full bg-outline-variant/30"></div>
-                  </div>
+                <Section
+                  key={personInfo.person.name}
+                  title={`${personInfo.person.name} (${personInfo.resultKcal} kcal)`}
+                  icon={
+                    <span className="material-symbols-outlined text-secondary text-[24px]">
+                      person
+                    </span>
+                  }
+                >
                   <div className="space-y-4">
                     {uniqueIngredients.map((ing, i) => {
                       const key = `person-${personIndex}-${i}`
@@ -135,7 +135,7 @@ export default function CookingView({
                       )
                     })}
                   </div>
-                </section>
+                </Section>
               )
             })}
 
@@ -165,16 +165,14 @@ export default function CookingView({
 
         {/* Recipe steps */}
         {activeSteps.length > 0 && (
-          <section>
-            <div className="flex items-center gap-4 mb-6">
-              <h2 className="font-headline text-base font-bold text-on-surface-variant flex items-center gap-3 flex-shrink-0">
-                <span className="material-symbols-outlined text-primary text-[24px]">
-                  format_list_numbered
-                </span>
-                Przepis
-              </h2>
-              <div className="h-[1px] w-full bg-outline-variant/30"></div>
-            </div>
+          <Section
+            title="Przepis"
+            icon={
+              <span className="material-symbols-outlined text-primary text-[24px]">
+                format_list_numbered
+              </span>
+            }
+          >
             <CookingProgressBar
               total={activeSteps.length}
               done={activeSteps.filter((_, i) => checkedSteps[i]).length}
@@ -184,7 +182,7 @@ export default function CookingView({
               checkedSteps={checkedSteps}
               onToggleStep={toggleStep}
             />
-          </section>
+          </Section>
         )}
 
         {/* Tips */}

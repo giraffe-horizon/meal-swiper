@@ -11,6 +11,7 @@ import {
   useShoppingCheckedQuery,
   useShoppingCheckedMutation,
 } from '@/hooks/queries/useShoppingCheckedQuery'
+import Section from '@/components/ui/Section'
 
 interface ShoppingListViewProps {
   weeklyPlan: WeeklyPlan
@@ -208,13 +209,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
               {/* Variant-based categorized display */}
               {isVariantBased && Object.keys(itemsByCategory).length > 0 ? (
                 Object.entries(itemsByCategory).map(([category, categoryItems]) => (
-                  <section key={category}>
-                    <div className="flex items-center gap-4 mb-6">
-                      <h3 className="font-headline text-lg font-bold text-on-surface-variant flex-shrink-0 capitalize">
-                        {category}
-                      </h3>
-                      <div className="h-[1px] w-full bg-outline-variant/30"></div>
-                    </div>
+                  <Section key={category} title={category}>
                     <div className="space-y-4">
                       {categoryItems.map((item) => {
                         const isChecked = checkedItems[item.normalizedName] || false
@@ -271,17 +266,11 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
                         )
                       })}
                     </div>
-                  </section>
+                  </Section>
                 ))
               ) : (
                 /* Legacy flat display */
-                <section>
-                  <div className="flex items-center gap-4 mb-6">
-                    <h3 className="font-headline text-lg font-bold text-on-surface-variant flex-shrink-0">
-                      Produkty
-                    </h3>
-                    <div className="h-[1px] w-full bg-outline-variant/30"></div>
-                  </div>
+                <Section title="Produkty">
                   <div className="space-y-4">
                     {items.map((item) => {
                       const isChecked = checkedItems[item.normalizedName] || false
@@ -336,7 +325,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
                       )
                     })}
                   </div>
-                </section>
+                </Section>
               )}
             </div>
 
