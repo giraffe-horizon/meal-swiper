@@ -81,7 +81,6 @@ const defaultProps = {
   currentDay: 'mon' as const,
   onComplete: vi.fn(),
   weeklyPlan: defaultPlan,
-  onSkipAll: vi.fn(),
   onSkipDay: vi.fn(),
   shuffledMealsFromContext: [mockMeal, mockMeal2],
   currentSwipeIndexFromContext: 0,

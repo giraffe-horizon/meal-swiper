@@ -34,10 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(
                   function(registration) {
-                    console.log('Service Worker registration successful with scope: ', registration.scope);
+                    console.debug('Service Worker registration successful with scope: ', registration.scope);
                   },
                   function(err) {
-                    console.log('Service Worker registration failed: ', err);
+                    console.error('Service Worker registration failed: ', err);
                   }
                 );
               });

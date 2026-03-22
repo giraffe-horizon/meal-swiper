@@ -140,10 +140,6 @@ export default function SettingsPage() {
     updateSettings({ ...settings, persons: newPersons })
   }
 
-  const setTheme = (theme: 'light' | 'dark' | 'system') => {
-    updateSettings({ ...settings, theme })
-  }
-
   const saveTenantName = async () => {
     if (!tenantToken) return
     try {
@@ -328,9 +324,7 @@ export default function SettingsPage() {
 
               {/* Diet Radio Group */}
               <div className="space-y-3">
-                <label className="text-sm font-bold text-on-surface">
-                  Rodzaj diety
-                </label>
+                <label className="text-sm font-bold text-on-surface">Rodzaj diety</label>
                 <div className="grid grid-cols-2 gap-2">
                   {DIET_OPTIONS.slice(0, 4).map((option) => {
                     const isSelected = currentDiet === option.id
@@ -351,9 +345,7 @@ export default function SettingsPage() {
                           checked={isSelected}
                           onChange={(e) => handleDietChange(index, e.target.value)}
                         />
-                        <span className="text-sm font-semibold">
-                          {option.label}
-                        </span>
+                        <span className="text-sm font-semibold">{option.label}</span>
                       </label>
                     )
                   })}
@@ -362,9 +354,7 @@ export default function SettingsPage() {
 
               {/* Cuisine Preference Chips */}
               <div className="space-y-3">
-                <label className="text-sm font-bold text-on-surface">
-                  Ulubione kuchnie
-                </label>
+                <label className="text-sm font-bold text-on-surface">Ulubione kuchnie</label>
                 {cuisinesLoading ? (
                   <div className="text-on-surface-variant text-sm">Ładowanie...</div>
                 ) : (
@@ -394,9 +384,7 @@ export default function SettingsPage() {
 
               {/* Excluded ingredients tags */}
               <div className="space-y-3">
-                <label className="text-sm font-bold text-on-surface">
-                  Wykluczone składniki
-                </label>
+                <label className="text-sm font-bold text-on-surface">Wykluczone składniki</label>
                 <div className="flex flex-wrap gap-2">
                   {/* DB-backed excluded ingredients */}
                   {excludedIngredientObjects.map((ingredient) => (

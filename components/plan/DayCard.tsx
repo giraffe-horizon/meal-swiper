@@ -23,7 +23,7 @@ export default function DayCard({
   isFree,
   dateStr: _dateStr,
   dayName: _dayName,
-  people,
+  people: _people,
   onDayClick,
   onRemoveMeal,
   onToggleVacation,
@@ -110,7 +110,9 @@ export default function DayCard({
               }}
               className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"
             >
-              <span className="material-symbols-outlined text-on-surface-variant text-lg">more_vert</span>
+              <span className="material-symbols-outlined text-on-surface-variant text-lg">
+                more_vert
+              </span>
             </button>
             {activeMenu && (
               <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-20">
