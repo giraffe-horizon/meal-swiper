@@ -433,7 +433,7 @@ export default function SettingsPage() {
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="np. orzechy, gluten..."
+                      placeholder="Wpisz i naciśnij Enter..."
                       value={ingredientSearch}
                       onChange={(e) => setIngredientSearch(e.target.value)}
                       onKeyDown={(e) => {
@@ -450,8 +450,8 @@ export default function SettingsPage() {
                       }}
                       className="px-3 py-1.5 rounded-full bg-surface-container-highest text-on-surface text-xs border border-dashed border-outline-variant/30 focus:ring-0 min-w-[120px]"
                     />
-                    {ingredientSearch && filteredIngredients.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-surface-container-highest rounded-lg border border-outline-variant/30 shadow-lg z-10">
+                    {ingredientSearch.trim() && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-surface-container-highest rounded-lg border border-outline-variant/30 shadow-lg z-10 max-h-32 overflow-y-auto">
                         {filteredIngredients.map((ingredient) => (
                           <button
                             key={ingredient.id}
@@ -461,6 +461,12 @@ export default function SettingsPage() {
                             {ingredient.name}
                           </button>
                         ))}
+                        <button
+                          onClick={() => handleIngredientAdd(index, ingredientSearch.trim())}
+                          className="w-full text-left px-3 py-2 hover:bg-surface-container-high text-sm text-primary"
+                        >
+                          + Dodaj &quot;{ingredientSearch.trim()}&quot;
+                        </button>
                       </div>
                     )}
                   </div>

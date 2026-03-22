@@ -2073,6 +2073,39 @@ class LocalDatabase implements D1Database {
       }
 
       console.log(`Seeded ${meals.length} example meals in local SQLite database`)
+
+      // Seed ingredients for exclusion feature
+      const ingredientSeeds = [
+        { id: 'orzechy', name: 'Orzechy', category: 'bakalie' },
+        { id: 'mleko', name: 'Mleko', category: 'nabiał' },
+        { id: 'jaja', name: 'Jaja', category: 'nabiał' },
+        { id: 'gluten', name: 'Gluten', category: 'zboża' },
+        { id: 'soja', name: 'Soja', category: 'inne' },
+        { id: 'ryby', name: 'Ryby', category: 'mięso' },
+        { id: 'owoce-morza', name: 'Owoce morza', category: 'mięso' },
+        { id: 'laktoza', name: 'Laktoza', category: 'nabiał' },
+        { id: 'seler', name: 'Seler', category: 'warzywa' },
+        { id: 'gorczyca', name: 'Gorczyca', category: 'przyprawy' },
+        { id: 'sezam', name: 'Sezam', category: 'bakalie' },
+        { id: 'lupiny', name: 'Łubin', category: 'inne' },
+        { id: 'miod', name: 'Miód', category: 'inne' },
+        { id: 'wieprzowina', name: 'Wieprzowina', category: 'mięso' },
+        { id: 'wolowina', name: 'Wołowina', category: 'mięso' },
+        { id: 'drob', name: 'Drób', category: 'mięso' },
+        { id: 'maslo', name: 'Masło', category: 'nabiał' },
+        { id: 'ser', name: 'Ser', category: 'nabiał' },
+        { id: 'cukier', name: 'Cukier', category: 'inne' },
+        { id: 'kukurydza', name: 'Kukurydza', category: 'warzywa' },
+      ]
+
+      const insertIngredient = this.db.prepare(
+        'INSERT OR IGNORE INTO ingredients (id, name, category) VALUES (?, ?, ?)'
+      )
+      for (const ing of ingredientSeeds) {
+        insertIngredient.run(ing.id, ing.name, ing.category)
+      }
+
+      console.log(`Seeded ${ingredientSeeds.length} ingredients for exclusion feature`)
     } catch (error) {
       console.error('Error seeding data:', error)
       throw error
