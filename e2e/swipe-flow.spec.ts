@@ -55,7 +55,7 @@ test.describe('Swipe flow', () => {
 
     const firstMeal = await page.locator('h2').first().textContent()
 
-    const skipBtn = page.locator('button[title="Pomiń ten dzień"]')
+    const skipBtn = page.locator('button[title="Pomiń tę propozycję"]')
     await expect(skipBtn).toBeVisible({ timeout: 5000 })
     await skipBtn.click()
 
@@ -129,7 +129,10 @@ test.describe('Shopping list flow', () => {
     await page.waitForTimeout(500)
 
     // Check that the first shopping item shows as checked (has check icon)
-    const firstItemCheck = page.locator('[class*="cursor-pointer"]:has-text("•")').first().locator('[class*="bg-primary"]')
+    const firstItemCheck = page
+      .locator('[class*="cursor-pointer"]:has-text("•")')
+      .first()
+      .locator('[class*="bg-primary"]')
     await expect(firstItemCheck).toBeVisible()
   })
 })

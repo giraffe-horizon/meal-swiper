@@ -44,10 +44,10 @@ test.describe('Settings page', () => {
     expect(numberInputs + buttons, 'Settings page has no interactive controls').toBeGreaterThan(0)
   })
 
-  test('shows theme selector', async ({ page }) => {
-    // Theme selector with options must exist
-    const themeEl = page.getByText(/ciemny|wygląd/i).first()
-    await expect(themeEl).toBeVisible({ timeout: 5000 })
+  test('shows household preferences heading', async ({ page }) => {
+    // Settings page shows "Preferencje domowników" heading
+    const heading = page.getByText(/preferencje domowników/i).first()
+    await expect(heading).toBeVisible({ timeout: 5000 })
   })
 
   test('shows kcal section', async ({ page }) => {
@@ -62,25 +62,25 @@ test.describe('Settings page', () => {
   })
 })
 
-test.describe('Settings - theme selector', () => {
+test.describe('Settings - add person', () => {
   let token: string
 
   test.beforeAll(async ({ baseURL }) => {
     token = await createTestTenant(baseURL!)
   })
 
-  test('theme selector buttons are interactive', async ({ page }) => {
+  test('add person button is interactive', async ({ page }) => {
     await page.goto(`/${token}/settings`)
     await page.waitForLoadState('domcontentloaded')
 
-    const darkBtn = page.getByText(/ciemny/i).first()
-    await expect(darkBtn).toBeVisible({ timeout: 5000 })
+    const addBtn = page.getByText(/dodaj osobę/i).first()
+    await expect(addBtn).toBeVisible({ timeout: 5000 })
 
-    // Click dark mode button — it should not cause errors
-    await darkBtn.click()
+    // Click add person — it should not cause errors
+    await addBtn.click()
     await page.waitForTimeout(200)
 
     // Page should still be functional after clicking
-    await expect(page.getByText(/preferencje|ustawienia/i).first()).toBeVisible()
+    await expect(page.getByText(/preferencje domowników/i).first()).toBeVisible()
   })
 })
