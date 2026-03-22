@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ViewId } from '@/types'
-import { AppProvider, useAppContext } from '@/lib/context'
+import { AppProvider, useAppContext } from '@/lib/providers/AppProvider'
 import Navigation from '@/components/Navigation'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 

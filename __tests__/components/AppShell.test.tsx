@@ -45,6 +45,11 @@ const mockUseAppContext = vi.fn(() => ({
   tenantToken: 'test-token',
 }))
 
+vi.mock('@/lib/providers/AppProvider', () => ({
+  AppProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useAppContext: () => mockUseAppContext(),
+}))
+
 vi.mock('@/lib/context', () => ({
   AppProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   useAppContext: () => mockUseAppContext(),

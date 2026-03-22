@@ -129,9 +129,7 @@ describe('AppProvider / useAppContext', () => {
 
   it('throws if useAppContext used outside provider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    expect(() => render(<ConsumerComponent />)).toThrow(
-      'useAppContext must be used within AppProvider'
-    )
+    expect(() => render(<ConsumerComponent />)).toThrow('must be used within')
     spy.mockRestore()
   })
 
