@@ -59,6 +59,16 @@ export default {
         label: ['Manrope'],
         display: ['Plus Jakarta Sans', 'sans-serif'], // Keep existing for compatibility
       },
+      height: {
+        card: '340px',
+        'card-image': '220px',
+        nav: '64px',
+        header: '48px',
+      },
+      spacing: {
+        'nav-clearance': '160px',
+        'safe-bottom': '96px',
+      },
       borderRadius: {
         DEFAULT: '1rem',
         lg: '2rem',

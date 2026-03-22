@@ -185,7 +185,7 @@ export default function SwipeView({
 
   const stackCards = nav.activeMeals.slice(nav.currentIndex, nav.currentIndex + 3)
   return (
-    <main className="flex flex-col items-center justify-center gap-3 px-4 py-2 max-w-lg mx-auto w-full relative bg-background h-[calc(100dvh-48px)]">
+    <main className="flex flex-col items-center justify-center gap-3 px-4 py-2 max-w-lg mx-auto w-full relative bg-background h-[calc(100dvh-theme(height.header))]">
       {toast.showToast && (
         <div className="fixed top-16 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-auto sm:max-w-sm bg-primary text-on-primary px-4 py-2.5 rounded-xl shadow-lg z-50 flex items-center gap-2 text-sm">
           <span className="material-symbols-outlined text-[18px]">check_circle</span>

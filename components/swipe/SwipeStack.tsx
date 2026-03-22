@@ -33,7 +33,7 @@ export default function SwipeStack({
   people,
 }: SwipeStackProps) {
   return (
-    <div className="relative w-full max-w-sm h-[340px]">
+    <div className="relative w-full max-w-sm h-card">
       {stackCards
         .slice()
         .reverse()
@@ -78,7 +78,7 @@ export default function SwipeStack({
               }}
             >
               {/* Photo */}
-              <div className="w-full h-[220px] relative">
+              <div className="w-full h-card-image relative">
                 {meal.photo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

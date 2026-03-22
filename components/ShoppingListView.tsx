@@ -163,7 +163,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   }
 
   return (
-    <div className="bg-surface text-on-surface font-body min-h-screen pb-40">
+    <div className="bg-surface text-on-surface font-body min-h-screen pb-nav-clearance">
       <main className="px-6 pt-6 max-w-2xl mx-auto">
         {!hasAnyItems ? (
           <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">

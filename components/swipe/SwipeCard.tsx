@@ -49,7 +49,7 @@ function SwipeCard({
       onPointerUp={onPointerUp}
     >
       {/* Meal Photo */}
-      <div className="w-full h-[220px] relative">
+      <div className="w-full h-card-image relative">
         {showPlaceholder ? (
           <MealImagePlaceholder
             category={meal.category}
@@ -115,7 +115,7 @@ function SwipeCard({
             <span className="font-label text-primary font-bold text-sm leading-tight">
               {Math.round(
                 (('kcal_baza' in meal
-                  ? (meal.kcal_baza || meal.kcal_z_miesem || 0)
+                  ? meal.kcal_baza || meal.kcal_z_miesem || 0
                   : meal.variants.find((v) => v.is_default)?.kcal || 0) *
                   people) /
                   2
@@ -129,11 +129,12 @@ function SwipeCard({
             <span className="font-label text-on-surface font-bold text-sm leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
-                  ? (meal.bialko_baza || meal.bialko_z_miesem || 0)
+                  ? meal.bialko_baza || meal.bialko_z_miesem || 0
                   : meal.variants.find((v) => v.is_default)?.protein || 0) *
                   people) /
                   2
-              )}g
+              )}
+              g
             </span>
           </div>
           <div className="flex flex-col text-center">
@@ -143,13 +144,14 @@ function SwipeCard({
             <span className="font-label text-on-surface font-bold text-sm leading-tight">
               {Math.round(
                 (('bialko_baza' in meal
-                  ? ((meal.bialko_baza || meal.bialko_z_miesem || 0) * 0.6)
+                  ? (meal.bialko_baza || meal.bialko_z_miesem || 0) * 0.6
                   : meal.variants.find((v) => v.is_default)?.fat ||
                     (meal.variants.find((v) => v.is_default)?.protein || 0) * 0.6 ||
                     0) *
                   people) /
                   2
-              )}g
+              )}
+              g
             </span>
           </div>
         </div>

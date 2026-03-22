@@ -49,7 +49,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="bg-background text-on-background font-body min-h-screen pb-40">
+    <div className="bg-background text-on-background font-body min-h-screen pb-nav-clearance">
       <main className="max-w-2xl mx-auto px-6 pt-8 space-y-8">
         <section>
           <h1 className="font-headline text-xl font-extrabold tracking-tight text-on-surface mb-4">

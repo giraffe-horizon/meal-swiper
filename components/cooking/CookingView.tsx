@@ -64,7 +64,7 @@ export default function CookingView({
     <div className="bg-surface text-on-surface font-body min-h-screen">
       <CookingHero meal={meal} stats={heroStats} />
 
-      <div className="px-6 mt-8 space-y-12 pb-40 max-w-2xl mx-auto">
+      <div className="px-6 mt-8 space-y-12 pb-nav-clearance max-w-2xl mx-auto">
         {/* Legacy ingredients */}
         {!isVariantMeal && legacyData && (
           <>
