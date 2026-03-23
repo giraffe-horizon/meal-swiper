@@ -1,7 +1,11 @@
 name = "meal-swiper"
+main = ".open-next/worker.js"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
-pages_build_output_dir = ".open-next/assets"
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"

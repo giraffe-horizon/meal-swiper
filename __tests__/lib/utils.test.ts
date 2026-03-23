@@ -25,8 +25,9 @@ describe('utils', () => {
     it('offset +1 gives next monday', () => {
       const thisMonday = getMonday(0)
       const nextMonday = getMonday(1)
-      const diff = (nextMonday.getTime() - thisMonday.getTime()) / (1000 * 60 * 60 * 24)
-      expect(diff).toBe(7)
+      // Compare calendar days instead of milliseconds to avoid DST issues
+      const diffDays = Math.round((nextMonday.getTime() - thisMonday.getTime()) / (1000 * 60 * 60 * 24))
+      expect(diffDays).toBe(7)
     })
   })
 
@@ -45,7 +46,8 @@ describe('utils', () => {
     it('dates are consecutive', () => {
       const dates = getWeekDates(0)
       for (let i = 1; i < dates.length; i++) {
-        const diff = (dates[i].getTime() - dates[i - 1].getTime()) / (1000 * 60 * 60 * 24)
+        // Compare calendar days instead of milliseconds to avoid DST issues
+        const diff = Math.round((dates[i].getTime() - dates[i - 1].getTime()) / (1000 * 60 * 60 * 24))
         expect(diff).toBe(1)
       }
     })
