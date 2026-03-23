@@ -20,7 +20,7 @@ let bundle = readFileSync(BUNDLE_PATH, 'utf8')
 bundle = bundle.replace(/\n\/\/# sourceMappingURL=.*$/, '')
 
 // Add node: prefix to bare Node.js built-in imports (CF Pages requires it)
-const NODE_BUILTINS = ['assert','buffer','child_process','cluster','crypto','dgram','dns','events','fs','http','https','module','net','os','path','querystring','readline','stream','string_decoder','tls','tty','url','util','v8','vm','worker_threads','zlib']
+const NODE_BUILTINS = ['assert','async_hooks','buffer','child_process','cluster','console','crypto','dgram','diagnostics_channel','dns','events','fs','http','http2','https','inspector','module','net','os','path','perf_hooks','process','querystring','readline','stream','string_decoder','timers','tls','trace_events','tty','url','util','v8','vm','wasi','worker_threads','zlib']
 for (const mod of NODE_BUILTINS) {
   bundle = bundle.replaceAll(`from "${mod}"`, `from "node:${mod}"`)
   bundle = bundle.replaceAll(`require("${mod}")`, `require("node:${mod}")`)
