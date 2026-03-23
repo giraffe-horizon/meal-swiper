@@ -28,7 +28,8 @@ describe('useWeekDates', () => {
     const { result: r0 } = renderHook(() => useWeekDates(0))
     const { result: r1 } = renderHook(() => useWeekDates(1))
     const diff = r1.current.weekDates[0].getTime() - r0.current.weekDates[0].getTime()
-    // Allow 1ms delta due to DST or timezone boundary differences
-    expect(Math.round(diff / 1000)).toBe(7 * 24 * 60 * 60)
+    // Use Math.round to handle DST transitions (days can be 23 or 25 hours)
+    const diffDays = Math.round(diff / (1000 * 60 * 60 * 24))
+    expect(diffDays).toBe(7)
   })
 })
