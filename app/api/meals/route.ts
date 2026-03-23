@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { fetchMealsFromD1, fetchAllMealsWithVariants } from '@/lib/db'
 import { getDb } from '@/lib/get-db'
 
-export const runtime = 'nodejs'
 
 export async function GET(request: Request) {
   try {

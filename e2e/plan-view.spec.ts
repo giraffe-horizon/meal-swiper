@@ -22,35 +22,24 @@ test.describe('Plan view - weekly calendar', () => {
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
 
-    // Week range is now displayed as "16 - 20 Marca" format in CalendarView header
-    const dateHeading = page
-      .locator('h2')
-      .filter({ hasText: /\d+\s*-\s*\d+/ })
-      .first()
+    // Week range heading (e.g. "23 - 27 Mar")
+    const dateHeading = page.locator('h2').first()
     await expect(dateHeading).toBeVisible({ timeout: 10000 })
-    const initialText = await dateHeading.textContent()
+    const initialText = (await dateHeading.textContent())!
 
-    await page
-      .locator('button')
-      .filter({ has: page.locator('.material-symbols-outlined') })
-      .filter({ hasText: 'chevron_right' })
-      .first()
-      .click()
-    await page.waitForTimeout(300)
+    // Navigate to next week
+    await page.getByRole('button', { name: 'chevron_right' }).first().click()
 
+    // Wait for the week number indicator to change (more stable than heading text)
+    await expect(dateHeading).not.toHaveText(initialText, { timeout: 10000 })
     const newText = await dateHeading.textContent()
     expect(newText).not.toBe(initialText)
 
-    await page
-      .locator('button')
-      .filter({ has: page.locator('.material-symbols-outlined') })
-      .filter({ hasText: 'chevron_left' })
-      .first()
-      .click()
-    await page.waitForTimeout(300)
+    // Navigate back
+    await page.getByRole('button', { name: 'chevron_left' }).first().click()
 
-    const backText = await dateHeading.textContent()
-    expect(backText).toBe(initialText)
+    // Wait for heading to return to initial text
+    await expect(dateHeading).toHaveText(initialText, { timeout: 10000 })
   })
 
   test('empty day shows add meal button', async ({ page }) => {

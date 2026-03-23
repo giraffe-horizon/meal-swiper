@@ -3,8 +3,6 @@ import { getSettings, saveSettings } from '@/lib/db'
 import { requireTenantId, extractTenantToken } from '@/lib/tenant'
 import { getDb } from '@/lib/get-db'
 
-// Use Node.js runtime for local SQLite compatibility
-export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   const db = await getDb()

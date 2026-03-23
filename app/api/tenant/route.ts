@@ -8,8 +8,6 @@ import {
 } from '@/lib/db'
 import { getDb } from '@/lib/get-db'
 
-// Use Node.js runtime for local SQLite compatibility
-export const runtime = 'nodejs'
 
 // GET /api/tenant?token=<token> — return tenant info
 export async function GET(request: NextRequest) {
