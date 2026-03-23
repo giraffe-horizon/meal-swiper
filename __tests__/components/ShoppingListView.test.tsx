@@ -183,27 +183,7 @@ describe('ShoppingListView', () => {
     })
   })
 
-  it('share list button triggers clipboard write', async () => {
-    // Mock clipboard
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.defineProperty(navigator, 'clipboard', {
-      writable: true,
-      value: { writeText },
-    })
-    window.alert = vi.fn()
-
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
-      wrapper: createWrapper(),
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText(/Makaron/)).toBeInTheDocument()
-    })
-
-    const shareBtn = screen.getByText('Udostępnij')
-    fireEvent.click(shareBtn)
-    expect(writeText).toHaveBeenCalled()
-  })
+  // Share button removed per UX feedback — test no longer applicable
 
   it('reset list with confirm=true clears all items', async () => {
     window.confirm = vi.fn(() => true)
