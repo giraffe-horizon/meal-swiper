@@ -19,6 +19,13 @@ let bundle = readFileSync(BUNDLE_PATH, 'utf8')
 // Remove sourcemap comment
 bundle = bundle.replace(/\n\/\/# sourceMappingURL=.*$/, '')
 
+// Add node: prefix to bare Node.js built-in imports (CF Pages requires it)
+const NODE_BUILTINS = ['assert','buffer','child_process','cluster','crypto','dgram','dns','events','fs','http','https','module','net','os','path','querystring','readline','stream','string_decoder','tls','tty','url','util','v8','vm','worker_threads','zlib']
+for (const mod of NODE_BUILTINS) {
+  bundle = bundle.replaceAll(`from "${mod}"`, `from "node:${mod}"`)
+  bundle = bundle.replaceAll(`require("${mod}")`, `require("node:${mod}")`)
+}
+
 // Rename the last worker_default declaration to __innerWorker__
 const WORKER_DEF = 'var worker_default = {'
 const lastIdx = bundle.lastIndexOf(WORKER_DEF)
