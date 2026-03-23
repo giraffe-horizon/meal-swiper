@@ -45,6 +45,7 @@ export default function PersonCard({
   ingredients,
 }: PersonCardProps) {
   const [ingredientSearch, setIngredientSearch] = useState('')
+  const [ingredientFocused, setIngredientFocused] = useState(false)
   const currentDiet = getCurrentDiet(person)
 
   const excludedIngredientObjects = useMemo(
@@ -58,11 +59,13 @@ export default function PersonCard({
         .filter(
           (ing) =>
             !ing.is_seasoning &&
-            ingredientSearch.trim() &&
-            ing.name.toLowerCase().includes(ingredientSearch.toLowerCase())
+            !(person.excludedIngredients || []).includes(ing.id) &&
+            (ingredientSearch.trim()
+              ? ing.name.toLowerCase().includes(ingredientSearch.toLowerCase())
+              : true)
         )
-        .slice(0, 5),
-    [ingredients, ingredientSearch]
+        .slice(0, 8),
+    [ingredients, ingredientSearch, person.excludedIngredients]
   )
 
   const update = (updates: Partial<PersonSettings>) => onUpdate(index, { ...person, ...updates })
@@ -104,11 +107,6 @@ export default function PersonCard({
     <Card className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-            <span className="text-primary font-headline font-black text-xl uppercase">
-              {(person.name || `Osoba ${index + 1}`).charAt(0)}
-            </span>
-          </div>
           <div>
             <input
               className="bg-transparent border-none p-0 font-headline text-base font-bold text-on-surface focus:ring-0 w-full"
@@ -140,6 +138,7 @@ export default function PersonCard({
           unit="kcal"
           min={1200}
           max={4000}
+          step={50}
           onChange={handleKcalChange}
         />
         <SliderField
@@ -148,6 +147,7 @@ export default function PersonCard({
           unit="g"
           min={40}
           max={250}
+          step={1}
           onChange={handleProteinChange}
         />
       </div>
@@ -247,9 +247,11 @@ export default function PersonCard({
           <div className="relative">
             <input
               type="text"
-              placeholder="Wpisz i naciśnij Enter..."
+              placeholder="Szukaj składnika..."
               value={ingredientSearch}
               onChange={(e) => setIngredientSearch(e.target.value)}
+              onFocus={() => setIngredientFocused(true)}
+              onBlur={() => setTimeout(() => setIngredientFocused(false), 200)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && ingredientSearch.trim()) {
                   e.preventDefault()
@@ -257,25 +259,36 @@ export default function PersonCard({
                   handleIngredientAdd(match ? match.id : ingredientSearch.trim())
                 }
               }}
-              className="px-3 py-1.5 rounded-full bg-surface-container-highest text-on-surface text-xs border border-dashed border-outline-variant/30 focus:ring-0 min-w-[120px]"
+              className="px-3 py-1.5 rounded-full bg-surface-container-highest text-on-surface text-xs border border-dashed border-outline-variant/30 focus:ring-0 min-w-[140px]"
             />
-            {ingredientSearch.trim() && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-surface-container-highest rounded-lg border border-outline-variant/30 shadow-lg z-10 max-h-32 overflow-y-auto">
+            {ingredientFocused && filteredIngredients.length > 0 && (
+              <div className="absolute top-full left-0 mt-1 bg-surface-container-highest rounded-lg border border-outline-variant/30 shadow-lg z-10 max-h-40 overflow-y-auto min-w-[200px]">
                 {filteredIngredients.map((ingredient) => (
                   <button
                     key={ingredient.id}
-                    onClick={() => handleIngredientAdd(ingredient.id)}
-                    className="w-full text-left px-3 py-2 hover:bg-surface-container-high text-sm"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      handleIngredientAdd(ingredient.id)
+                      setIngredientFocused(false)
+                    }}
+                    className="w-full text-left px-3 py-2 hover:bg-surface-container-high text-sm flex items-center justify-between"
                   >
-                    {ingredient.name}
+                    <span>{ingredient.name}</span>
+                    <span className="text-[10px] text-on-surface-variant">{ingredient.category}</span>
                   </button>
                 ))}
-                <button
-                  onClick={() => handleIngredientAdd(ingredientSearch.trim())}
-                  className="w-full text-left px-3 py-2 hover:bg-surface-container-high text-sm text-primary"
-                >
-                  + Dodaj &quot;{ingredientSearch.trim()}&quot;
-                </button>
+                {ingredientSearch.trim() && !filteredIngredients.some(i => i.name.toLowerCase() === ingredientSearch.toLowerCase()) && (
+                  <button
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      handleIngredientAdd(ingredientSearch.trim())
+                      setIngredientFocused(false)
+                    }}
+                    className="w-full text-left px-3 py-2 hover:bg-surface-container-high text-sm text-primary"
+                  >
+                    + Dodaj &quot;{ingredientSearch.trim()}&quot;
+                  </button>
+                )}
               </div>
             )}
           </div>

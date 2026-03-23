@@ -6,10 +6,11 @@ interface SliderFieldProps {
   unit: string
   min: number
   max: number
+  step?: number
   onChange: (value: number) => void
 }
 
-export default function SliderField({ label, value, unit, min, max, onChange }: SliderFieldProps) {
+export default function SliderField({ label, value, unit, min, max, step, onChange }: SliderFieldProps) {
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-end">
@@ -22,6 +23,7 @@ export default function SliderField({ label, value, unit, min, max, onChange }: 
         className="w-full"
         max={max}
         min={min}
+        step={step}
         type="range"
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}

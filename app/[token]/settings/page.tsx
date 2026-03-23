@@ -80,6 +80,9 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Household Info */}
+        {tenantToken && <HouseholdSection tenantToken={tenantToken} />}
+
         {/* Person Cards */}
         {settings.persons.slice(0, settings.people).map((person, index) => (
           <PersonCard
@@ -105,9 +108,6 @@ export default function SettingsPage() {
             Dodaj osobę
           </button>
         )}
-
-        {/* Household Info */}
-        {tenantToken && <HouseholdSection tenantToken={tenantToken} />}
       </main>
     </div>
   )
