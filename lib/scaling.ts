@@ -7,6 +7,7 @@ import type {
   MealWithVariants,
 } from '@/types'
 import { parseAmount, formatAmount, formatNumber } from '@/lib/amounts'
+import { isPantryStaple } from '@/lib/shopping'
 
 // Przepisy bazowe są kalibrowane na 2 osoby × 2000 kcal = 4000 kcal łącznie
 export const BASE_KCAL_PER_PERSON = 2000
@@ -236,6 +237,9 @@ export function aggregateShoppingList(
 
         const ingredientId = variantIngredient.ingredient_id
         const ingredient = variantIngredient.ingredient
+
+        // Skip pantry staples (salt, pepper, oil, etc.)
+        if (ingredient.is_seasoning || isPantryStaple(ingredient.name)) continue
 
         // Skaluj ilość składnika
         const scaledAmount = scaleIngredientAmount(variantIngredient, personScale)

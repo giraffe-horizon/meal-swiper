@@ -153,18 +153,9 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   const checkedCount = items.filter((item) => checkedItems[item.normalizedName]).length
   const progressPercent = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0
 
-  const shareList = () => {
-    let text = '📝 Lista zakupów\n\n'
-    items.forEach((item) => {
-      text += `• ${item.name} — ${item.amount}\n`
-    })
-    navigator.clipboard.writeText(text)
-    alert('✅ Lista skopiowana do schowka!')
-  }
-
   return (
     <div className="bg-surface text-on-surface font-body min-h-screen pb-nav-clearance">
-      <main className="px-6 pt-6 max-w-2xl mx-auto">
+      <main className="px-4 pt-4 max-w-2xl mx-auto">
         {!hasAnyItems ? (
           <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
@@ -178,25 +169,16 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
         ) : (
           <>
             {/* Progress Hero Section */}
-            <section className="mb-10">
-              <div className="flex items-end justify-between mb-6">
-                <div>
-                  <span className="font-label text-tertiary text-sm font-bold tracking-widest uppercase">
-                    POSTĘP ZAKUPÓW
-                  </span>
-                  <h2 className="font-headline text-4xl font-extrabold mt-2 text-on-surface">
-                    {checkedCount}/{totalItems} kupione
-                  </h2>
-                </div>
-                <button
-                  onClick={shareList}
-                  className="flex items-center gap-2 px-6 py-3 rounded-[24px] bg-primary text-on-primary font-semibold transition-all hover:opacity-90 active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-[20px]">share</span>
-                  <span className="text-sm font-bold">Udostępnij</span>
-                </button>
+            <section className="mb-6">
+              <div className="mb-3">
+                <span className="font-label text-tertiary text-xs font-bold tracking-widest uppercase">
+                  POSTĘP ZAKUPÓW
+                </span>
+                <h2 className="font-headline text-2xl font-extrabold mt-1 text-on-surface">
+                  {checkedCount}/{totalItems} kupione
+                </h2>
               </div>
-              <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+              <div className="h-2.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary rounded-full shadow-[0_0_15px_rgba(105,221,150,0.3)] transition-all duration-500"
                   style={{ width: `${progressPercent}%` }}
@@ -205,12 +187,12 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
             </section>
 
             {/* Shopping List Groups */}
-            <div className="space-y-12">
+            <div className="space-y-6">
               {/* Variant-based categorized display */}
               {isVariantBased && Object.keys(itemsByCategory).length > 0 ? (
                 Object.entries(itemsByCategory).map(([category, categoryItems]) => (
                   <Section key={category} title={category}>
-                    <div className="space-y-4">
+                    <div className="space-y-1.5">
                       {categoryItems.map((item) => {
                         const isChecked = checkedItems[item.normalizedName] || false
 
@@ -271,7 +253,7 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
               ) : (
                 /* Legacy flat display */
                 <Section title="Produkty">
-                  <div className="space-y-4">
+                  <div className="space-y-1.5">
                     {items.map((item) => {
                       const isChecked = checkedItems[item.normalizedName] || false
 
@@ -329,8 +311,8 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
               )}
             </div>
 
-            {/* Add Item FAB */}
-            <div className="mt-12 mb-20">
+            {/* Reset Button */}
+            <div className="mt-6 mb-20">
               <button
                 onClick={resetList}
                 className="w-full flex items-center justify-center gap-3 py-4 rounded-xl border-2 border-dashed border-outline-variant/30 text-on-surface-variant hover:border-primary/50 hover:text-primary transition-all"
