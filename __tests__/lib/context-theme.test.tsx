@@ -17,7 +17,8 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 vi.mock('@/hooks/useMeals', () => ({
-  useMeals: () => ({ meals: [], loading: false }),
+  useMeals: () => ({ meals: [], loading: false, error: null, refetch: vi.fn() }),
+  useMealsWithVariants: () => ({ meals: [], loading: false, error: null, refetch: vi.fn() }),
 }))
 
 vi.mock('@/hooks/useWeeklyPlan', () => ({
@@ -52,6 +53,9 @@ vi.mock('@/hooks/useSwipeState', () => ({
     setCurrentSwipeIndex: vi.fn(),
     setSeenIds: vi.fn(),
     shuffleMeals: vi.fn(),
+    shuffleFilteredMeals: vi.fn(),
+    getVariantAssignment: () => null,
+    filteredMeals: [],
     advanceIndex: vi.fn(),
     resetSwipe: vi.fn(),
   }),

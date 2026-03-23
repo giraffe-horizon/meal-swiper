@@ -1,10 +1,12 @@
 'use client'
 
+import IconButton from '@/components/ui/IconButton'
+
 interface SwipeActionsProps {
   onLeft: () => void
   onRight: () => void
   disabled: boolean
-  currentDay: string | null
+  _currentDay: string | null
   onSkipDay: () => void
 }
 
@@ -12,37 +14,51 @@ export default function SwipeActions({
   onLeft,
   onRight,
   disabled,
-  currentDay,
+  _currentDay,
   onSkipDay,
 }: SwipeActionsProps) {
   return (
-    <div className="flex flex-col items-center gap-2 shrink-0 pb-2">
-      <div className="flex items-center justify-center gap-6 sm:gap-8 h-16 sm:h-20">
-        <button
-          onClick={onLeft}
-          disabled={disabled}
-          title="Pomiń tę propozycję"
-          className="w-14 h-14 sm:w-16 sm:h-16 bg-white dark:bg-surface-dark rounded-full shadow-lg flex items-center justify-center text-red-500 border-2 border-red-100 dark:border-red-900/30 transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
+    <div className="flex items-center justify-center gap-6">
+      {/* Reject Button - X (44px) */}
+      <IconButton
+        onClick={onLeft}
+        disabled={disabled}
+        title="Pomiń tę propozycję"
+        className="text-error"
+      >
+        <span className="material-symbols-outlined !text-xl">close</span>
+      </IconButton>
+
+      {/* Like Button - Heart (Primary Action - 60px) */}
+      <IconButton
+        variant="primary"
+        size="lg"
+        onClick={onRight}
+        disabled={disabled}
+        title="Dodaj do planu"
+      >
+        <span
+          className="material-symbols-outlined !text-3xl"
+          style={{ fontVariationSettings: "'FILL' 1" }}
         >
-          <span className="material-symbols-outlined text-3xl font-bold">close</span>
-        </button>
-        <button
-          onClick={onRight}
-          disabled={disabled}
-          title="Dodaj do planu"
-          className="w-14 h-14 sm:w-16 sm:h-16 bg-primary rounded-full shadow-lg shadow-primary/30 flex items-center justify-center text-white transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
+          favorite
+        </span>
+      </IconButton>
+
+      {/* Star Button - Save as Favorite (44px) */}
+      <IconButton
+        onClick={onSkipDay}
+        disabled={disabled}
+        title="Zapisz jako ulubione"
+        className="text-[#FACC15]"
+      >
+        <span
+          className="material-symbols-outlined !text-xl"
+          style={{ fontVariationSettings: "'FILL' 1" }}
         >
-          <span className="material-symbols-outlined text-3xl font-bold">favorite</span>
-        </button>
-      </div>
-      {currentDay && (
-        <button
-          onClick={onSkipDay}
-          className="text-sm text-slate-500 dark:text-text-secondary-dark hover:text-slate-700 dark:hover:text-slate-300 transition-colors py-1"
-        >
-          Pomiń ten dzień &rarr;
-        </button>
-      )}
+          star
+        </span>
+      </IconButton>
     </div>
   )
 }

@@ -64,21 +64,21 @@ export default function SwipePage() {
   // Jeśli wszystkie dni wypełnione/wolne, pokazujemy komunikat zamiast SwipeView
   if (allDaysFilled) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-background-light dark:bg-background-dark p-6">
+      <div className="flex-1 flex items-center justify-center bg-background p-6">
         <div className="text-center max-w-md">
           <span className="material-symbols-outlined text-primary text-7xl mb-4 inline-block">
             check_circle
           </span>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+          <h2 className="text-2xl font-bold text-on-surface font-headline mb-2">
             Tydzień wypełniony!
           </h2>
-          <p className="text-slate-600 dark:text-slate-400 mb-6">
+          <p className="text-on-surface-variant font-body mb-6">
             Wszystkie dni mają przypisane posiłki lub są oznaczone jako wolne. Możesz wrócić do
             planu lub przejść do listy zakupów.
           </p>
           <button
             onClick={() => router.push(`/${tenantToken}/plan`)}
-            className="px-6 py-3 bg-primary text-white rounded-full font-bold shadow-lg hover:bg-primary/90 transition-colors"
+            className="px-6 py-3 bg-primary text-on-primary rounded-full font-bold shadow-[0_0_30px_rgba(105,221,150,0.3)] hover:bg-primary/90 transition-colors"
           >
             Wróć do planu
           </button>
@@ -96,7 +96,6 @@ export default function SwipePage() {
       currentDay={effectiveDay}
       onComplete={handleComplete}
       weeklyPlan={weeklyPlan}
-      onSkipAll={handleComplete}
       onSkipDay={handleSkipDay}
       weekOffset={weekOffset}
       weekDates={weekDates}

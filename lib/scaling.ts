@@ -1,5 +1,13 @@
-import type { Ingredient, PersonSettings } from '@/types'
-import { parseAmount, formatAmount } from '@/lib/amounts'
+import type {
+  Ingredient,
+  PersonSettings,
+  MealVariant,
+  MealVariantIngredient,
+  CatalogIngredient,
+  MealWithVariants,
+} from '@/types'
+import { parseAmount, formatAmount, formatNumber } from '@/lib/amounts'
+import { isPantryStaple } from '@/lib/shopping'
 
 // Przepisy bazowe są kalibrowane na 2 osoby × 2000 kcal = 4000 kcal łącznie
 export const BASE_KCAL_PER_PERSON = 2000
@@ -13,6 +21,12 @@ export function computeScaleFactor(persons: PersonSettings[], basePeople = 2): n
     // Fallback: jeśli brak osób, zakładamy 2 osoby × 2000 kcal = brak skalowania
     return 1
   }
+
+  // Guard against division by zero
+  if (basePeople === 0) {
+    return 1
+  }
+
   const totalKcal = persons.reduce((sum, p) => sum + p.kcal, 0)
   return totalKcal / (basePeople * BASE_KCAL_PER_PERSON)
 }
@@ -33,7 +47,20 @@ export function snapToNiceFraction(value: number): number {
   // Minimum 1/4 (mniej niż 1/4 to tyle co nic)
   if (value < 0.15) return 0.25
 
-  const candidates: number[] = [0.25, 1 / 3, 0.5, 2 / 3, 0.75, 1, 1.25, 1 + 1 / 3, 1.5, 1 + 2 / 3, 1.75, 2]
+  const candidates: number[] = [
+    0.25,
+    1 / 3,
+    0.5,
+    2 / 3,
+    0.75,
+    1,
+    1.25,
+    1 + 1 / 3,
+    1.5,
+    1 + 2 / 3,
+    1.75,
+    2,
+  ]
 
   if (value > 2) {
     // Dla większych wartości zaokrąglaj do 0.5
@@ -109,4 +136,144 @@ export function scaleIngredient(ing: Ingredient, scaleFactor: number): Ingredien
 
 export function scaleNutrition(value: number, scaleFactor: number): number {
   return Math.round(value * scaleFactor)
+}
+
+// ========== NEW VARIANT ARCHITECTURE SCALING ==========
+
+/**
+ * Oblicza skalę osoby względem wariantu posiłku
+ * scale = (person.dailyKcal / person.mealsPerDay) / variant.kcal
+ */
+export function calculatePersonScale(
+  variant: MealVariant,
+  person: PersonSettings
+): { scale: number; resultKcal: number; resultProtein: number } {
+  const dailyKcal = person.dailyKcal || person.kcal || 2000
+  const mealsPerDay = person.mealsPerDay || 3
+  const targetKcalPerMeal = dailyKcal / mealsPerDay
+
+  // Guard against division by zero
+  if (variant.kcal === 0) {
+    return {
+      scale: 1,
+      resultKcal: 0,
+      resultProtein: Math.round(variant.protein),
+    }
+  }
+
+  const scale = targetKcalPerMeal / variant.kcal
+
+  return {
+    scale,
+    resultKcal: Math.round(variant.kcal * scale),
+    resultProtein: Math.round(variant.protein * scale),
+  }
+}
+
+/**
+ * Skaluje ilość składnika według podanej skali
+ * Jeśli scalable=false, zwraca oryginalne wartości bez zmian
+ */
+export function scaleIngredientAmount(
+  ingredient: MealVariantIngredient,
+  scale: number
+): { grams: number | null; ml: number | null; pieces: number | null; display: string } {
+  if (!ingredient.scalable) {
+    // Nie skaluj - zwróć oryginalne wartości
+    return {
+      grams: ingredient.amount_grams,
+      ml: null,
+      pieces: null,
+      display: ingredient.display_amount,
+    }
+  }
+
+  // Skaluj amount_grams
+  const scaledGrams = ingredient.amount_grams * scale
+
+  // Zaokrąglij do 5g
+  const roundedGrams = Math.round(scaledGrams / 5) * 5
+
+  // Wygeneruj display string na podstawie zaokrąglonej wartości
+  let display: string
+  if (roundedGrams >= 1000) {
+    const kg = roundedGrams / 1000
+    display = `${formatNumber(kg)} kg`
+  } else {
+    display = `${roundedGrams} g`
+  }
+
+  return {
+    grams: roundedGrams,
+    ml: null, // TODO: konwersja g→ml dla płynów jeśli będzie potrzebna
+    pieces: null,
+    display,
+  }
+}
+
+/**
+ * Agreguje listę zakupów z planów tygodniowych zawierających warianty i skale
+ */
+export function aggregateShoppingList(
+  weekPlan: Array<{
+    meal: MealWithVariants
+    variantAssignment: Record<string, MealVariant>
+    personScales: Record<string, number>
+  }>
+): Array<{ ingredient: CatalogIngredient; totalGrams: number; display: string }> {
+  // Mapa ingredient_id → { ingredient, totalGrams }
+  const ingredientMap = new Map<string, { ingredient: CatalogIngredient; totalGrams: number }>()
+
+  for (const planEntry of weekPlan) {
+    const { variantAssignment, personScales } = planEntry
+
+    // Dla każdej osoby i jej przypisanego wariantu
+    for (const [personName, variant] of Object.entries(variantAssignment)) {
+      const personScale = personScales[personName] || 1
+
+      // Dla każdego składnika w wariancie
+      for (const variantIngredient of variant.ingredients || []) {
+        if (!variantIngredient.ingredient) continue
+
+        const ingredientId = variantIngredient.ingredient_id
+        const ingredient = variantIngredient.ingredient
+
+        // Skip pantry staples (salt, pepper, oil, etc.)
+        if (ingredient.is_seasoning || isPantryStaple(ingredient.name)) continue
+
+        // Skaluj ilość składnika
+        const scaledAmount = scaleIngredientAmount(variantIngredient, personScale)
+
+        if (scaledAmount.grams === null) continue // nie można skalować
+
+        // Agreguj w mapie
+        const existing = ingredientMap.get(ingredientId)
+        if (existing) {
+          existing.totalGrams += scaledAmount.grams
+        } else {
+          ingredientMap.set(ingredientId, {
+            ingredient,
+            totalGrams: scaledAmount.grams,
+          })
+        }
+      }
+    }
+  }
+
+  // Konwertuj mapę na listę i posortuj
+  const result = Array.from(ingredientMap.values()).map(({ ingredient, totalGrams }) => ({
+    ingredient,
+    totalGrams,
+    display: totalGrams >= 1000 ? `${formatNumber(totalGrams / 1000)} kg` : `${totalGrams} g`,
+  }))
+
+  // Sortuj po kategorii składnika, potem po nazwie
+  result.sort((a, b) => {
+    if (a.ingredient.category !== b.ingredient.category) {
+      return a.ingredient.category.localeCompare(b.ingredient.category)
+    }
+    return a.ingredient.name.localeCompare(b.ingredient.name)
+  })
+
+  return result
 }

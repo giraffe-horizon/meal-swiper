@@ -22,47 +22,38 @@ test.describe('Plan view - weekly calendar', () => {
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
 
-    const dateSpan = page
-      .locator('span')
-      .filter({ hasText: /\d+-\d+\.\d+/ })
-      .first()
-    const initialText = await dateSpan.textContent()
+    // Week range heading (e.g. "23 - 27 Mar")
+    const dateHeading = page.locator('h2').first()
+    await expect(dateHeading).toBeVisible({ timeout: 10000 })
+    const initialText = (await dateHeading.textContent())!
 
-    await page
-      .locator('button')
-      .filter({ has: page.locator('.material-symbols-outlined') })
-      .filter({ hasText: 'chevron_right' })
-      .first()
-      .click()
-    await page.waitForTimeout(300)
+    // Navigate to next week
+    await page.getByRole('button', { name: 'chevron_right' }).first().click()
 
-    const newText = await dateSpan.textContent()
+    // Wait for the week number indicator to change (more stable than heading text)
+    await expect(dateHeading).not.toHaveText(initialText, { timeout: 10000 })
+    const newText = await dateHeading.textContent()
     expect(newText).not.toBe(initialText)
 
-    await page
-      .locator('button')
-      .filter({ has: page.locator('.material-symbols-outlined') })
-      .filter({ hasText: 'chevron_left' })
-      .first()
-      .click()
-    await page.waitForTimeout(300)
+    // Navigate back
+    await page.getByRole('button', { name: 'chevron_left' }).first().click()
 
-    const backText = await dateSpan.textContent()
-    expect(backText).toBe(initialText)
+    // Wait for heading to return to initial text
+    await expect(dateHeading).toHaveText(initialText, { timeout: 10000 })
   })
 
-  test('empty day shows "Brak planu"', async ({ page }) => {
+  test('empty day shows add meal button', async ({ page }) => {
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
 
-    await expect(page.getByText('Brak planu').first()).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText('Dodaj posiłek').first()).toBeVisible({ timeout: 10000 })
   })
 
-  test('settings link is visible in header', async ({ page }) => {
+  test('settings link is visible in navigation', async ({ page }) => {
     await page.goto(`/${token}/plan`)
     await page.waitForLoadState('domcontentloaded')
 
-    const settingsLink = page.locator('a[href*="/settings"]').first()
+    const settingsLink = page.locator('nav a[href*="/settings"]').first()
     await expect(settingsLink).toBeVisible()
   })
 

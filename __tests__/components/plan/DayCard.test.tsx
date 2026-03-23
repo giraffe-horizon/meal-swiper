@@ -40,38 +40,20 @@ describe('DayCard - empty state', () => {
     vi.clearAllMocks()
   })
 
-  it('renders day name and date', () => {
+  it('renders empty state card', () => {
     render(<DayCard {...defaultProps} />)
-    expect(screen.getByText(/Poniedziałek/)).toBeInTheDocument()
-    expect(screen.getByText(/10 Mar/)).toBeInTheDocument()
+    expect(screen.getByTestId('day-card-mon')).toBeInTheDocument()
   })
 
-  it('shows "Brak planu" when no meal', () => {
+  it('shows "Dodaj" when no meal', () => {
     render(<DayCard {...defaultProps} />)
-    expect(screen.getByText('Brak planu')).toBeInTheDocument()
+    expect(screen.getByText('Dodaj posiłek')).toBeInTheDocument()
   })
 
-  it('calls onDayClick when empty card clicked', () => {
+  it('calls onDayClick when empty card is clicked', () => {
     render(<DayCard {...defaultProps} />)
-    const card = screen.getByTestId('day-card-mon')
-    fireEvent.click(card)
+    fireEvent.click(screen.getByText('Dodaj posiłek'))
     expect(defaultProps.onDayClick).toHaveBeenCalledWith('mon')
-  })
-
-  it('shows menu when more_vert button clicked', () => {
-    render(<DayCard {...defaultProps} />)
-    const moreBtn = screen.getAllByText('more_vert')[0]
-    fireEvent.click(moreBtn.closest('button')!)
-    expect(screen.getByText('Dodaj danie')).toBeInTheDocument()
-  })
-
-  it('calls onToggleVacation from empty day menu', () => {
-    render(<DayCard {...defaultProps} />)
-    const moreBtn = screen.getAllByText('more_vert')[0]
-    fireEvent.click(moreBtn.closest('button')!)
-    const vacBtn = screen.getByText('Oznacz jako wolny')
-    fireEvent.click(vacBtn)
-    expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
   })
 })
 
@@ -85,79 +67,27 @@ describe('DayCard - with meal', () => {
     expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument()
   })
 
-  it('renders prep time', () => {
+  it('renders meal category tag', () => {
     render(<DayCard {...defaultProps} meal={mockMeal} />)
-    expect(screen.getByText(/30 min/)).toBeInTheDocument()
+    expect(screen.getByText('makarony')).toBeInTheDocument()
   })
 
-  it('calls onMealClick when meal button clicked', () => {
+  it('calls onMealClick when meal card clicked', () => {
     render(<DayCard {...defaultProps} meal={mockMeal} />)
-    const mealBtn = screen.getByText('Pasta Carbonara').closest('button')
-    if (mealBtn) fireEvent.click(mealBtn)
+    const card = screen.getByTestId('day-card-mon')
+    fireEvent.click(card)
     expect(defaultProps.onMealClick).toHaveBeenCalledWith(mockMeal)
   })
-
-  it('shows menu with remove option when more_vert clicked', () => {
-    render(<DayCard {...defaultProps} meal={mockMeal} />)
-    const moreBtn = screen.getAllByText('more_vert')[0]
-    fireEvent.click(moreBtn.closest('button')!)
-    expect(screen.getByText('Usuń danie')).toBeInTheDocument()
-  })
-
-  it('calls onRemoveMeal from menu', () => {
-    render(<DayCard {...defaultProps} meal={mockMeal} />)
-    const moreBtn = screen.getAllByText('more_vert')[0]
-    fireEvent.click(moreBtn.closest('button')!)
-    fireEvent.click(screen.getByText('Usuń danie'))
-    expect(defaultProps.onRemoveMeal).toHaveBeenCalledWith('mon')
-  })
-
-  it('calls onDayClick "Zmień danie" from menu', () => {
-    render(<DayCard {...defaultProps} meal={mockMeal} />)
-    const moreBtn = screen.getAllByText('more_vert')[0]
-    fireEvent.click(moreBtn.closest('button')!)
-    fireEvent.click(screen.getByText('Zmień danie'))
-    expect(defaultProps.onDayClick).toHaveBeenCalledWith('mon')
-  })
 })
 
-describe('DayCard - vacation state', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('shows "Urlop" when isFree is true', () => {
-    render(<DayCard {...defaultProps} isFree={true} />)
-    expect(screen.getByText('Urlop')).toBeInTheDocument()
-  })
-
-  it('shows vacation icon', () => {
-    render(<DayCard {...defaultProps} isFree={true} />)
-    expect(screen.getByText('flight_takeoff')).toBeInTheDocument()
-  })
-
-  it('shows menu when clicking more_vert on free day', () => {
-    render(<DayCard {...defaultProps} isFree={true} />)
-    const moreBtn = screen.getAllByText('more_vert')[0]
-    fireEvent.click(moreBtn.closest('button')!)
-    expect(screen.getByText(/Anuluj urlop/i)).toBeInTheDocument()
-  })
-
-  it('calls onToggleVacation via Anuluj urlop menu button', () => {
-    render(<DayCard {...defaultProps} isFree={true} />)
-    const moreBtn = screen.getAllByText('more_vert')[0]
-    fireEvent.click(moreBtn.closest('button')!)
-    fireEvent.click(screen.getByText(/Anuluj urlop/i))
-    expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
-  })
-})
+// Vacation state UI removed in new design - vacation functionality handled via context menu
 
 describe('DayCard - context menu (right-click)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('handles context menu on empty day (confirm = true) → toggleVacation', () => {
+  it('calls onToggleVacation via context menu on empty day (confirm = true)', () => {
     window.confirm = vi.fn(() => true)
     render(<DayCard {...defaultProps} />)
     const card = screen.getByTestId('day-card-mon')
@@ -190,11 +120,14 @@ describe('DayCard - context menu (right-click)', () => {
     expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
   })
 
-  it('handles context menu on vacation day (confirm = true) → toggleVacation off', () => {
-    window.confirm = vi.fn(() => true)
+  it('handles vacation day via menu "Anuluj urlop"', () => {
     render(<DayCard {...defaultProps} isFree={true} />)
-    const card = screen.getByTestId('day-card-mon')
-    fireEvent.contextMenu(card)
+    // Click the menu button
+    const menuButton = screen.getByRole('button')
+    fireEvent.click(menuButton)
+    // Click "Anuluj urlop" option
+    const cancelVacationButton = screen.getByText('Anuluj urlop')
+    fireEvent.click(cancelVacationButton)
     expect(defaultProps.onToggleVacation).toHaveBeenCalledWith('mon')
   })
 })

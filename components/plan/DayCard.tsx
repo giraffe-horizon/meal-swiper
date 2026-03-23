@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Meal, DayKey } from '@/types'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
 
@@ -21,16 +21,28 @@ export default function DayCard({
   day,
   meal,
   isFree,
-  dateStr,
-  dayName,
-  people,
+  dateStr: _dateStr,
+  dayName: _dayName,
+  people: _people,
   onDayClick,
   onRemoveMeal,
   onToggleVacation,
   onMealClick,
 }: DayCardProps) {
-  const [activeMenu, setActiveMenu] = useState(false)
   const [imgError, setImgError] = useState(false)
+  const [activeMenu, setActiveMenu] = useState(false)
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setActiveMenu(false)
+    }
+
+    if (activeMenu) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [activeMenu])
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -51,204 +63,160 @@ export default function DayCard({
     }
   }
 
-  if (isFree) {
-    return (
-      <div
-        data-testid={`day-card-${day}`}
-        onContextMenu={handleContextMenu}
-        className="bg-slate-100 dark:bg-surface-dark/50 rounded-xl p-3 sm:p-4 flex items-center justify-between opacity-70 group relative"
-      >
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-slate-500">flight_takeoff</span>
-          </div>
-          <div className="flex flex-col min-w-0">
-            <p className="text-sm font-medium text-slate-500 dark:text-text-secondary-dark truncate">
-              {dayName}, {dateStr}
-            </p>
-            <p className="text-base font-bold text-slate-600 dark:text-text-secondary-dark">
-              Urlop
-            </p>
-          </div>
-        </div>
-        <div className="relative">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setActiveMenu(!activeMenu)
-            }}
-            className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg"
-          >
-            <span className="material-symbols-outlined text-slate-500">more_vert</span>
-          </button>
-          {activeMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-surface-dark rounded-lg shadow-lg border border-slate-200 dark:border-border-dark py-2 z-50 min-w-[180px]">
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onToggleVacation(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-              >
-                <span className="material-symbols-outlined text-[18px]">close</span>
-                Anuluj urlop
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
   if (meal) {
     return (
       <div
         data-testid={`day-card-${day}`}
         onContextMenu={handleContextMenu}
-        className="bg-white dark:bg-surface-dark rounded-xl p-3 sm:p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-border-dark group relative"
+        onClick={() => onMealClick(meal)}
+        className="bg-surface-container rounded-xl flex items-center h-16 relative cursor-pointer group"
       >
-        <button
-          type="button"
-          onClick={() => onMealClick(meal)}
-          className="flex items-center gap-4 min-w-0 flex-1 text-left cursor-pointer hover:opacity-80 transition-opacity"
-        >
-          <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-sm shrink-0 overflow-hidden">
-            {meal.photo_url && !imgError ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={meal.photo_url}
-                alt={meal.nazwa}
-                className="w-full h-full object-cover"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <MealImagePlaceholder
-                category={meal.category}
-                className="w-full h-full"
-                iconSize="text-2xl"
-              />
-            )}
-          </div>
-          <div className="flex flex-col min-w-0 flex-1">
-            <p className="text-sm font-medium text-slate-500 dark:text-text-secondary-dark truncate">
-              {dayName}, {dateStr}
-            </p>
-            <p className="text-base font-bold text-slate-900 dark:text-text-primary-dark truncate">
-              {meal.nazwa}
-            </p>
-            {meal.nazwa && meal.prep_time && (
-              <p className="text-xs text-slate-500 dark:text-text-secondary-dark mt-0.5">
-                {meal.prep_time} min &bull; {Math.round((meal.kcal_baza * people) / 2)} kcal
-              </p>
-            )}
-          </div>
-        </button>
-        <div className="relative">
-          <button
-            onClick={() => setActiveMenu(!activeMenu)}
-            className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-surface-dark rounded-lg"
-          >
-            <span className="material-symbols-outlined text-slate-400">more_vert</span>
-          </button>
-          {activeMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-surface-dark rounded-lg shadow-lg border border-slate-200 dark:border-border-dark py-2 z-50 min-w-[180px]">
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onDayClick(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-              >
-                <span className="material-symbols-outlined text-[18px]">sync_alt</span>
-                Zmień danie
-              </button>
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onRemoveMeal(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-red-600 dark:text-red-400"
-              >
-                <span className="material-symbols-outlined text-[18px]">delete</span>
-                Usuń danie
-              </button>
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onToggleVacation(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-              >
-                <span className="material-symbols-outlined text-[18px]">flight_takeoff</span>
-                Oznacz jako wolny
-              </button>
-            </div>
+        {/* Thumbnail */}
+        <div className="w-12 h-12 min-w-[48px] rounded-lg overflow-hidden ml-2 shrink-0">
+          {meal.photo_url && !imgError ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={meal.photo_url}
+              alt={meal.nazwa}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <MealImagePlaceholder
+              category={meal.category}
+              className="w-full h-full"
+              iconSize="text-xl"
+            />
           )}
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0 px-3">
+          <h3 className="font-headline text-sm font-bold leading-tight text-on-surface truncate">
+            {meal.nazwa}
+          </h3>
+          <span className="font-label text-[10px] uppercase tracking-widest text-primary font-bold">
+            {meal.category || meal.kuchnia || 'Posiłek'}
+          </span>
+        </div>
+
+        {/* Context menu */}
+        <div className="pr-2 z-10">
+          <div className="relative">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setActiveMenu(!activeMenu)
+              }}
+              className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"
+            >
+              <span className="material-symbols-outlined text-on-surface-variant text-lg">
+                more_vert
+              </span>
+            </button>
+            {activeMenu && (
+              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-50">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDayClick(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Zmień danie
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onRemoveMeal(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Usuń danie
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onToggleVacation(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Oznacz jako wolny
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     )
   }
 
-  return (
-    <div
-      data-testid={`day-card-${day}`}
-      onClick={() => onDayClick(day)}
-      onContextMenu={handleContextMenu}
-      className="bg-white dark:bg-surface-dark rounded-xl p-3 sm:p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-border-dark border-dashed cursor-pointer hover:border-primary/50 transition-colors group"
-    >
-      <div className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-slate-50 dark:bg-surface-dark border-2 border-dashed border-slate-200 dark:border-border-dark flex items-center justify-center shrink-0">
-          <span className="material-symbols-outlined text-slate-400">restaurant_menu</span>
-        </div>
-        <div className="flex flex-col min-w-0">
-          <p className="text-sm font-medium text-slate-500 dark:text-text-secondary-dark truncate">
-            {dayName}, {dateStr}
-          </p>
-          <p className="text-base font-medium text-slate-400 dark:text-slate-500 italic">
-            Brak planu
-          </p>
-        </div>
-      </div>
-      <button className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors shrink-0">
-        <span className="material-symbols-outlined text-primary">add</span>
-      </button>
-      <div className="relative ml-2">
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            setActiveMenu(!activeMenu)
-          }}
-          className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-surface-dark rounded-lg"
-        >
-          <span className="material-symbols-outlined text-slate-400">more_vert</span>
-        </button>
-        {activeMenu && (
-          <div className="absolute right-0 top-full mt-1 bg-white dark:bg-surface-dark rounded-lg shadow-lg border border-slate-200 dark:border-border-dark py-2 z-50 min-w-[180px]">
+  // Vacation view
+  if (isFree) {
+    return (
+      <div
+        data-testid={`day-card-${day}`}
+        className="w-full h-32 bg-surface-container rounded-lg flex items-center justify-center gap-2 text-on-surface relative overflow-hidden"
+      >
+        <div className="absolute top-2 right-3 z-10">
+          <div className="relative">
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                setActiveMenu(false)
-                onDayClick(day)
+                setActiveMenu(!activeMenu)
               }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
+              className="p-1.5 hover:bg-surface-container-high rounded-full transition-colors"
             >
-              <span className="material-symbols-outlined text-[18px]">add</span>
-              Dodaj danie
+              <span className="material-symbols-outlined text-on-surface-variant text-lg">
+                more_vert
+              </span>
             </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setActiveMenu(false)
-                onToggleVacation(day)
-              }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-            >
-              <span className="material-symbols-outlined text-[18px]">flight_takeoff</span>
-              Oznacz jako wolny
-            </button>
+            {activeMenu && (
+              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-50">
+                <button
+                  onClick={() => {
+                    onToggleVacation(day)
+                    setActiveMenu(false)
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Anuluj urlop
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-12 h-12 rounded-full bg-tertiary/20 flex items-center justify-center">
+            <span className="material-symbols-outlined text-2xl text-tertiary">flight</span>
+          </div>
+          <span className="font-headline text-lg font-bold text-tertiary">Urlop</span>
+        </div>
       </div>
+    )
+  }
+
+  // Empty day view
+  return (
+    <div data-testid={`day-card-${day}`} className="flex gap-2" onContextMenu={handleContextMenu}>
+      <button
+        onClick={() => onDayClick(day)}
+        className="flex-1 h-14 border border-dashed border-outline-variant/30 rounded-xl flex items-center justify-center gap-1.5 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all"
+      >
+        <span className="material-symbols-outlined text-base">add</span>
+        <span className="font-body text-xs font-medium">Dodaj posiłek</span>
+      </button>
+      <button
+        onClick={() => onToggleVacation(day)}
+        className="h-14 px-3 border border-dashed border-outline-variant/30 rounded-xl flex items-center justify-center text-on-surface-variant hover:border-tertiary/50 transition-all"
+        title="Oznacz jako wolny dzień"
+      >
+        <span className="material-symbols-outlined text-base">flight</span>
+      </button>
     </div>
   )
 }

@@ -1,11 +1,11 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare'
 import type { NextRequest } from 'next/server'
-import { getSettings, saveSettings, type D1Database } from '@/lib/db'
+import { getSettings, saveSettings } from '@/lib/db'
 import { requireTenantId, extractTenantToken } from '@/lib/tenant'
+import { getDb } from '@/lib/get-db'
+
 
 export async function GET(request: NextRequest) {
-  const { env } = await getCloudflareContext()
-  const db = (env as unknown as { DB: D1Database }).DB
+  const db = await getDb()
   const key = request.nextUrl.searchParams.get('key')
 
   if (!key) return Response.json({ error: 'key required' }, { status: 400 })
@@ -26,8 +26,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { env } = await getCloudflareContext()
-  const db = (env as unknown as { DB: D1Database }).DB
+  const db = await getDb()
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   const body = await request.json()

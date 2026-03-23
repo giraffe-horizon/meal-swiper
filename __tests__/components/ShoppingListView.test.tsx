@@ -8,6 +8,8 @@ vi.mock('@/lib/context', () => ({
   useAppContext: () => ({
     scaleFactor: 1,
     tenantToken: 'test-token',
+    settings: { persons: [] },
+    getVariantAssignment: () => null,
   }),
 }))
 
@@ -129,8 +131,8 @@ describe('ShoppingListView', () => {
       wrapper: createWrapper(),
     })
     await waitFor(() => {
-      // Shows "0/2 produktów"
-      expect(screen.getByText(/produktów/)).toBeInTheDocument()
+      // Shows "0/2 kupione"
+      expect(screen.getByText(/kupione/)).toBeInTheDocument()
     })
   })
 
@@ -167,36 +169,21 @@ describe('ShoppingListView', () => {
       expect(screen.getByText(/Makaron/)).toBeInTheDocument()
     })
 
-    // Click "Zaznacz wszystkie" button
-    const checkAllBtn = screen.getByText('Zaznacz wszystkie')
-    fireEvent.click(checkAllBtn)
-    // All items should now be checked
+    // In the new design, we click individual items to check them
+    // Let's check both items manually by clicking on their containers
+    const makaronItem = screen.getByText(/Makaron/).closest('div')
+    const jajkaItem = screen.getByText(/Jajka/).closest('div')
+
+    if (makaronItem) fireEvent.click(makaronItem)
+    if (jajkaItem) fireEvent.click(jajkaItem)
+
+    // After checking all items, progress should show 2/2
     await waitFor(() => {
-      expect(screen.getByText(/Zakupy zrobione/)).toBeInTheDocument()
+      expect(screen.getByText(/2\/2 kupione/)).toBeInTheDocument()
     })
   })
 
-  it('share list button triggers clipboard write', async () => {
-    // Mock clipboard
-    const writeText = vi.fn().mockResolvedValue(undefined)
-    Object.defineProperty(navigator, 'clipboard', {
-      writable: true,
-      value: { writeText },
-    })
-    window.alert = vi.fn()
-
-    render(<ShoppingListView weeklyPlan={planWithMeal} weekOffset={0} />, {
-      wrapper: createWrapper(),
-    })
-
-    await waitFor(() => {
-      expect(screen.getByText(/Makaron/)).toBeInTheDocument()
-    })
-
-    const shareBtn = screen.getByText('Udostępnij')
-    fireEvent.click(shareBtn)
-    expect(writeText).toHaveBeenCalled()
-  })
+  // Share button removed per UX feedback — test no longer applicable
 
   it('reset list with confirm=true clears all items', async () => {
     window.confirm = vi.fn(() => true)
@@ -210,14 +197,12 @@ describe('ShoppingListView', () => {
       expect(screen.getByText(/Makaron/)).toBeInTheDocument()
     })
 
-    // Click "Zaznacz wszystkie" first to have something to reset
-    fireEvent.click(screen.getByText('Zaznacz wszystkie'))
-    await waitFor(() => {
-      expect(screen.getByText(/Zakupy zrobione/)).toBeInTheDocument()
-    })
+    // Check some items first by clicking on them
+    const makaronItem = screen.getByText(/Makaron/).closest('div')
+    if (makaronItem) fireEvent.click(makaronItem)
 
-    // Now click reset
-    fireEvent.click(screen.getByText('Resetuj listę'))
+    // Now click reset (the button text is "Resetuj listę zakupów")
+    fireEvent.click(screen.getByText('Resetuj listę zakupów'))
     expect(window.confirm).toHaveBeenCalled()
     expect(removeCheckedItems).toHaveBeenCalled()
   })

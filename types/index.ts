@@ -1,7 +1,87 @@
+// Deprecated: Use CatalogIngredient instead
 export interface Ingredient {
   name: string
   amount: string
   category?: 'mięso' | 'warzywa' | 'nabiał' | 'suche'
+}
+
+// New ingredient flags and types for variant architecture
+export type IngredientFlag =
+  | 'gluten_free'
+  | 'dairy_free'
+  | 'vegetarian'
+  | 'vegan'
+  | 'low_carb'
+  | 'high_protein'
+
+export type DietaryFlag =
+  | 'vegetarian'
+  | 'vegan'
+  | 'gluten_free'
+  | 'dairy_free'
+  | 'low_carb'
+  | 'keto'
+  | 'paleo'
+
+export type IngredientCategory =
+  | 'mięso'
+  | 'warzywa'
+  | 'owoce'
+  | 'nabiał'
+  | 'zboża'
+  | 'przyprawy'
+  | 'oleje'
+  | 'inne'
+
+export interface CatalogIngredient {
+  id: string
+  name: string
+  category: IngredientCategory
+  flags: IngredientFlag[]
+  is_seasoning: boolean
+  created_at?: string
+}
+
+export interface MealVariant {
+  id: string
+  meal_id: string
+  name: string
+  description?: string
+  kcal: number
+  protein: number
+  carbs?: number
+  fat?: number
+  dietary_flags: DietaryFlag[]
+  is_default: boolean
+  ingredients?: MealVariantIngredient[]
+  created_at?: string
+}
+
+export interface MealVariantIngredient {
+  id: string
+  meal_variant_id: string
+  ingredient_id: string
+  amount_grams: number
+  display_amount: string
+  scalable: boolean
+  optional: boolean
+  notes?: string
+  ingredient?: CatalogIngredient
+}
+
+export interface MealWithVariants {
+  id: string
+  nazwa: string
+  opis: string
+  photo_url: string
+  prep_time: number
+  trudnosc: 'łatwe' | 'średnie' | 'trudne' | ''
+  kuchnia: string
+  category: string
+  przepis: string // JSON string: RecipeStep
+  tags: string[]
+  variants: MealVariant[]
+  created_at?: string
 }
 
 export interface RecipeStep {
@@ -53,8 +133,14 @@ export interface Tab {
 
 export interface PersonSettings {
   name: string
-  kcal: number
-  protein: number
+  kcal: number // Deprecated: use dailyKcal
+  protein: number // Deprecated: use dailyProtein
+  dailyKcal?: number
+  dailyProtein?: number
+  mealsPerDay?: number
+  diet?: DietaryFlag[]
+  cuisinePreferences?: string[]
+  excludedIngredients?: string[]
 }
 
 export interface AppSettings {

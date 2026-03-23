@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -45,6 +45,11 @@ const mockUseAppContext = vi.fn(() => ({
   tenantToken: 'test-token',
 }))
 
+vi.mock('@/lib/providers/AppProvider', () => ({
+  AppProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useAppContext: () => mockUseAppContext(),
+}))
+
 vi.mock('@/lib/context', () => ({
   AppProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   useAppContext: () => mockUseAppContext(),
@@ -52,8 +57,12 @@ vi.mock('@/lib/context', () => ({
 
 // Mock Navigation component
 vi.mock('@/components/Navigation', () => ({
-  default: ({ activeView }: { activeView: string }) => (
-    <nav data-testid="navigation" data-active={activeView} />
+  default: ({ activeView, token }: { activeView: string; token?: string }) => (
+    <nav data-testid="navigation" data-active={activeView}>
+      <a href={`/${token || ''}/settings`.replace('//', '/')} role="link">
+        Ustawienia
+      </a>
+    </nav>
   ),
 }))
 
@@ -77,16 +86,15 @@ describe('AppShell', () => {
     mockSetWeekOffset.mockClear()
   })
 
-  it('renders the header with logo icon', () => {
+  it('renders the header with Culinary Alchemist branding', () => {
     render(
       <AppShell>
         <div>Content</div>
       </AppShell>
     )
-    // Title was removed — only the restaurant logo icon remains in the header
-    expect(screen.queryByRole('heading')).toBeNull()
-    const logo = document.querySelector('.material-symbols-outlined')
-    expect(logo).toBeTruthy()
+    // New design has menu_book icon and "Culinary Alchemist" text
+    expect(screen.getByText('menu_book')).toBeInTheDocument()
+    expect(screen.getByText('Culinary Alchemist')).toBeInTheDocument()
   })
 
   it('renders children when not loading', () => {
@@ -117,42 +125,24 @@ describe('AppShell', () => {
     expect(nav.getAttribute('data-active')).toBe('plan')
   })
 
-  it('renders settings link', () => {
+  it('renders settings link in navigation', () => {
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    const settingsLink = screen.getByTitle('Ustawienia')
+    const settingsLink = screen.getByRole('link', { name: /Ustawienia/i })
     expect(settingsLink).toBeInTheDocument()
     expect(settingsLink.getAttribute('href')).toBe('/test-token/settings')
   })
 
-  it('clicking prev week button decrements weekOffset', () => {
+  it('renders header without notification bell (removed for mobile)', () => {
     render(
       <AppShell>
         <div />
       </AppShell>
     )
-    // Find button containing chevron_left
-    const buttons = screen.getAllByRole('button')
-    const prevBtn = buttons.find((b) => b.textContent?.includes('chevron_left'))
-    expect(prevBtn).toBeTruthy()
-    fireEvent.click(prevBtn!)
-    expect(mockSetWeekOffset).toHaveBeenCalledWith(-1)
-  })
-
-  it('clicking next week button increments weekOffset', () => {
-    render(
-      <AppShell>
-        <div />
-      </AppShell>
-    )
-    const buttons = screen.getAllByRole('button')
-    const nextBtn = buttons.find((b) => b.textContent?.includes('chevron_right'))
-    expect(nextBtn).toBeTruthy()
-    fireEvent.click(nextBtn!)
-    expect(mockSetWeekOffset).toHaveBeenCalledWith(1)
+    expect(screen.queryByText('notifications')).not.toBeInTheDocument()
   })
 
   it('shows LoadingSpinner when loading', () => {

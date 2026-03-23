@@ -7,7 +7,30 @@ import {
   generateShoppingList,
   type MergedIngredient,
 } from '@/lib/shopping'
-import type { WeeklyPlan, Ingredient } from '@/types'
+import type { WeeklyPlan, Ingredient, Meal } from '@/types'
+
+// Helper function to create mock meals for tests
+function createMockMeal(overrides: Partial<Meal> = {}): Meal {
+  return {
+    id: '1',
+    nazwa: 'Test Meal',
+    opis: 'Test description',
+    photo_url: 'test.jpg',
+    prep_time: 30,
+    kcal_baza: 500,
+    kcal_z_miesem: 600,
+    bialko_baza: 20,
+    bialko_z_miesem: 30,
+    trudnosc: 'łatwe',
+    kuchnia: 'włoska',
+    category: 'obiad',
+    skladniki_baza: '[]',
+    skladniki_mieso: '[]',
+    przepis: JSON.stringify({ kroki: ['test'], wskazowki: 'test' }),
+    tags: [],
+    ...overrides,
+  }
+}
 
 describe('shopping', () => {
   describe('normalizeIngredientName', () => {
@@ -201,36 +224,30 @@ describe('shopping', () => {
   describe('generateShoppingList', () => {
     it('merges ingredients from multiple meals', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([
             { name: 'Pomidor', amount: '200g' },
             { name: 'Cebula', amount: '1 szt' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
-        tue: {
-          id: 2,
+        }),
+        tue: createMockMeal({
+          id: '2',
           nazwa: 'Meal 2',
           skladniki_baza: JSON.stringify([
             { name: 'Pomidory', amount: '300g' },
             { name: 'Czosnek', amount: '2 ząbki (8g)' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         wed: null,
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: false,
+        wed_free: true,
+        thu_free: true,
+        fri_free: true,
       }
 
       // scaleFactor = 1 (2 osoby / 2 osoby bazowe = 1)
@@ -253,25 +270,24 @@ describe('shopping', () => {
 
     it('filters out pantry staples', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([
             { name: 'Pomidor', amount: '200g' },
             { name: 'Sól', amount: '1 szczypta' },
             { name: 'Pieprz', amount: '1 szczypta' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         tue: null,
         wed: null,
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: true,
+        wed_free: true,
+        thu_free: true,
+        fri_free: true,
       }
 
       const list = generateShoppingList(weeklyPlan, 1)
@@ -283,39 +299,28 @@ describe('shopping', () => {
 
     it('merges different plural forms (jajko/jajka/jajek)', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([{ name: 'jajko', amount: '2 szt' }] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
-        tue: {
-          id: 2,
+        }),
+        tue: createMockMeal({
+          id: '2',
           nazwa: 'Meal 2',
           skladniki_baza: JSON.stringify([{ name: 'jajka', amount: '3 szt' }] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
-        wed: {
-          id: 3,
+        }),
+        wed: createMockMeal({
+          id: '3',
           nazwa: 'Meal 3',
           skladniki_baza: JSON.stringify([{ name: 'jajek', amount: '1 szt' }] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: false,
+        wed_free: false,
+        thu_free: true,
+        fri_free: true,
       }
 
       const list = generateShoppingList(weeklyPlan, 1)
@@ -327,23 +332,22 @@ describe('shopping', () => {
 
     it('scales ingredients by scale factor', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([
             { name: 'Pomidor', amount: '200g' }, // Base is for 2 people
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         tue: null,
         wed: null,
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: true,
+        wed_free: true,
+        thu_free: true,
+        fri_free: true,
       }
 
       // Test for 4 people (scaleFactor = 4/2 = 2)
@@ -356,25 +360,24 @@ describe('shopping', () => {
 
     it('sorts results alphabetically', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([
             { name: 'Ziemniak', amount: '200g' },
             { name: 'Banan', amount: '100g' },
             { name: 'Marchewka', amount: '150g' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         tue: null,
         wed: null,
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: true,
+        wed_free: true,
+        thu_free: true,
+        fri_free: true,
       }
 
       const list = generateShoppingList(weeklyPlan, 1)
@@ -389,45 +392,34 @@ describe('shopping', () => {
   describe('edge cases - czosnek scenario', () => {
     it('merges czosnek with different amounts and grams hints', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([
             { name: 'czosnek', amount: '2 ząbki (8g)' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
-        tue: {
-          id: 2,
+        }),
+        tue: createMockMeal({
+          id: '2',
           nazwa: 'Meal 2',
           skladniki_baza: JSON.stringify([
             { name: 'czosnek', amount: '4 ząbki (16g)' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
-        wed: {
-          id: 3,
+        }),
+        wed: createMockMeal({
+          id: '3',
           nazwa: 'Meal 3',
           skladniki_baza: JSON.stringify([
             { name: 'czosnek', amount: '3 ząbki (12g)' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: false,
+        wed_free: false,
+        thu_free: true,
+        fri_free: true,
       }
 
       const list = generateShoppingList(weeklyPlan, 1)
@@ -441,34 +433,28 @@ describe('shopping', () => {
   describe('cross-unit merging via gramsHint', () => {
     it('merges pomidory pelati with different units (puszki + g)', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([
             { name: 'Pomidory pelati', amount: '1.5 puszki (600g)' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
-        tue: {
-          id: 2,
+        }),
+        tue: createMockMeal({
+          id: '2',
           nazwa: 'Meal 2',
           skladniki_baza: JSON.stringify([
             { name: 'Pomidory pelati', amount: '600 g' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         wed: null,
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: false,
+        wed_free: true,
+        thu_free: true,
+        fri_free: true,
       }
 
       const list = generateShoppingList(weeklyPlan, 1)
@@ -482,34 +468,28 @@ describe('shopping', () => {
 
     it('merges sos sojowy with ml hints (łyżki + łyżki)', () => {
       const weeklyPlan: WeeklyPlan = {
-        weekKey: '2024-03-01',
-        mon: {
-          id: 1,
+        mon: createMockMeal({
+          id: '1',
           nazwa: 'Meal 1',
           skladniki_baza: JSON.stringify([
             { name: 'Sos sojowy', amount: '1.5 łyżki' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
-        tue: {
-          id: 2,
+        }),
+        tue: createMockMeal({
+          id: '2',
           nazwa: 'Meal 2',
           skladniki_baza: JSON.stringify([
             { name: 'Sos sojowy', amount: '6 łyżki (60ml)' },
           ] as Ingredient[]),
-          skladniki_mieso: null,
-          przepis: 'test',
-          osoby_bazowe: 2,
-          kcal_na_osobe: 500,
-          bialko_na_osobe: 30,
-        },
+        }),
         wed: null,
         thu: null,
         fri: null,
+        mon_free: false,
+        tue_free: false,
+        wed_free: true,
+        thu_free: true,
+        fri_free: true,
       }
 
       const list = generateShoppingList(weeklyPlan, 1)

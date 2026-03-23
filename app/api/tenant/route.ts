@@ -1,4 +1,3 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare'
 import type { NextRequest } from 'next/server'
 import {
   getTenantByToken,
@@ -6,13 +5,13 @@ import {
   createTenant,
   updateTenantName,
   saveSettings,
-  type D1Database,
 } from '@/lib/db'
+import { getDb } from '@/lib/get-db'
+
 
 // GET /api/tenant?token=<token> — return tenant info
 export async function GET(request: NextRequest) {
-  const { env } = await getCloudflareContext()
-  const db = (env as unknown as { DB: D1Database }).DB
+  const db = await getDb()
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   const token = new URL(request.url).searchParams.get('token')
@@ -31,8 +30,7 @@ export async function GET(request: NextRequest) {
 
 // POST /api/tenant — register a new tenant token or verify existing one
 export async function POST(request: NextRequest) {
-  const { env } = await getCloudflareContext()
-  const db = (env as unknown as { DB: D1Database }).DB
+  const db = await getDb()
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   const body = await request.json()
@@ -80,8 +78,7 @@ export async function POST(request: NextRequest) {
 
 // PATCH /api/tenant — update tenant name
 export async function PATCH(request: NextRequest) {
-  const { env } = await getCloudflareContext()
-  const db = (env as unknown as { DB: D1Database }).DB
+  const db = await getDb()
   if (!db) return Response.json({ error: 'D1 not configured' }, { status: 500 })
 
   const body = await request.json()

@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import type { WeeklyPlan } from '@/types'
+import type { WeeklyPlan, MealWithVariants, MealVariant } from '@/types'
 import { getWeekKey } from '@/lib/utils'
 import { getCheckedItems, saveCheckedItems, removeCheckedItems } from '@/lib/storage'
 import { generateShoppingList } from '@/lib/shopping'
+import { aggregateShoppingList, calculatePersonScale } from '@/lib/scaling'
 import { useAppContext } from '@/lib/context'
 import {
   useShoppingCheckedQuery,
   useShoppingCheckedMutation,
 } from '@/hooks/queries/useShoppingCheckedQuery'
+import Section from '@/components/ui/Section'
 
 interface ShoppingListViewProps {
   weeklyPlan: WeeklyPlan
@@ -17,17 +19,103 @@ interface ShoppingListViewProps {
 }
 
 export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingListViewProps) {
-  const { scaleFactor, tenantToken } = useAppContext()
+  const { scaleFactor, tenantToken, settings, getVariantAssignment } = useAppContext()
   const weekKey = getWeekKey(weekOffset)
 
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() =>
     typeof window !== 'undefined' ? getCheckedItems(weekKey) : {}
   )
 
-  const items = useMemo(
-    () => generateShoppingList(weeklyPlan, scaleFactor),
-    [weeklyPlan, scaleFactor]
-  )
+  const { items, itemsByCategory, isVariantBased } = useMemo(() => {
+    // Check if we have any variant assignments available
+    const weekPlanValues = Object.values(weeklyPlan).filter(
+      (meal) => meal && typeof meal === 'object' && 'id' in meal
+    ) as Array<{ id: string }>
+    const hasVariants = weekPlanValues.some((meal) => {
+      const variantAssignment = getVariantAssignment(meal.id)
+      return variantAssignment && Object.keys(variantAssignment).length > 0
+    })
+
+    if (hasVariants && settings.persons.length > 0) {
+      // Use variant-based aggregation
+      const weekPlanEntries = weekPlanValues
+        .map((meal) => {
+          const variantAssignment = getVariantAssignment(meal.id) || {}
+          const personScales: Record<string, number> = {}
+
+          // Calculate scales for each person
+          for (const person of settings.persons) {
+            const variant = variantAssignment[person.name]
+            if (variant) {
+              const { scale } = calculatePersonScale(variant, person)
+              personScales[person.name] = scale
+            }
+          }
+
+          // Safety check: ensure meal has variants before casting
+          const mealWithVariants = meal as { variants?: unknown }
+          if (!('variants' in meal) || !Array.isArray(mealWithVariants.variants)) {
+            return null
+          }
+
+          return {
+            meal: meal as unknown as MealWithVariants,
+            variantAssignment,
+            personScales,
+          }
+        })
+        .filter(
+          (
+            entry
+          ): entry is {
+            meal: MealWithVariants
+            variantAssignment: Record<string, MealVariant>
+            personScales: Record<string, number>
+          } =>
+            entry !== null &&
+            entry.variantAssignment &&
+            Object.keys(entry.variantAssignment).length > 0
+        )
+
+      const variantShoppingList = aggregateShoppingList(weekPlanEntries)
+
+      // Group by category for variant-based shopping
+      const grouped = variantShoppingList.reduce(
+        (acc, item) => {
+          const category = item.ingredient.category
+          if (!acc[category]) acc[category] = []
+          acc[category].push({
+            name: item.ingredient.name,
+            amount: item.display,
+            normalizedName: item.ingredient.id,
+          })
+          return acc
+        },
+        {} as Record<string, Array<{ name: string; amount: string; normalizedName: string }>>
+      )
+
+      // Convert to flat list for backward compatibility
+      const flatItems = variantShoppingList.map((item) => ({
+        name: item.ingredient.name,
+        amount: item.display,
+        normalizedName: item.ingredient.id,
+      }))
+
+      return {
+        items: flatItems,
+        itemsByCategory: grouped,
+        isVariantBased: true,
+      }
+    } else {
+      // Fallback to legacy shopping list generation
+      const legacyItems = generateShoppingList(weeklyPlan, scaleFactor)
+      return {
+        items: legacyItems,
+        itemsByCategory: {},
+        isVariantBased: false,
+      }
+    }
+  }, [weeklyPlan, scaleFactor, settings, getVariantAssignment])
 
   const { data: serverChecked } = useShoppingCheckedQuery(weekKey, tenantToken)
   const { mutate: syncCheckedToServer } = useShoppingCheckedMutation(tenantToken)
@@ -63,128 +151,174 @@ export default function ShoppingListView({ weeklyPlan, weekOffset }: ShoppingLis
   const hasAnyItems = items.length > 0
   const totalItems = items.length
   const checkedCount = items.filter((item) => checkedItems[item.normalizedName]).length
-  const allChecked = totalItems > 0 && checkedCount === totalItems
-
-  const checkAllItems = () => {
-    const newChecked: Record<string, boolean> = {}
-    items.forEach((item) => {
-      newChecked[item.normalizedName] = true
-    })
-    setCheckedItems(newChecked)
-    saveCheckedItems(weekKey, newChecked)
-    syncCheckedToServer({ weekKey, checked: newChecked })
-  }
-
-  const shareList = () => {
-    let text = '📝 Lista zakupów\n\n'
-    items.forEach((item) => {
-      text += `• ${item.name} — ${item.amount}\n`
-    })
-    navigator.clipboard.writeText(text)
-    alert('✅ Lista skopiowana do schowka!')
-  }
+  const progressPercent = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-background-light dark:bg-background-dark">
-      {/* Toolbar */}
-      {hasAnyItems && (
-        <div className="flex items-center justify-between gap-2 px-4 py-2 border-b border-border-light dark:border-border-dark">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">
-              {checkedCount}/{totalItems} produktów
-            </span>
-            {allChecked && <span className="text-sm">🎉</span>}
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={checkAllItems}
-              className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
-            >
-              Zaznacz wszystkie
-            </button>
-            <button
-              onClick={shareList}
-              className="text-xs font-medium text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
-            >
-              <span className="material-symbols-outlined text-[16px]">share</span>
-              Udostępnij
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="flex-1 p-4 overflow-y-auto">
+    <div className="bg-surface text-on-surface font-body min-h-screen pb-nav-clearance">
+      <main className="px-4 pt-4 max-w-2xl mx-auto">
         {!hasAnyItems ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <div className="text-6xl mb-4">🛒</div>
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-text-primary-dark mb-2">
-              Brak listy zakupów
-            </h2>
-            <p className="text-slate-600 dark:text-text-secondary-dark text-center">
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+              <span className="material-symbols-outlined text-4xl text-primary">shopping_cart</span>
+            </div>
+            <h2 className="text-2xl font-bold text-on-surface mb-2">Brak listy zakupów</h2>
+            <p className="text-on-surface-variant text-center">
               Zaplanuj posiłki na tydzień, aby wygenerować listę.
             </p>
           </div>
         ) : (
           <>
-            {allChecked && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 mb-4 text-center">
-                <div className="text-4xl mb-2">🎉</div>
-                <p className="text-lg font-bold text-green-800 dark:text-green-200">
-                  Zakupy zrobione!
-                </p>
-                <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                  Wszystkie produkty zaznaczone
-                </p>
+            {/* Progress Hero Section */}
+            <section className="mb-6">
+              <div className="mb-3">
+                <span className="font-label text-tertiary text-xs font-bold tracking-widest uppercase">
+                  POSTĘP ZAKUPÓW
+                </span>
+                <h2 className="font-headline text-2xl font-extrabold mt-1 text-on-surface">
+                  {checkedCount}/{totalItems} kupione
+                </h2>
               </div>
-            )}
-            <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
-              <div className="divide-y divide-border-light dark:divide-border-dark">
-                {items.map((item) => {
-                  const isChecked = checkedItems[item.normalizedName] || false
+              <div className="h-2.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full shadow-[0_0_15px_rgba(105,221,150,0.3)] transition-all duration-500"
+                  style={{ width: `${progressPercent}%` }}
+                ></div>
+              </div>
+            </section>
 
-                  return (
-                    <label
-                      key={item.normalizedName}
-                      className={`flex items-center gap-4 px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors ${
-                        isChecked ? 'opacity-60' : ''
-                      }`}
-                    >
-                      <div className="flex size-6 items-center justify-center shrink-0">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => toggleItem(item.normalizedName)}
-                          className="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:border-border-light dark:focus:border-border-dark focus:outline-none transition-colors cursor-pointer"
-                        />
-                      </div>
-                      <span
-                        className={`text-base font-medium flex-1 text-text-primary-light dark:text-text-primary-dark ${
-                          isChecked ? 'line-through' : ''
-                        }`}
-                      >
-                        {item.name}
-                        <span
-                          className={`text-text-secondary-light dark:text-text-secondary-dark font-normal ${isChecked ? 'line-through' : ''}`}
+            {/* Shopping List Groups */}
+            <div className="space-y-6">
+              {/* Variant-based categorized display */}
+              {isVariantBased && Object.keys(itemsByCategory).length > 0 ? (
+                Object.entries(itemsByCategory).map(([category, categoryItems]) => (
+                  <Section key={category} title={category}>
+                    <div className="space-y-1.5">
+                      {categoryItems.map((item) => {
+                        const isChecked = checkedItems[item.normalizedName] || false
+
+                        return (
+                          <div
+                            key={item.normalizedName}
+                            className="flex items-center justify-between group"
+                          >
+                            <div
+                              className="flex items-center gap-4 cursor-pointer"
+                              onClick={() => toggleItem(item.normalizedName)}
+                            >
+                              <div
+                                className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                                  isChecked
+                                    ? 'bg-primary'
+                                    : 'border-2 border-outline-variant hover:border-primary transition-colors'
+                                }`}
+                              >
+                                {isChecked && (
+                                  <span
+                                    className="material-symbols-outlined text-[16px] text-on-primary font-bold"
+                                    style={{ fontVariationSettings: "'wght' 700" }}
+                                  >
+                                    check
+                                  </span>
+                                )}
+                              </div>
+                              <div>
+                                <span
+                                  className={`text-on-surface font-semibold ${isChecked ? 'line-through opacity-60' : ''}`}
+                                >
+                                  {item.name}
+                                </span>
+                                <span className="mx-2 text-outline-variant text-xs">•</span>
+                                <span
+                                  className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                    isChecked
+                                      ? 'text-outline-variant line-through'
+                                      : 'text-tertiary'
+                                  }`}
+                                >
+                                  {item.amount}
+                                </span>
+                              </div>
+                            </div>
+                            <button className="opacity-0 group-hover:opacity-100 transition-opacity">
+                              <span className="material-symbols-outlined text-outline-variant">
+                                more_vert
+                              </span>
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </Section>
+                ))
+              ) : (
+                /* Legacy flat display */
+                <Section title="Produkty">
+                  <div className="space-y-1.5">
+                    {items.map((item) => {
+                      const isChecked = checkedItems[item.normalizedName] || false
+
+                      return (
+                        <div
+                          key={item.normalizedName}
+                          className="flex items-center justify-between group"
                         >
-                          {' '}
-                          — {item.amount}
-                        </span>
-                      </span>
-                    </label>
-                  )
-                })}
-              </div>
+                          <div
+                            className="flex items-center gap-4 cursor-pointer"
+                            onClick={() => toggleItem(item.normalizedName)}
+                          >
+                            <div
+                              className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform active:scale-90 ${
+                                isChecked
+                                  ? 'bg-primary'
+                                  : 'border-2 border-outline-variant hover:border-primary transition-colors'
+                              }`}
+                            >
+                              {isChecked && (
+                                <span
+                                  className="material-symbols-outlined text-[16px] text-on-primary font-bold"
+                                  style={{ fontVariationSettings: "'wght' 700" }}
+                                >
+                                  check
+                                </span>
+                              )}
+                            </div>
+                            <div>
+                              <span
+                                className={`text-on-surface font-semibold ${isChecked ? 'line-through opacity-60' : ''}`}
+                              >
+                                {item.name}
+                              </span>
+                              <span className="mx-2 text-outline-variant text-xs">•</span>
+                              <span
+                                className={`font-label text-xs font-bold uppercase tracking-tighter ${
+                                  isChecked ? 'text-outline-variant line-through' : 'text-tertiary'
+                                }`}
+                              >
+                                {item.amount}
+                              </span>
+                            </div>
+                          </div>
+                          <button className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span className="material-symbols-outlined text-outline-variant">
+                              more_vert
+                            </span>
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </Section>
+              )}
             </div>
 
             {/* Reset Button */}
-            <div className="pt-4 pb-8 flex justify-center">
+            <div className="mt-6 mb-20">
               <button
                 onClick={resetList}
-                className="px-6 py-2.5 rounded-full border border-border-light dark:border-border-dark text-text-secondary-light dark:text-text-secondary-dark font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-2"
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-xl border-2 border-dashed border-outline-variant/30 text-on-surface-variant hover:border-primary/50 hover:text-primary transition-all"
               >
-                <span className="material-symbols-outlined text-sm">refresh</span>
-                Resetuj listę
+                <span className="material-symbols-outlined">refresh</span>
+                <span className="font-semibold">Resetuj listę zakupów</span>
               </button>
             </div>
           </>

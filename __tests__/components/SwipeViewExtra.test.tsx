@@ -116,7 +116,6 @@ const defaultProps = {
   currentDay: 'mon' as const,
   onComplete: vi.fn(),
   weeklyPlan: emptyPlan,
-  onSkipAll: vi.fn(),
   shuffledMealsFromContext: shuffled,
   currentSwipeIndexFromContext: 0,
   seenIdsFromContext: [],
@@ -202,18 +201,10 @@ describe('SwipeView - keyboard navigation', () => {
   })
 })
 
-describe('SwipeView - day selection', () => {
-  it('shows day chips for all 5 days', () => {
+describe('SwipeView - day selection (removed)', () => {
+  it('week strip removed for mobile layout', () => {
     render(<SwipeView {...defaultProps} />)
-    expect(screen.getByText('Pn')).toBeInTheDocument()
-    expect(screen.getByText('Pt')).toBeInTheDocument()
-  })
-
-  it('calls onDaySelect when a day chip is clicked', () => {
-    const onDaySelect = vi.fn()
-    render(<SwipeView {...defaultProps} onDaySelect={onDaySelect} />)
-    fireEvent.click(screen.getByText('Wt'))
-    expect(onDaySelect).toHaveBeenCalledWith('tue')
+    expect(screen.queryByText('Twój Tydzień')).not.toBeInTheDocument()
   })
 })
 
@@ -228,10 +219,10 @@ describe('SwipeView - filter state', () => {
 })
 
 describe('SwipeView - onComplete fallback', () => {
-  it('calls onComplete when "Pomiń ten dzień" clicked and no onSkipDay', () => {
+  it('calls onComplete when star button clicked and no onSkipDay', () => {
     const onComplete = vi.fn()
     render(<SwipeView {...defaultProps} onComplete={onComplete} onSkipDay={undefined} />)
-    fireEvent.click(screen.getByText(/Pomiń ten dzień/))
+    fireEvent.click(screen.getByTitle('Zapisz jako ulubione'))
     expect(onComplete).toHaveBeenCalled()
   })
 })

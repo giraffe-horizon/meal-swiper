@@ -18,8 +18,8 @@ describe('RecipeSteps', () => {
 
   it('renders step number', () => {
     render(<RecipeSteps steps={[textStep, textStep]} />)
-    expect(screen.getByText('1')).toBeInTheDocument()
-    expect(screen.getByText('2')).toBeInTheDocument()
+    expect(screen.getByText('01')).toBeInTheDocument()
+    expect(screen.getByText('02')).toBeInTheDocument()
   })
 
   it('renders amount badges', () => {
@@ -35,9 +35,9 @@ describe('RecipeSteps', () => {
     expect(onToggleStep).toHaveBeenCalledWith(0)
   })
 
-  it('shows checkmark when step is done', () => {
+  it('shows step number even when done', () => {
     render(<RecipeSteps steps={[textStep]} checkedSteps={{ 0: true }} />)
-    expect(screen.getByText('✓')).toBeInTheDocument()
+    expect(screen.getByText('01')).toBeInTheDocument()
   })
 
   it('applies line-through class when done', () => {
@@ -48,9 +48,9 @@ describe('RecipeSteps', () => {
     expect(pEl?.classList.contains('line-through')).toBe(true)
   })
 
-  it('applies green styling when step done', () => {
+  it('applies different styling when step done', () => {
     const { container } = render(<RecipeSteps steps={[textStep]} checkedSteps={{ 0: true }} />)
-    const stepWrapper = container.querySelector('[class*="bg-green"]')
+    const stepWrapper = container.querySelector('[class*="bg-surface-container-low"]')
     expect(stepWrapper).toBeTruthy()
   })
 

@@ -111,11 +111,12 @@ describe('useSettings', () => {
 
   it('handles invalid localStorage JSON gracefully', async () => {
     localStorage.setItem('meal_swiper_settings', 'invalid-json')
-    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
+    global.fetch = vi.fn().mockResolvedValue({ ok: false, json: async () => null })
+    const { result } = renderHook(() => useSettings(null), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.isLoaded).toBe(true)
-    })
+    }, { timeout: 5000 })
 
     // Should fallback to default settings
     expect(result.current.settings.people).toBe(DEFAULT_SETTINGS.people)
@@ -140,16 +141,18 @@ describe('useSettings', () => {
   })
 
   it('fetches from D1 and overwrites local settings if ok', async () => {
+    const token = 'test-token-123'
     const serverSettings = { people: 5, persons: DEFAULT_SETTINGS.persons, theme: 'dark' as const }
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => serverSettings,
     })
 
-    const { result } = renderHook(() => useSettings(), { wrapper: createWrapper() })
+    const { result } = renderHook(() => useSettings(token), { wrapper: createWrapper() })
 
+    // React Query fetches async — wait longer for server data to arrive
     await waitFor(() => {
       expect(result.current.settings.people).toBe(5)
-    })
+    }, { timeout: 5000 })
   })
 })

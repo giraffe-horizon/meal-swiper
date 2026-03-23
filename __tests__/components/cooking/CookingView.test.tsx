@@ -96,12 +96,9 @@ describe('CookingView', () => {
 
   it('toggles ingredient checked state on click', () => {
     render(<CookingView meal={mockMeal} people={2} scaleFactor={1} />)
-    const labels = screen.getAllByRole('generic').filter((el) => el.tagName === 'LABEL')
-    // Actually use the label elements
     const makaron = screen.getByText('Makaron')
-    const label = makaron.closest('label')
-    expect(label).toBeTruthy()
-    fireEvent.click(label!)
+    // Click on the makaron text element itself - it should be inside a clickable container
+    fireEvent.click(makaron)
     // After clicking, the ingredient should be struck through
     expect(makaron.classList.contains('line-through')).toBe(true)
   })
