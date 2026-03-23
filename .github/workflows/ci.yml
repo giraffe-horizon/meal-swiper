@@ -66,9 +66,6 @@ jobs:
 
   e2e:
     name: 🎭 E2E Tests
-    # Temporarily disabled: wrangler pages dev + @opennextjs/cloudflare breaks
-    # getCloudflareContext() in E2E environment. See issue for tracking.
-    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
