@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -52,6 +53,13 @@ export default {
         'inverse-on-surface': '#2b322e',
         'surface-dim': '#0e1512',
         'tertiary-container': '#ba9c00',
+        // Dark/light mode aliases for onboarding
+        'background-light': '#f8faf9',
+        'background-dark': '#0e1512',
+        'surface-dark': '#1a211e',
+        'text-primary-dark': '#dde4df',
+        'text-secondary-dark': '#bdcabd',
+        'border-dark': '#3e4a40',
       },
       fontFamily: {
         headline: ['Epilogue'],

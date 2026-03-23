@@ -105,10 +105,10 @@ export default function HouseholdSection({ tenantToken }: HouseholdSectionProps)
           </button>
         </div>
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-surface-container-highest rounded-lg">
-            <div className="flex-1">
+          <div className="flex items-center justify-between p-4 bg-surface-container-highest rounded-lg overflow-hidden">
+            <div className="flex-1 min-w-0">
               <p className="text-on-surface-variant text-xs mb-1">Token gospodarstwa</p>
-              <code className="font-mono text-xs text-on-surface bg-surface-container-low px-2 py-1 rounded break-all">
+              <code className="font-mono text-[10px] text-on-surface bg-surface-container-low px-2 py-1 rounded break-all block overflow-hidden">
                 {tenantToken}
               </code>
             </div>

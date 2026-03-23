@@ -69,10 +69,10 @@ export default function DayCard({
         data-testid={`day-card-${day}`}
         onContextMenu={handleContextMenu}
         onClick={() => onMealClick(meal)}
-        className="bg-surface-container rounded-xl overflow-hidden flex items-center h-16 relative cursor-pointer group"
+        className="bg-surface-container rounded-xl flex items-center h-16 relative cursor-pointer group"
       >
         {/* Thumbnail */}
-        <div className="w-12 h-12 min-w-[48px] rounded-lg overflow-hidden ml-2">
+        <div className="w-12 h-12 min-w-[48px] rounded-lg overflow-hidden ml-2 shrink-0">
           {meal.photo_url && !imgError ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -115,7 +115,7 @@ export default function DayCard({
               </span>
             </button>
             {activeMenu && (
-              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-20">
+              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-50">
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
@@ -175,7 +175,7 @@ export default function DayCard({
               </span>
             </button>
             {activeMenu && (
-              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-10">
+              <div className="absolute right-0 top-8 bg-surface-container-highest border border-outline-variant/20 rounded-lg shadow-lg py-1 min-w-[140px] z-50">
                 <button
                   onClick={() => {
                     onToggleVacation(day)

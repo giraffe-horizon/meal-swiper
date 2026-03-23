@@ -13,13 +13,19 @@ export default function OnboardingPage() {
     { name: 'Osoba 1', kcal: 2000, protein: 120 },
     { name: 'Osoba 2', kcal: 2000, protein: 120 },
   ])
-  const [theme, setTheme] = useState<Theme>('system')
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('meal_swiper_theme') as Theme) || 'system'
+    }
+    return 'system'
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Apply theme to document
+  // Apply theme to document and persist
   useEffect(() => {
     const root = document.documentElement
+    localStorage.setItem('meal_swiper_theme', theme)
     if (theme === 'dark') {
       root.classList.add('dark')
     } else if (theme === 'light') {
