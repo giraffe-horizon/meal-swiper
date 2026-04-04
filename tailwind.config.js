@@ -1,10 +1,13 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   darkMode: 'class',
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './lib/**/*.{js,ts,jsx,tsx}',
     './stores/**/*.{js,ts}',
   ],
+  presets: [require('nativewind/preset')],
   theme: {
     extend: {
       colors: {
@@ -19,6 +22,7 @@ export default {
         'text-secondary-dark': '#94B4A6', // Przygaszona szałwia
         'border-light': '#E2E8F0',
         'border-dark': '#24332D', // Ciemna krawędź
+        'surface-container': '#1a211e', // Container surface (cards, inputs)
       },
       fontFamily: {
         display: ['Plus Jakarta Sans', 'sans-serif'],

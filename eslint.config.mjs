@@ -41,6 +41,9 @@ const config = [
       '.next/**',
       '.open-next/**',
       '.wrangler/**',
+      'babel.config.js',
+      'metro.config.js',
+      'tailwind.config.js',
     ],
   },
 ]

@@ -92,11 +92,12 @@ export async function fetchTenantInfo(token: string): Promise<TenantInfo | null>
 }
 
 export async function createTenant(data: { token: string }): Promise<void> {
-  await fetch(`${API_BASE}/tenant`, {
+  const res = await fetch(`${API_BASE}/tenant`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...API_HEADERS },
     body: JSON.stringify(data),
   })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
 }
 
 export async function updateTenantName(token: string, name: string): Promise<void> {

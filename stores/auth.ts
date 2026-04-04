@@ -1,4 +1,7 @@
 import { create } from 'zustand'
+import * as SecureStore from 'expo-secure-store'
+
+const TENANT_TOKEN_KEY = 'tenant_token'
 
 interface AuthState {
   token: string | null
@@ -16,19 +19,21 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setToken: (token: string) => {
     set({ token, isOnboarded: true })
-    // In Phase 1: persist to expo-secure-store
-    // SecureStore.setItemAsync('tenant_token', token)
+    SecureStore.setItemAsync(TENANT_TOKEN_KEY, token).catch(() => {
+      // SecureStore write failed — clear in-memory state to stay consistent
+      set({ token: null, isOnboarded: false })
+    })
   },
 
   clearToken: () => {
     set({ token: null, isOnboarded: false })
-    // In Phase 1: SecureStore.deleteItemAsync('tenant_token')
+    SecureStore.deleteItemAsync(TENANT_TOKEN_KEY).catch(() => {
+      // Best-effort deletion — token already cleared from memory
+    })
   },
 
   hydrate: async () => {
-    // In Phase 1: read from expo-secure-store
-    // const token = await SecureStore.getItemAsync('tenant_token')
-    // set({ token, isOnboarded: !!token, isHydrated: true })
-    set({ isHydrated: true })
+    const token = await SecureStore.getItemAsync(TENANT_TOKEN_KEY)
+    set({ token, isOnboarded: !!token, isHydrated: true })
   },
 }))
