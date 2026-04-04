@@ -1,0 +1,15 @@
+api/
+data/
+design-reference/
+docs/
+**/__tests__/
+*.test.ts
+*.spec.ts
+EXPO_MIGRATION_PLAN.md
+CLAUDE.md
+CHANGELOG.md
+CONTRIBUTING.md
+TESTS_SPEC.md
+REFACTOR_PLAN.md
+README.md
+.github/

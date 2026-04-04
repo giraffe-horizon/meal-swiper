@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Meal Swiper",
+    "slug": "meal-swiper",
+    "version": "1.0.0",
+    "scheme": "mealswiper",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0e1512"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.giraffehorizon.mealswiper",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0e1512"
+      },
+      "package": "com.giraffehorizon.mealswiper"
+    },
+    "extra": {
+      "apiUrl": "https://meal-swiper-api.giraffehorizon.workers.dev",
+      "apiKey": ""
+    },
+    "plugins": ["expo-router", "expo-secure-store", "expo-haptics"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "updates": {
+      "enabled": false,
+      "url": "https://u.expo.dev/YOUR_PROJECT_UUID"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
+  }
+}

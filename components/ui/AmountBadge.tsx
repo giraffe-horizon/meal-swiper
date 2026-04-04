@@ -1,16 +1,20 @@
-'use client'
+import { View, Text } from 'react-native'
 
 interface AmountBadgeProps {
-  amount: string
+  value: number | string
+  unit: string
   className?: string
 }
 
-export default function AmountBadge({ amount, className = '' }: AmountBadgeProps) {
+export default function AmountBadge({ value, unit, className = '' }: AmountBadgeProps) {
   return (
-    <span
-      className={`inline-flex items-center px-1.5 py-0.5 mx-0.5 rounded bg-primary/15 text-primary font-semibold text-[0.85em] whitespace-nowrap ${className}`}
+    <View
+      className={`bg-surface-container rounded-full px-3 py-1 flex-row items-center ${className}`}
+      accessibilityRole="text"
+      accessibilityLabel={`${value} ${unit}`}
     >
-      {amount}
-    </span>
+      <Text className="text-[#69dd96] text-xs font-bold">{value}</Text>
+      <Text className="text-[#94B4A6] text-xs ml-1">{unit}</Text>
+    </View>
   )
 }

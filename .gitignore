@@ -28,19 +28,47 @@ dist-ssr
 .env.local
 .dev.vars
 
-# Next.js
-.next
-.vercel
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+ios/
+android/
 
-# Wrangler
-.wrangler
-wrangler.toml.bak
-wrangler.jsonc
+# EAS
+.eas/
 
-# OpenNext
-.open-next
+# Signing keys
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Wrangler (API worker)
+.wrangler/
+
+# API worker
+api/node_modules
+api/.wrangler
+api/dist
+
+# Coverage & test output
+coverage/
+test-results/
+
+# Build artifacts
+.open-next/
+.next/
+tsconfig.tsbuildinfo
+
+# Local database
+local.db
+local.db-journal
+
+# Scripts
 scripts/.env
 scripts/generated-images/
 screenshots/
-test-results/
-coverage/

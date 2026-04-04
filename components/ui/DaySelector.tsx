@@ -1,87 +1,50 @@
-'use client'
+import { View, Pressable, Text } from 'react-native'
+import type { DayKey } from '@/types'
 
-import type { WeeklyPlan, DayKey } from '@/types'
-import { DAY_KEYS, formatDateShort } from '@/lib/utils'
+const DAYS: { key: DayKey; label: string }[] = [
+  { key: 'mon', label: 'Pon' },
+  { key: 'tue', label: 'Wt' },
+  { key: 'wed', label: 'Śr' },
+  { key: 'thu', label: 'Czw' },
+  { key: 'fri', label: 'Pt' },
+]
 
 interface DaySelectorProps {
-  weeklyPlan: WeeklyPlan
-  weekDates: Date[]
-  selectedDay: DayKey | null
+  activeDay: DayKey
   onSelect: (day: DayKey) => void
-  showThumbnails?: boolean
+  className?: string
 }
 
-export default function DaySelector({
-  weeklyPlan,
-  weekDates,
-  selectedDay,
-  onSelect,
-  showThumbnails = false,
-}: DaySelectorProps) {
-  const shortNames = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt']
-
+export default function DaySelector({ activeDay, onSelect, className = '' }: DaySelectorProps) {
   return (
-    <div className="flex gap-2 px-4 py-1 sm:py-2 overflow-x-auto scrollbar-none justify-center">
-      {DAY_KEYS.map((day, idx) => {
-        const meal = weeklyPlan[day]
-        const isFree = weeklyPlan[`${day}_free`]
-        const isActive = selectedDay === day
-        const shortName = shortNames[idx]
-        const dateLabel = weekDates[idx] ? formatDateShort(weekDates[idx]) : ''
-
+    <View
+      className={`flex-row justify-between ${className}`}
+      accessibilityRole="tablist"
+      accessibilityLabel="Wybierz dzień tygodnia"
+    >
+      {DAYS.map(({ key, label }) => {
+        const isActive = key === activeDay
         return (
-          <button
-            key={day}
-            onClick={() => !isFree && onSelect(day)}
-            disabled={isFree}
-            className={`flex flex-col items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl transition-all ${
-              isActive
-                ? 'bg-primary/20 ring-2 ring-primary shadow-sm'
-                : 'hover:bg-slate-100 dark:hover:bg-surface-dark'
-            } ${isFree ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+          <Pressable
+            key={key}
+            onPress={() => onSelect(key)}
+            className={`min-w-[48px] min-h-[44px] items-center justify-center rounded-xl px-3 py-2 ${
+              isActive ? 'bg-[#69dd96]' : 'bg-surface-container'
+            }`}
+            accessibilityRole="tab"
+            accessibilityLabel={label}
+            accessibilityState={{ selected: isActive }}
           >
-            {showThumbnails && (
-              <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-surface-dark shrink-0">
-                {meal ? (
-                  <div className="absolute inset-0 bg-slate-200 dark:bg-surface-dark flex items-center justify-center">
-                    {meal.photo_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={meal.photo_url}
-                        alt={meal.nazwa}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          ;(e.target as HTMLImageElement).style.display = 'none'
-                        }}
-                      />
-                    ) : (
-                      <span className="material-symbols-outlined text-slate-400 text-sm">
-                        restaurant
-                      </span>
-                    )}
-                  </div>
-                ) : isFree ? (
-                  <span className="text-lg">✈️</span>
-                ) : (
-                  <span className="material-symbols-outlined text-slate-400 text-[20px]">
-                    restaurant_menu
-                  </span>
-                )}
-              </div>
-            )}
-            <span
-              className={`text-xs font-semibold ${
-                isActive ? 'text-primary' : 'text-slate-600 dark:text-text-secondary-dark'
+            <Text
+              className={`text-sm font-bold ${
+                isActive ? 'text-[#0e1512]' : 'text-[#94B4A6]'
               }`}
             >
-              {shortName}
-            </span>
-            {dateLabel && (
-              <span className="text-[10px] text-slate-400 hidden sm:block">{dateLabel}</span>
-            )}
-          </button>
+              {label}
+            </Text>
+          </Pressable>
         )
       })}
-    </div>
+    </View>
   )
 }

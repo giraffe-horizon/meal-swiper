@@ -1,34 +1,50 @@
-import nextConfig from 'eslint-config-next'
-import nextCoreWebVitals from 'eslint-config-next/core-web-vitals'
-import nextTypescript from 'eslint-config-next/typescript'
+import eslint from '@eslint/js'
+import tseslint from '@typescript-eslint/eslint-plugin'
+import tsparser from '@typescript-eslint/parser'
 
 /** @type {import('eslint').Linter.Config[]} */
 const config = [
-  ...nextConfig,
-  ...nextCoreWebVitals,
-  ...nextTypescript,
+  eslint.configs.recommended,
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+    },
     settings: {
       react: { version: '19' },
     },
     rules: {
+      ...tseslint.configs.recommended.rules,
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': ['warn', { allow: ['error', 'warn'] }],
-      // App Router uses root layout.tsx, not pages/_document.js — rule is N/A
-      '@next/next/no-page-custom-font': 'off',
-      // display=block is correct for icon fonts (must render or nothing)
-      '@next/next/google-font-display': 'off',
+      'no-undef': 'off',
     },
   },
   {
-    ignores: ['.next/**', '.vercel/**', 'node_modules/**', 'public/meals/**'],
-  },
-  {
-    files: ['**/__tests__/**', '**/*.test.ts', '**/*.test.tsx', '**/*.test.js'],
-    rules: {
-      '@typescript-eslint/no-require-imports': 'off',
-    },
+    ignores: [
+      '.expo/**',
+      'node_modules/**',
+      'dist/**',
+      'api/**',
+      'ios/**',
+      'android/**',
+      'data/**',
+      'coverage/**',
+      'design-reference/**',
+      '.next/**',
+      '.open-next/**',
+      '.wrangler/**',
+      'babel.config.js',
+      'metro.config.js',
+      'tailwind.config.js',
+    ],
   },
 ]
 

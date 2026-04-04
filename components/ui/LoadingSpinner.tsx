@@ -1,16 +1,18 @@
-'use client'
+import { View, ActivityIndicator } from 'react-native'
 
-export default function LoadingSpinner() {
+interface LoadingSpinnerProps {
+  size?: 'small' | 'large'
+  className?: string
+}
+
+export default function LoadingSpinner({ size = 'large', className = '' }: LoadingSpinnerProps) {
   return (
-    <div className="flex-1 h-full min-h-[50vh] flex items-center justify-center bg-background-light dark:bg-background-dark">
-      <div className="text-center">
-        <span className="material-symbols-outlined text-primary text-6xl mb-4 block animate-spin">
-          restaurant
-        </span>
-        <div className="text-xl text-text-primary-light dark:text-text-primary-dark">
-          Ładowanie...
-        </div>
-      </div>
-    </div>
+    <View
+      className={`flex-1 justify-center items-center ${className}`}
+      accessibilityRole="progressbar"
+      accessibilityLabel="Ładowanie"
+    >
+      <ActivityIndicator size={size} color="#69dd96" />
+    </View>
   )
 }

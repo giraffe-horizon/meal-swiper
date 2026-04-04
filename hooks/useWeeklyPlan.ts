@@ -1,71 +1,68 @@
-'use client'
-
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import type { Meal, DayKey, WeeklyPlan } from '@/types'
-import { getWeeklyPlan, saveWeeklyPlan, createDefaultPlan } from '@/lib/storage'
-import { getWeekKey } from '@/lib/utils'
+import { useCallback, useRef } from 'react'
 import { usePlanQuery, usePlanMutation } from '@/hooks/queries/usePlanQuery'
+import type { DayKey, Meal, WeeklyPlan } from '@/types'
 
-export function useWeeklyPlan(tenantToken: string | null = null) {
-  const [weekOffset, setWeekOffset] = useState(0)
-  const weekKey = useMemo(() => getWeekKey(weekOffset), [weekOffset])
+function createDefaultPlan(): WeeklyPlan {
+  return {
+    mon: null,
+    tue: null,
+    wed: null,
+    thu: null,
+    fri: null,
+    mon_free: false,
+    tue_free: false,
+    wed_free: false,
+    thu_free: false,
+    fri_free: false,
+  }
+}
 
-  const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan>(() =>
-    typeof window !== 'undefined' ? getWeeklyPlan(weekKey) : createDefaultPlan()
-  )
+export function useWeeklyPlan(weekKey: string, token: string | null) {
+  const planQuery = usePlanQuery(weekKey, token)
+  const planMutation = usePlanMutation(token)
 
-  // Server sync via react-query
-  const { data: serverPlan } = usePlanQuery(weekKey, tenantToken)
-  const { mutate: savePlanToServer } = usePlanMutation(tenantToken)
+  const plan: WeeklyPlan = planQuery.data ?? createDefaultPlan()
 
-  // When week changes: reload from localStorage
-  useEffect(() => {
-    const localPlan = getWeeklyPlan(weekKey)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- celowy reset stanu przy zmianie tygodnia
-    setWeeklyPlan(localPlan)
-  }, [weekKey])
-
-  // When server data arrives: sync to state + localStorage
-  useEffect(() => {
-    if (serverPlan) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync planu z serwera
-      setWeeklyPlan(serverPlan)
-      saveWeeklyPlan(weekKey, serverPlan)
-    }
-  }, [serverPlan, weekKey])
-
-  const updatePlan = useCallback(
-    (newPlan: WeeklyPlan) => {
-      setWeeklyPlan(newPlan)
-      saveWeeklyPlan(weekKey, newPlan)
-      savePlanToServer({ weekKey, plan: newPlan })
-    },
-    [weekKey, savePlanToServer]
-  )
+  // Use ref to always have latest plan for mutation callbacks (avoids stale closures)
+  const planRef = useRef(plan)
+  planRef.current = plan
 
   const setMeal = useCallback(
     (day: DayKey, meal: Meal) => {
-      // Zawsze czyść flagę urlopu gdy przypisujesz danie
-      const freeKey = `${day}_free` as `${DayKey}_free`
-      updatePlan({ ...weeklyPlan, [day]: meal, [freeKey]: false })
+      const current = planRef.current
+      const updated: WeeklyPlan = { ...current, [day]: meal }
+      planMutation.mutate({ weekKey, plan: updated })
     },
-    [weeklyPlan, updatePlan]
+    [weekKey, planMutation]
   )
 
   const removeMeal = useCallback(
-    (day: DayKey) => updatePlan({ ...weeklyPlan, [day]: null }),
-    [weeklyPlan, updatePlan]
+    (day: DayKey) => {
+      const current = planRef.current
+      const updated: WeeklyPlan = { ...current, [day]: null }
+      planMutation.mutate({ weekKey, plan: updated })
+    },
+    [weekKey, planMutation]
   )
 
   const toggleVacation = useCallback(
     (day: DayKey) => {
+      const current = planRef.current
       const freeKey = `${day}_free` as `${DayKey}_free`
-      const newPlan = { ...weeklyPlan, [freeKey]: !weeklyPlan[freeKey] }
-      if (newPlan[freeKey]) newPlan[day] = null
-      updatePlan(newPlan)
+      const updated: WeeklyPlan = { ...current, [freeKey]: !current[freeKey] }
+      planMutation.mutate({ weekKey, plan: updated })
     },
-    [weeklyPlan, updatePlan]
+    [weekKey, planMutation]
   )
 
-  return { weeklyPlan, weekOffset, weekKey, setWeekOffset, setMeal, removeMeal, toggleVacation }
+  return {
+    plan,
+    isLoading: planQuery.isLoading,
+    isError: planQuery.isError,
+    refetch: planQuery.refetch,
+    setMeal,
+    removeMeal,
+    toggleVacation,
+    isSaving: planMutation.isPending,
+  }
 }

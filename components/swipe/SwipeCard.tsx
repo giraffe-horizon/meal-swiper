@@ -1,116 +1,167 @@
-'use client'
-
-import { useState } from 'react'
-import { motion, type MotionValue, type PanInfo } from 'framer-motion'
-import type { Meal } from '@/types'
+import { Pressable, Text, View } from 'react-native'
+import { GestureDetector } from 'react-native-gesture-handler'
+import Animated, { useAnimatedStyle, type SharedValue } from 'react-native-reanimated'
+import { Image } from 'expo-image'
+import { Ionicons } from '@expo/vector-icons'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
+import CompatibilityIndicator from '@/components/swipe/CompatibilityIndicator'
+import type { MealWithVariants, PersonSettings } from '@/types'
+import type { SwipeGesturesResult } from '@/hooks/useSwipeGestures'
 
-interface SwipeCardProps {
-  meal: Meal
-  x: MotionValue<number>
-  rotate: MotionValue<number>
-  likeOpacity: MotionValue<number>
-  nopeOpacity: MotionValue<number>
-  onDragEnd: (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void
-  onPointerDown: (e: React.PointerEvent) => void
-  onPointerUp: (e: React.PointerEvent) => void
-  people: number
-  currentIndex: number
-  totalCards: number
+export interface SwipeCardProps {
+  meal: MealWithVariants
+  persons: PersonSettings[]
+  gestureResult: SwipeGesturesResult
+  onPress: () => void
+  isTop: boolean
+}
+
+function DifficultyIcon({ trudnosc }: { trudnosc: string }) {
+  const color =
+    trudnosc === 'łatwe' ? '#69dd96' : trudnosc === 'średnie' ? '#eab308' : '#ef4444'
+  return <Ionicons name="flame-outline" size={12} color={color} />
+}
+
+function OpacityBadge({
+  label,
+  color,
+  opacity,
+  side,
+}: {
+  label: string
+  color: string
+  opacity: SharedValue<number>
+  side: 'left' | 'right'
+}) {
+  const style = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }))
+
+  return (
+    <Animated.View
+      style={[style, { borderColor: color }]}
+      className={`absolute top-6 ${side === 'right' ? 'right-4' : 'left-4'} z-10 rounded-lg border-2 px-3 py-1`}
+      pointerEvents="none"
+    >
+      <Text style={{ color, fontSize: 20, fontWeight: '800', letterSpacing: 2 }}>{label}</Text>
+    </Animated.View>
+  )
 }
 
 export default function SwipeCard({
   meal,
-  x,
-  rotate,
-  likeOpacity,
-  nopeOpacity,
-  onDragEnd,
-  onPointerDown,
-  onPointerUp,
-  people,
-  currentIndex,
-  totalCards,
+  persons,
+  gestureResult,
+  onPress,
+  isTop,
 }: SwipeCardProps) {
-  const [imgError, setImgError] = useState(false)
-  const showPlaceholder = !meal.photo_url || imgError
+  const { gesture, animatedStyle, likeOpacity, nopeOpacity } = gestureResult
 
-  return (
-    <motion.div
-      key={`card-${currentIndex}`}
-      className="absolute inset-0 rounded-2xl shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing select-none touch-none"
-      style={{ x, rotate, zIndex: 10 }}
-      drag="x"
-      dragElastic={0.7}
-      dragConstraints={{ left: 0, right: 0 }}
-      onDragEnd={onDragEnd}
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
+  const defaultVariant = meal.variants.find((v) => v.is_default) || meal.variants[0]
+  const kcal = defaultVariant?.kcal ?? 0
+  const protein = defaultVariant?.protein ?? 0
+
+  const card = (
+    <Animated.View
+      style={isTop ? [animatedStyle] : undefined}
+      className="w-full bg-surface-container rounded-3xl overflow-hidden shadow-lg shadow-black/30"
+      accessibilityLabel={meal.nazwa}
+      accessibilityHint="Przesuń w prawo aby dodać do planu, w lewo aby pominąć"
+      accessibilityActions={[
+        { name: 'like', label: 'Dodaj do planu' },
+        { name: 'skip', label: 'Pomiń' },
+        { name: 'details', label: 'Szczegóły' },
+      ]}
+      onAccessibilityAction={(event) => {
+        switch (event.nativeEvent.actionName) {
+          case 'like':
+            gestureResult.animateSwipe('right')
+            break
+          case 'skip':
+            gestureResult.animateSwipe('left')
+            break
+          case 'details':
+            onPress()
+            break
+        }
+      }}
     >
-      {/* Full image background */}
-      <div className="absolute inset-0">
-        {showPlaceholder ? (
-          <MealImagePlaceholder
-            category={meal.category}
-            className="absolute inset-0 w-full h-full"
-            iconSize="text-7xl"
+      {/* LIKE badge */}
+      <OpacityBadge label="LIKE" color="#69dd96" opacity={likeOpacity} side="right" />
+      {/* NOPE badge */}
+      <OpacityBadge label="NOPE" color="#ef4444" opacity={nopeOpacity} side="left" />
+
+      {/* Image */}
+      <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`Otwórz szczegóły: ${meal.nazwa}`}>
+        {meal.photo_url ? (
+          <Image
+            source={{ uri: meal.photo_url }}
+            style={{ width: '100%', height: 280 }}
+            contentFit="cover"
+            transition={200}
+            accessibilityLabel={`Zdjęcie posiłku: ${meal.nazwa}`}
           />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            alt={meal.nazwa}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            src={meal.photo_url}
-            draggable="false"
-            onError={() => setImgError(true)}
-          />
+          <View className="w-full items-center justify-center bg-surface-container" style={{ height: 280 }}>
+            <MealImagePlaceholder size={120} />
+          </View>
         )}
-      </div>
+      </Pressable>
 
-      {/* Swipe overlays */}
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
-        style={{ opacity: likeOpacity }}
-      >
-        <div className="border-[6px] border-green-400 text-green-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[-20deg] bg-black">
-          DODAJ DO PLANU
-        </div>
-      </motion.div>
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
-        style={{ opacity: nopeOpacity }}
-      >
-        <div className="border-[6px] border-red-400 text-red-400 px-6 py-2 rounded-xl font-black text-4xl uppercase rotate-[20deg] bg-black">
-          POMIJAM
-        </div>
-      </motion.div>
+      {/* Content */}
+      <View className="p-4 gap-2">
+        {/* Title row */}
+        <View className="flex-row items-center justify-between">
+          <Text className="text-on-surface text-xl font-bold flex-1 mr-2" numberOfLines={1}>
+            {meal.nazwa}
+          </Text>
+          <CompatibilityIndicator meal={meal} persons={persons} />
+        </View>
 
-      {/* Solid overlay at bottom */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
+        {/* Description */}
+        {meal.opis ? (
+          <Text className="text-on-surface-variant text-sm" numberOfLines={2}>
+            {meal.opis}
+          </Text>
+        ) : null}
 
-      {/* Content at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 pb-6 text-white pointer-events-none">
-        <div className="flex justify-between items-end">
-          <div className="flex-1 min-w-0 mr-3">
-            <h2 className="text-2xl font-bold leading-tight drop-shadow-lg">{meal.nazwa}</h2>
-            <p className="text-slate-200 text-sm mt-1 line-clamp-2 drop-shadow">{meal.opis}</p>
-            <div className="flex items-center gap-4 mt-3 text-sm font-medium text-slate-100">
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[18px]">schedule</span>
-                <span>{meal.prep_time} min</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
-                <span>{Math.round((meal.kcal_baza * people) / 2)} kcal</span>
-                <span className="text-slate-300 text-xs">dla {people} os.</span>
-              </div>
-            </div>
-          </div>
-          <div className="bg-slate-800 rounded-full px-3 py-1 text-xs font-bold shrink-0">
-            {currentIndex + 1}/{totalCards}
-          </div>
-        </div>
-      </div>
-    </motion.div>
+        {/* Badges row */}
+        <View className="flex-row items-center gap-3 mt-1">
+          {/* Kcal */}
+          <View className="flex-row items-center gap-1">
+            <Ionicons name="flame-outline" size={14} color="#69dd96" />
+            <Text className="text-primary text-xs font-semibold">{kcal} kcal</Text>
+          </View>
+
+          {/* Protein */}
+          <View className="flex-row items-center gap-1">
+            <Ionicons name="barbell-outline" size={14} color="#94B4A6" />
+            <Text className="text-on-surface-variant text-xs font-semibold">{protein}g</Text>
+          </View>
+
+          {/* Prep time */}
+          {meal.prep_time > 0 && (
+            <View className="flex-row items-center gap-1">
+              <Ionicons name="time-outline" size={14} color="#94B4A6" />
+              <Text className="text-on-surface-variant text-xs">{meal.prep_time} min</Text>
+            </View>
+          )}
+
+          {/* Difficulty */}
+          {meal.trudnosc ? (
+            <View className="flex-row items-center gap-1">
+              <DifficultyIcon trudnosc={meal.trudnosc} />
+              <Text className="text-on-surface-variant text-xs">{meal.trudnosc}</Text>
+            </View>
+          ) : null}
+        </View>
+      </View>
+    </Animated.View>
   )
+
+  if (isTop) {
+    return <GestureDetector gesture={gesture}>{card}</GestureDetector>
+  }
+
+  return card
 }

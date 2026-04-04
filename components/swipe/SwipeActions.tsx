@@ -1,48 +1,54 @@
-'use client'
+import { View, Pressable } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 
-interface SwipeActionsProps {
-  onLeft: () => void
-  onRight: () => void
-  disabled: boolean
-  currentDay: string | null
-  onSkipDay: () => void
+export interface SwipeActionsProps {
+  onNope: () => void
+  onInfo: () => void
+  onLike: () => void
+  disabled?: boolean
 }
 
-export default function SwipeActions({
-  onLeft,
-  onRight,
-  disabled,
-  currentDay,
-  onSkipDay,
-}: SwipeActionsProps) {
+export default function SwipeActions({ onNope, onInfo, onLike, disabled = false }: SwipeActionsProps) {
   return (
-    <div className="flex flex-col items-center gap-2 shrink-0 pb-2">
-      <div className="flex items-center justify-center gap-6 sm:gap-8 h-16 sm:h-20">
-        <button
-          onClick={onLeft}
-          disabled={disabled}
-          title="Pomiń tę propozycję"
-          className="w-14 h-14 sm:w-16 sm:h-16 bg-white dark:bg-surface-dark rounded-full shadow-lg flex items-center justify-center text-red-500 border-2 border-red-100 dark:border-red-900/30 transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
-        >
-          <span className="material-symbols-outlined text-3xl font-bold">close</span>
-        </button>
-        <button
-          onClick={onRight}
-          disabled={disabled}
-          title="Dodaj do planu"
-          className="w-14 h-14 sm:w-16 sm:h-16 bg-primary rounded-full shadow-lg shadow-primary/30 flex items-center justify-center text-white transition-transform active:scale-90 hover:scale-105 disabled:opacity-50"
-        >
-          <span className="material-symbols-outlined text-3xl font-bold">favorite</span>
-        </button>
-      </div>
-      {currentDay && (
-        <button
-          onClick={onSkipDay}
-          className="text-sm text-slate-500 dark:text-text-secondary-dark hover:text-slate-700 dark:hover:text-slate-300 transition-colors py-1"
-        >
-          Pomiń ten dzień &rarr;
-        </button>
-      )}
-    </div>
+    <View className="flex-row items-center justify-center gap-6 py-4">
+      {/* Nope / Skip */}
+      <Pressable
+        onPress={onNope}
+        disabled={disabled}
+        className="w-14 h-14 rounded-full border-2 border-red-500 items-center justify-center"
+        style={{ opacity: disabled ? 0.4 : 1 }}
+        accessibilityRole="button"
+        accessibilityLabel="Pomiń posiłek"
+        accessibilityState={{ disabled }}
+      >
+        <Ionicons name="close-outline" size={28} color="#ef4444" />
+      </Pressable>
+
+      {/* Info / Details */}
+      <Pressable
+        onPress={onInfo}
+        disabled={disabled}
+        className="w-12 h-12 rounded-full border-2 border-on-surface-variant items-center justify-center"
+        style={{ opacity: disabled ? 0.4 : 1 }}
+        accessibilityRole="button"
+        accessibilityLabel="Szczegóły posiłku"
+        accessibilityState={{ disabled }}
+      >
+        <Ionicons name="information-outline" size={24} color="#94B4A6" />
+      </Pressable>
+
+      {/* Like / Add to plan */}
+      <Pressable
+        onPress={onLike}
+        disabled={disabled}
+        className="w-14 h-14 rounded-full bg-primary items-center justify-center"
+        style={{ opacity: disabled ? 0.4 : 1 }}
+        accessibilityRole="button"
+        accessibilityLabel="Dodaj do planu"
+        accessibilityState={{ disabled }}
+      >
+        <Ionicons name="heart" size={28} color="#0e1512" />
+      </Pressable>
+    </View>
   )
 }

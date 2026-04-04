@@ -1,50 +1,66 @@
-'use client'
-
-import type { StepSegment } from '@/lib/recipe'
-import AmountBadge from '@/components/ui/AmountBadge'
+import { View, Text, Pressable } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 
 interface RecipeStepsProps {
-  steps: StepSegment[][]
-  checkedSteps?: Record<number, boolean>
-  onToggleStep?: (index: number) => void
+  steps: string[]
+  tips: string
+  completedSteps: Record<number, boolean>
+  onToggleStep: (index: number) => void
 }
 
-export default function RecipeSteps({ steps, checkedSteps = {}, onToggleStep }: RecipeStepsProps) {
+export default function RecipeSteps({
+  steps,
+  tips,
+  completedSteps,
+  onToggleStep,
+}: RecipeStepsProps) {
+  if (steps.length === 0) return null
+
   return (
-    <div className="space-y-3">
-      {steps.map((segments, i) => {
-        const done = checkedSteps[i] ?? false
+    <View className="gap-3">
+      <Text className="text-on-surface text-lg font-bold px-4" accessibilityRole="header">
+        Przepis
+      </Text>
+
+      {steps.map((step, i) => {
+        const isDone = !!completedSteps[i]
         return (
-          <div
+          <Pressable
             key={i}
-            onClick={() => onToggleStep?.(i)}
-            className={`flex gap-3 p-3 rounded-xl cursor-pointer transition-all ${
-              done
-                ? 'bg-green-50 dark:bg-green-900/20 opacity-60'
-                : 'bg-slate-50 dark:bg-surface-dark/50 hover:bg-slate-100 dark:hover:bg-surface-dark'
-            }`}
+            onPress={() => onToggleStep(i)}
+            className="flex-row gap-3 px-4 py-1"
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: isDone }}
+            accessibilityLabel={`Krok ${i + 1}: ${step}`}
           >
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-sm font-bold transition-colors ${
-                done ? 'bg-green-500 text-white' : 'bg-primary/10 text-primary'
+            <View
+              className={`w-7 h-7 rounded-full items-center justify-center mt-0.5 ${
+                isDone ? 'bg-primary' : 'bg-primary/20'
               }`}
             >
-              {done ? '✓' : i + 1}
-            </div>
-            <p
-              className={`text-sm text-slate-700 dark:text-text-secondary-dark leading-relaxed flex-1 ${done ? 'line-through' : ''}`}
-            >
-              {segments.map((seg, j) =>
-                seg.type === 'text' ? (
-                  <span key={j}>{seg.content}</span>
-                ) : (
-                  <AmountBadge key={j} amount={seg.amount} />
-                )
+              {isDone ? (
+                <Ionicons name="checkmark" size={16} color="#0e1512" />
+              ) : (
+                <Text className="text-primary text-xs font-bold">{i + 1}</Text>
               )}
-            </p>
-          </div>
+            </View>
+            <Text
+              className={`flex-1 text-sm leading-5 ${
+                isDone ? 'text-on-surface-variant line-through' : 'text-on-surface'
+              }`}
+            >
+              {step}
+            </Text>
+          </Pressable>
         )
       })}
-    </div>
+
+      {tips ? (
+        <View className="bg-primary/10 rounded-xl p-3 mx-4 mt-1">
+          <Text className="text-primary text-sm font-semibold mb-1">Wskazówki</Text>
+          <Text className="text-on-surface-variant text-sm">{tips}</Text>
+        </View>
+      ) : null}
+    </View>
   )
 }

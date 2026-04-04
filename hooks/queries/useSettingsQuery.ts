@@ -1,7 +1,6 @@
-'use client'
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchSettings, saveSettings } from '@/lib/api'
+import { useUIStore } from '@/stores/ui'
 import type { AppSettings } from '@/types'
 
 export const settingsQueryKey = (token: string | null) => ['settings', token] as const
@@ -21,6 +20,9 @@ export function useSettingsMutation(token: string | null) {
     mutationFn: (settings: AppSettings) => saveSettings(settings, token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: settingsQueryKey(token) })
+    },
+    onError: () => {
+      useUIStore.getState().addToast({ message: 'Błąd zapisu ustawień', type: 'error' })
     },
   })
 }

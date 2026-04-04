@@ -1,132 +1,133 @@
-'use client'
-
-import type { MotionValue, PanInfo } from 'framer-motion'
-import type { Meal } from '@/types'
+import { useCallback, useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
+import { View, Text } from 'react-native'
+import * as Haptics from 'expo-haptics'
+import { useAnimatedReaction, runOnJS } from 'react-native-reanimated'
+import { Ionicons } from '@expo/vector-icons'
 import SwipeCard from './SwipeCard'
-import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
+import { useSwipeGestures } from '@/hooks/useSwipeGestures'
+import type { MealWithVariants, PersonSettings } from '@/types'
 
-interface SwipeStackProps {
-  stackCards: Meal[]
-  currentIndex: number
-  totalCards: number
-  x: MotionValue<number>
-  rotate: MotionValue<number>
-  likeOpacity: MotionValue<number>
-  nopeOpacity: MotionValue<number>
-  onDragEnd: (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void
-  onPointerDown: (e: React.PointerEvent) => void
-  onPointerUp: (e: React.PointerEvent) => void
-  people: number
+export interface SwipeStackHandle {
+  swipe: (direction: 'left' | 'right') => void
 }
 
-export default function SwipeStack({
-  stackCards,
-  currentIndex,
-  totalCards,
-  x,
-  rotate,
-  likeOpacity,
-  nopeOpacity,
-  onDragEnd,
-  onPointerDown,
-  onPointerUp,
-  people,
-}: SwipeStackProps) {
-  return (
-    <div
-      className="relative w-full max-w-sm flex-1 min-h-0"
-      style={{ minHeight: '420px', maxHeight: 'calc(100vh - 320px)' }}
-    >
-      {stackCards
-        .slice()
-        .reverse()
-        .map((meal, reverseIdx) => {
-          const stackIdx = stackCards.length - 1 - reverseIdx
-          const isTop = stackIdx === 0
-          const actualIndex = currentIndex + stackIdx
+export interface SwipeStackProps {
+  meals: MealWithVariants[]
+  persons: PersonSettings[]
+  onSwipeRight: (meal: MealWithVariants) => void
+  onSwipeLeft: (meal: MealWithVariants) => void
+  onCardPress: (meal: MealWithVariants) => void
+}
 
-          // Only render top card + 2 background cards for performance and to avoid bleed-through
-          if (stackIdx > 2) return null
+const SwipeStack = forwardRef<SwipeStackHandle, SwipeStackProps>(function SwipeStack(
+  { meals, persons, onSwipeRight, onSwipeLeft, onCardPress },
+  ref
+) {
+  const hapticFiredRef = useRef(false)
 
-          if (isTop) {
-            return (
-              <SwipeCard
-                key={`card-${currentIndex}`}
-                meal={meal}
-                x={x}
-                rotate={rotate}
-                likeOpacity={likeOpacity}
-                nopeOpacity={nopeOpacity}
-                onDragEnd={onDragEnd}
-                onPointerDown={onPointerDown}
-                onPointerUp={onPointerUp}
-                people={people}
-                currentIndex={currentIndex}
-                totalCards={totalCards}
-              />
-            )
-          }
+  const topMeal = meals[0]
 
-          // Background stack cards — identical to top card
-          return (
-            <div
-              key={`stack-${actualIndex}`}
-              className="absolute inset-0 rounded-2xl shadow-xl overflow-hidden pointer-events-none"
-              style={{
-                zIndex: 10 - stackIdx,
-              }}
-            >
-              {/* Full image background or placeholder */}
-              {meal.photo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={meal.nazwa}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  src={meal.photo_url}
-                  draggable="false"
-                  onError={(e) => {
-                    ;(e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              ) : (
-                <MealImagePlaceholder className="absolute inset-0 w-full h-full" />
-              )}
+  const handleSwipeRight = useCallback(() => {
+    if (topMeal) onSwipeRight(topMeal)
+  }, [topMeal, onSwipeRight])
 
-              {/* Gradient overlay at bottom */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+  const handleSwipeLeft = useCallback(() => {
+    if (topMeal) onSwipeLeft(topMeal)
+  }, [topMeal, onSwipeLeft])
 
-              {/* Content at bottom — matching SwipeCard layout */}
-              <div className="absolute bottom-0 left-0 right-0 p-5 pb-6 text-white">
-                <div className="flex justify-between items-end">
-                  <div className="flex-1 min-w-0 mr-3">
-                    <h2 className="text-2xl font-bold leading-tight drop-shadow-lg">
-                      {meal.nazwa}
-                    </h2>
-                    <p className="text-slate-200 text-sm mt-1 line-clamp-2 drop-shadow">
-                      {meal.opis}
-                    </p>
-                    <div className="flex items-center gap-4 mt-3 text-sm font-medium text-slate-100">
-                      <div className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[18px]">schedule</span>
-                        <span>{meal.prep_time} min</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[18px]">
-                          local_fire_department
-                        </span>
-                        <span>{Math.round((meal.kcal_baza * people) / 2)} kcal</span>
-                        <span className="text-slate-300 text-xs">dla {people} os.</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-slate-800 rounded-full px-3 py-1 text-xs font-bold shrink-0">
-                    {actualIndex + 1}/{totalCards}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )
-        })}
-    </div>
+  const gestureResult = useSwipeGestures({
+    onSwipeRight: handleSwipeRight,
+    onSwipeLeft: handleSwipeLeft,
+  })
+
+  // Expose swipe method to parent via ref
+  useImperativeHandle(ref, () => ({
+    swipe: (direction: 'left' | 'right') => {
+      gestureResult.animateSwipe(direction)
+    },
+  }))
+
+  // Reset position when top card changes
+  useEffect(() => {
+    gestureResult.resetPosition()
+    hapticFiredRef.current = false
+  }, [topMeal?.id])
+
+  // Haptic feedback when crossing threshold
+  const triggerHaptic = useCallback(() => {
+    if (!hapticFiredRef.current) {
+      hapticFiredRef.current = true
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    }
+  }, [])
+
+  const resetHaptic = useCallback(() => {
+    hapticFiredRef.current = false
+  }, [])
+
+  // Watch translateX for haptic trigger via likeOpacity/nopeOpacity
+  useAnimatedReaction(
+    () => {
+      // Threshold crossed when either badge is fully visible
+      return Math.max(gestureResult.likeOpacity.value, gestureResult.nopeOpacity.value)
+    },
+    (current, previous) => {
+      if (current >= 0.8 && (previous === null || previous < 0.8)) {
+        runOnJS(triggerHaptic)()
+      } else if (current < 0.3 && previous !== null && previous >= 0.3) {
+        runOnJS(resetHaptic)()
+      }
+    }
   )
-}
+
+  // Empty state
+  if (meals.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center px-8">
+        <Ionicons name="restaurant-outline" size={64} color="#94B4A6" />
+        <Text className="text-on-surface text-lg font-bold mt-4 text-center">
+          Brak więcej posiłków
+        </Text>
+        <Text className="text-on-surface-variant text-sm mt-2 text-center">
+          Przejrzałeś wszystkie posiłki. Zmień filtry lub odśwież.
+        </Text>
+      </View>
+    )
+  }
+
+  // Render top 3 cards
+  const visibleMeals = meals.slice(0, 3)
+
+  return (
+    <View className="flex-1 items-center justify-center px-4">
+      {visibleMeals.map((meal, index) => {
+        const isTop = index === 0
+        const zIndex = 3 - index
+        const scale = 1 - index * 0.05 // 1, 0.95, 0.9
+        const translateY = index * 10 // 0, 10, 20
+
+        return (
+          <View
+            key={meal.id}
+            className="absolute w-full px-2"
+            style={{
+              zIndex,
+              transform: isTop ? [] : [{ scale }, { translateY }],
+            }}
+            pointerEvents={isTop ? 'auto' : 'none'}
+          >
+            <SwipeCard
+              meal={meal}
+              persons={persons}
+              gestureResult={gestureResult}
+              onPress={() => onCardPress(meal)}
+              isTop={isTop}
+            />
+          </View>
+        )
+      })}
+    </View>
+  )
+})
+
+export default SwipeStack

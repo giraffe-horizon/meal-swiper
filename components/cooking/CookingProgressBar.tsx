@@ -1,44 +1,32 @@
-'use client'
+import { View, Text } from 'react-native'
 
 interface CookingProgressBarProps {
+  completed: number
   total: number
-  done: number
 }
 
-export default function CookingProgressBar({ total, done }: CookingProgressBarProps) {
-  const percent = total > 0 ? Math.round((done / total) * 100) : 0
-  const isComplete = percent === 100
+export default function CookingProgressBar({ completed, total }: CookingProgressBarProps) {
+  const progress = total > 0 ? completed / total : 0
 
   return (
-    <div className="mb-4">
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-medium text-slate-500 dark:text-text-secondary-dark">
-          Postęp gotowania
-        </span>
-        <span
-          className={`text-xs font-bold transition-colors ${
-            isComplete ? 'text-emerald-600 dark:text-emerald-400' : 'text-primary'
-          }`}
-        >
-          {percent}%
-        </span>
-      </div>
-
-      <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${
-            isComplete ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-primary'
-          }`}
-          style={{ width: `${percent}%` }}
+    <View
+      className="px-4 py-2"
+      accessibilityRole="progressbar"
+      accessibilityLabel={`Postęp: ${completed} z ${total} kroków`}
+      accessibilityValue={{ min: 0, max: total, now: completed }}
+    >
+      <View className="flex-row items-center justify-between mb-1">
+        <Text className="text-on-surface-variant text-xs">Postęp</Text>
+        <Text className="text-primary text-xs font-semibold">
+          {completed}/{total}
+        </Text>
+      </View>
+      <View className="h-2 bg-surface-container rounded-full overflow-hidden">
+        <View
+          className="h-full bg-primary rounded-full"
+          style={{ width: `${progress * 100}%` }}
         />
-      </div>
-
-      {isComplete && (
-        <div className="mt-2 flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 animate-pulse">
-          <span className="material-symbols-outlined text-[16px]">celebration</span>
-          <span className="text-xs font-medium">Danie gotowe! Smacznego 🎉</span>
-        </div>
-      )}
-    </div>
+      </View>
+    </View>
   )
 }

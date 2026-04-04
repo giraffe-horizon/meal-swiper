@@ -1,254 +1,148 @@
-'use client'
-
-import { useState } from 'react'
-import type { Meal, DayKey } from '@/types'
+import { View, Text, Pressable } from 'react-native'
+import { Image } from 'expo-image'
+import { Ionicons } from '@expo/vector-icons'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
+import IconButton from '@/components/ui/IconButton'
+import { colors } from '@/lib/colors'
+import type { DayKey, Meal } from '@/types'
+import { DAY_NAMES_MAP } from '@/lib/utils'
 
 interface DayCardProps {
   day: DayKey
+  date: Date
   meal: Meal | null
-  isFree: boolean
-  dateStr: string
-  dayName: string
-  people: number
-  onDayClick: (day: DayKey) => void
-  onRemoveMeal: (day: DayKey) => void
-  onToggleVacation: (day: DayKey) => void
-  onMealClick: (meal: Meal) => void
+  isVacation: boolean
+  onPress: () => void
+  onToggleVacation: () => void
+  onCook: () => void
+}
+
+function formatDayDate(date: Date): string {
+  return `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}`
 }
 
 export default function DayCard({
   day,
+  date,
   meal,
-  isFree,
-  dateStr,
-  dayName,
-  people,
-  onDayClick,
-  onRemoveMeal,
+  isVacation,
+  onPress,
   onToggleVacation,
-  onMealClick,
+  onCook,
 }: DayCardProps) {
-  const [activeMenu, setActiveMenu] = useState(false)
-  const [imgError, setImgError] = useState(false)
+  const dayName = DAY_NAMES_MAP[day] ?? day
+  const dateStr = formatDayDate(date)
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault()
-    const action = window.confirm(
-      isFree
-        ? 'Usuń oznaczenie wolnego dnia?'
-        : meal
-          ? 'Co chcesz zrobić?\nOK = Usuń danie\nCancel = Oznacz jako wolny'
-          : 'Oznaczyć jako wolny dzień?'
-    )
-    if (isFree) {
-      if (action) onToggleVacation(day)
-    } else if (meal) {
-      if (action) onRemoveMeal(day)
-      else onToggleVacation(day)
-    } else {
-      if (action) onToggleVacation(day)
-    }
-  }
-
-  if (isFree) {
+  // Vacation state
+  if (isVacation) {
     return (
-      <div
-        data-testid={`day-card-${day}`}
-        onContextMenu={handleContextMenu}
-        className="bg-slate-100 dark:bg-surface-dark/50 rounded-xl p-3 sm:p-4 flex items-center justify-between opacity-70 group relative"
+      <Pressable
+        onPress={onToggleVacation}
+        className="bg-surface-container rounded-2xl p-3 mb-2"
+        accessibilityRole="button"
+        accessibilityLabel={`${dayName} ${dateStr}, wolne. Dotknij aby anulować wolne`}
       >
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-slate-500">flight_takeoff</span>
-          </div>
-          <div className="flex flex-col min-w-0">
-            <p className="text-sm font-medium text-slate-500 dark:text-text-secondary-dark truncate">
-              {dayName}, {dateStr}
-            </p>
-            <p className="text-base font-bold text-slate-600 dark:text-text-secondary-dark">
-              Urlop
-            </p>
-          </div>
-        </div>
-        <div className="relative">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setActiveMenu(!activeMenu)
-            }}
-            className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg"
-          >
-            <span className="material-symbols-outlined text-slate-500">more_vert</span>
-          </button>
-          {activeMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-surface-dark rounded-lg shadow-lg border border-slate-200 dark:border-border-dark py-2 z-50 min-w-[180px]">
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onToggleVacation(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-              >
-                <span className="material-symbols-outlined text-[18px]">close</span>
-                Anuluj urlop
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+        <View className="flex-row items-center justify-between">
+          <View>
+            <Text className="text-on-surface-variant text-xs font-semibold">{dateStr}</Text>
+            <Text className="text-on-surface text-sm font-bold">{dayName}</Text>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="airplane-outline" size={16} color={colors.onSurfaceVariant} />
+            <Text className="text-on-surface-variant text-sm line-through">Wolne</Text>
+          </View>
+        </View>
+      </Pressable>
     )
   }
 
+  // Meal assigned
   if (meal) {
     return (
-      <div
-        data-testid={`day-card-${day}`}
-        onContextMenu={handleContextMenu}
-        className="bg-white dark:bg-surface-dark rounded-xl p-3 sm:p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-border-dark group relative"
+      <Pressable
+        onPress={onPress}
+        className="bg-surface-container rounded-2xl p-3 mb-2"
+        accessibilityRole="button"
+        accessibilityLabel={`${dayName} ${dateStr}, ${meal.nazwa}. Dotknij aby zobaczyć opcje`}
       >
-        <button
-          type="button"
-          onClick={() => onMealClick(meal)}
-          className="flex items-center gap-4 min-w-0 flex-1 text-left cursor-pointer hover:opacity-80 transition-opacity"
-        >
-          <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-sm shrink-0 overflow-hidden">
-            {meal.photo_url && !imgError ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={meal.photo_url}
-                alt={meal.nazwa}
-                className="w-full h-full object-cover"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <MealImagePlaceholder
-                category={meal.category}
-                className="w-full h-full"
-                iconSize="text-2xl"
-              />
-            )}
-          </div>
-          <div className="flex flex-col min-w-0 flex-1">
-            <p className="text-sm font-medium text-slate-500 dark:text-text-secondary-dark truncate">
-              {dayName}, {dateStr}
-            </p>
-            <p className="text-base font-bold text-slate-900 dark:text-text-primary-dark truncate">
-              {meal.nazwa}
-            </p>
-            {meal.nazwa && meal.prep_time && (
-              <p className="text-xs text-slate-500 dark:text-text-secondary-dark mt-0.5">
-                {meal.prep_time} min &bull; {Math.round((meal.kcal_baza * people) / 2)} kcal
-              </p>
-            )}
-          </div>
-        </button>
-        <div className="relative">
-          <button
-            onClick={() => setActiveMenu(!activeMenu)}
-            className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-surface-dark rounded-lg"
-          >
-            <span className="material-symbols-outlined text-slate-400">more_vert</span>
-          </button>
-          {activeMenu && (
-            <div className="absolute right-0 top-full mt-1 bg-white dark:bg-surface-dark rounded-lg shadow-lg border border-slate-200 dark:border-border-dark py-2 z-50 min-w-[180px]">
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onDayClick(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-              >
-                <span className="material-symbols-outlined text-[18px]">sync_alt</span>
-                Zmień danie
-              </button>
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onRemoveMeal(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-red-600 dark:text-red-400"
-              >
-                <span className="material-symbols-outlined text-[18px]">delete</span>
-                Usuń danie
-              </button>
-              <button
-                onClick={() => {
-                  setActiveMenu(false)
-                  onToggleVacation(day)
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-              >
-                <span className="material-symbols-outlined text-[18px]">flight_takeoff</span>
-                Oznacz jako wolny
-              </button>
-            </div>
+        <View className="flex-row items-center gap-3">
+          {/* Meal image */}
+          {meal.photo_url ? (
+            <Image
+              source={{ uri: meal.photo_url }}
+              style={{ width: 56, height: 56, borderRadius: 12 }}
+              contentFit="cover"
+              transition={200}
+              accessibilityLabel={`Zdjęcie: ${meal.nazwa}`}
+            />
+          ) : (
+            <View
+              className="bg-background rounded-xl items-center justify-center"
+              style={{ width: 56, height: 56 }}
+            >
+              <MealImagePlaceholder size={32} />
+            </View>
           )}
-        </div>
-      </div>
+
+          {/* Info */}
+          <View className="flex-1">
+            <Text className="text-on-surface-variant text-xs font-semibold">
+              {dayName} · {dateStr}
+            </Text>
+            <Text className="text-on-surface text-sm font-bold" numberOfLines={1}>
+              {meal.nazwa}
+            </Text>
+            <View className="flex-row items-center gap-3 mt-0.5">
+              <View className="flex-row items-center gap-1">
+                <Ionicons name="flame-outline" size={12} color={colors.primary} />
+                <Text className="text-primary text-xs">{meal.kcal_baza} kcal</Text>
+              </View>
+              <View className="flex-row items-center gap-1">
+                <Ionicons name="barbell-outline" size={12} color={colors.onSurfaceVariant} />
+                <Text className="text-on-surface-variant text-xs">{meal.bialko_baza}g</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Cook button */}
+          <Pressable
+            onPress={onCook}
+            className="min-w-[44px] min-h-[44px] items-center justify-center rounded-xl bg-primary/15"
+            accessibilityRole="button"
+            accessibilityLabel={`Gotuj ${meal.nazwa}`}
+          >
+            <Ionicons name="restaurant-outline" size={20} color={colors.primary} />
+          </Pressable>
+        </View>
+      </Pressable>
     )
   }
 
+  // Empty state
   return (
-    <div
-      data-testid={`day-card-${day}`}
-      onClick={() => onDayClick(day)}
-      onContextMenu={handleContextMenu}
-      className="bg-white dark:bg-surface-dark rounded-xl p-3 sm:p-4 shadow-sm flex items-center justify-between border border-slate-100 dark:border-border-dark border-dashed cursor-pointer hover:border-primary/50 transition-colors group"
+    <Pressable
+      onPress={onPress}
+      onLongPress={onToggleVacation}
+      className="bg-surface-container/50 rounded-2xl p-3 mb-2 border border-dashed border-border-dark"
+      accessibilityRole="button"
+      accessibilityLabel={`${dayName} ${dateStr}, brak posiłku. Dotknij aby dodać`}
     >
-      <div className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-slate-50 dark:bg-surface-dark border-2 border-dashed border-slate-200 dark:border-border-dark flex items-center justify-center shrink-0">
-          <span className="material-symbols-outlined text-slate-400">restaurant_menu</span>
-        </div>
-        <div className="flex flex-col min-w-0">
-          <p className="text-sm font-medium text-slate-500 dark:text-text-secondary-dark truncate">
-            {dayName}, {dateStr}
-          </p>
-          <p className="text-base font-medium text-slate-400 dark:text-slate-500 italic">
-            Brak planu
-          </p>
-        </div>
-      </div>
-      <button className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors shrink-0">
-        <span className="material-symbols-outlined text-primary">add</span>
-      </button>
-      <div className="relative ml-2">
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            setActiveMenu(!activeMenu)
-          }}
-          className="p-2 shrink-0 opacity-100 transition-opacity hover:bg-slate-100 dark:hover:bg-surface-dark rounded-lg"
-        >
-          <span className="material-symbols-outlined text-slate-400">more_vert</span>
-        </button>
-        {activeMenu && (
-          <div className="absolute right-0 top-full mt-1 bg-white dark:bg-surface-dark rounded-lg shadow-lg border border-slate-200 dark:border-border-dark py-2 z-50 min-w-[180px]">
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setActiveMenu(false)
-                onDayClick(day)
-              }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-            >
-              <span className="material-symbols-outlined text-[18px]">add</span>
-              Dodaj danie
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setActiveMenu(false)
-                onToggleVacation(day)
-              }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-text-secondary-dark"
-            >
-              <span className="material-symbols-outlined text-[18px]">flight_takeoff</span>
-              Oznacz jako wolny
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text className="text-on-surface-variant text-xs font-semibold">{dateStr}</Text>
+          <Text className="text-on-surface text-sm font-bold">{dayName}</Text>
+        </View>
+        <View className="flex-row items-center gap-2">
+          <IconButton
+            icon="airplane-outline"
+            size={18}
+            color={colors.onSurfaceVariant}
+            onPress={onToggleVacation}
+            accessibilityLabel="Ustaw dzień wolny"
+          />
+          <Ionicons name="add-circle-outline" size={20} color={colors.onSurfaceVariant} />
+        </View>
+      </View>
+    </Pressable>
   )
 }
