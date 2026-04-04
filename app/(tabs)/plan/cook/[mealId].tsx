@@ -12,6 +12,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { useMealsWithVariantsQuery } from '@/hooks/queries/useMealsWithVariantsQuery'
 import { useSettingsQuery } from '@/hooks/queries/useSettingsQuery'
 import { useAuthStore } from '@/stores/auth'
+import { colors } from '@/lib/colors'
 import { parseRecipe } from '@/lib/recipe'
 import { toMealForModal } from '@/lib/meal-convert'
 import { scaleIngredient, computeScaleFactor } from '@/lib/scaling'
@@ -85,7 +86,7 @@ export default function CookScreen() {
   }, [])
 
   // Loading
-  if (mealsQuery.isLoading) {
+  if (mealsQuery.isLoading || settingsQuery.isLoading) {
     return (
       <View className="flex-1 bg-background">
         <LoadingSpinner />
@@ -120,7 +121,7 @@ export default function CookScreen() {
         accessibilityRole="button"
         accessibilityLabel="Wróć do planu"
       >
-        <Ionicons name="arrow-back" size={22} color="#dde4df" />
+        <Ionicons name="arrow-back" size={22} color={colors.onSurface} />
       </Pressable>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
@@ -134,7 +135,7 @@ export default function CookScreen() {
         <View className="flex-row items-center gap-4 px-4 py-3">
           {mealWithVariants.prep_time > 0 && (
             <View className="flex-row items-center gap-1">
-              <Ionicons name="time-outline" size={16} color="#94B4A6" />
+              <Ionicons name="time-outline" size={16} color={colors.onSurfaceVariant} />
               <Text className="text-on-surface-variant text-sm">
                 {mealWithVariants.prep_time} min
               </Text>
@@ -142,19 +143,19 @@ export default function CookScreen() {
           )}
           {mealWithVariants.trudnosc ? (
             <View className="flex-row items-center gap-1">
-              <Ionicons name="speedometer-outline" size={16} color="#94B4A6" />
+              <Ionicons name="speedometer-outline" size={16} color={colors.onSurfaceVariant} />
               <Text className="text-on-surface-variant text-sm">{mealWithVariants.trudnosc}</Text>
             </View>
           ) : null}
           {mealWithVariants.kuchnia ? (
             <View className="flex-row items-center gap-1">
-              <Ionicons name="globe-outline" size={16} color="#94B4A6" />
+              <Ionicons name="globe-outline" size={16} color={colors.onSurfaceVariant} />
               <Text className="text-on-surface-variant text-sm">{mealWithVariants.kuchnia}</Text>
             </View>
           ) : null}
           {mealWithVariants.variants[0] && (
             <View className="flex-row items-center gap-1">
-              <Ionicons name="flame-outline" size={16} color="#69dd96" />
+              <Ionicons name="flame-outline" size={16} color={colors.primary} />
               <Text className="text-primary text-sm font-semibold">
                 {mealWithVariants.variants[0].kcal} kcal
               </Text>

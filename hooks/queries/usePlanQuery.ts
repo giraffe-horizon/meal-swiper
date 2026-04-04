@@ -19,7 +19,20 @@ export function usePlanMutation(token: string | null) {
   return useMutation({
     mutationFn: ({ weekKey, plan }: { weekKey: string; plan: WeeklyPlan }) =>
       savePlan(weekKey, plan, token),
-    onSuccess: (_, { weekKey }) => {
+    onMutate: async ({ weekKey, plan }) => {
+      const qk = planQueryKey(weekKey, token)
+      await queryClient.cancelQueries({ queryKey: qk })
+      const previous = queryClient.getQueryData<WeeklyPlan>(qk)
+      queryClient.setQueryData(qk, plan)
+      return { previous, weekKey }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous !== undefined) {
+        const qk = planQueryKey(context.weekKey, token)
+        queryClient.setQueryData(qk, context.previous)
+      }
+    },
+    onSettled: (_data, _err, { weekKey }) => {
       queryClient.invalidateQueries({ queryKey: planQueryKey(weekKey, token) })
     },
   })

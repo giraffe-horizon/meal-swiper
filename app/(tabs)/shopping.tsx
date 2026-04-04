@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, Text, Pressable, ScrollView, RefreshControl } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { colors } from '@/lib/colors'
 import { useWeekDates } from '@/hooks/useWeekDates'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import {
@@ -61,7 +62,7 @@ export default function ShoppingScreen() {
   const setWeekOffset = useUIStore((s) => s.setWeekOffset)
 
   const { weekKey, range } = useWeekDates(weekOffset)
-  const { plan, isLoading: planLoading } = useWeeklyPlan(weekKey, token)
+  const { plan, isLoading: planLoading, isError: planError, refetch: planRefetch } = useWeeklyPlan(weekKey, token)
   const settingsQuery = useSettingsQuery(token)
   const checkedQuery = useShoppingCheckedQuery(weekKey, token)
   const checkedMutation = useShoppingCheckedMutation(token)
@@ -82,6 +83,12 @@ export default function ShoppingScreen() {
 
   // Checked state (merge server + local)
   const [localChecked, setLocalChecked] = useState<Record<string, boolean>>({})
+
+  // Reset local state when week changes
+  useEffect(() => {
+    setLocalChecked({})
+    setExpandedItems({})
+  }, [weekKey])
   const serverChecked = checkedQuery.data ?? {}
   const checked = useMemo(
     () => ({ ...serverChecked, ...localChecked }),
@@ -115,9 +122,13 @@ export default function ShoppingScreen() {
   const [refreshing, setRefreshing] = useState(false)
   const handleRefresh = useCallback(async () => {
     setRefreshing(true)
-    await checkedQuery.refetch()
+    await Promise.all([
+      checkedQuery.refetch(),
+      planRefetch(),
+      settingsQuery.refetch(),
+    ])
     setRefreshing(false)
-  }, [checkedQuery])
+  }, [checkedQuery, planRefetch, settingsQuery])
 
   const checkedCount = Object.values(checked).filter(Boolean).length
 
@@ -130,6 +141,27 @@ export default function ShoppingScreen() {
     )
   }
 
+  // Error
+  if (planError) {
+    return (
+      <View className="flex-1 bg-background items-center justify-center px-8">
+        <Ionicons name="alert-circle-outline" size={48} color={colors.onSurfaceVariant} />
+        <Text className="text-on-surface text-lg font-bold text-center mt-3">Błąd ładowania</Text>
+        <Text className="text-on-surface-variant text-sm text-center mt-2">
+          Nie udało się pobrać danych. Sprawdź połączenie.
+        </Text>
+        <Pressable
+          onPress={() => planRefetch()}
+          className="bg-primary rounded-2xl px-6 py-3 mt-4"
+          accessibilityRole="button"
+          accessibilityLabel="Spróbuj ponownie"
+        >
+          <Text className="text-background font-bold">Spróbuj ponownie</Text>
+        </Pressable>
+      </View>
+    )
+  }
+
   return (
     <View className="flex-1 bg-background">
       <ScrollView
@@ -138,8 +170,8 @@ export default function ShoppingScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor="#69dd96"
-            colors={['#69dd96']}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
           />
         }
       >
@@ -168,7 +200,7 @@ export default function ShoppingScreen() {
         {/* Empty state */}
         {shoppingList.length === 0 && (
           <View className="items-center px-8 mt-10">
-            <Ionicons name="cart-outline" size={48} color="#94B4A6" />
+            <Ionicons name="cart-outline" size={48} color={colors.onSurfaceVariant} />
             <Text className="text-on-surface-variant text-sm text-center mt-3">
               Brak posiłków w planie — najpierw zaplanuj tydzień!
             </Text>
@@ -188,7 +220,7 @@ export default function ShoppingScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Wyczyść zaznaczenia"
               >
-                <Ionicons name="close-circle-outline" size={16} color="#94B4A6" />
+                <Ionicons name="close-circle-outline" size={16} color={colors.onSurfaceVariant} />
                 <Text className="text-on-surface-variant text-xs">Wyczyść</Text>
               </Pressable>
             )}
@@ -224,7 +256,7 @@ export default function ShoppingScreen() {
                           isChecked ? 'bg-primary border-primary' : 'border-on-surface-variant'
                         }`}
                       >
-                        {isChecked && <Ionicons name="checkmark" size={14} color="#0e1512" />}
+                        {isChecked && <Ionicons name="checkmark" size={14} color={colors.background} />}
                       </View>
                     </Pressable>
 
@@ -251,7 +283,7 @@ export default function ShoppingScreen() {
                       <Ionicons
                         name={isExpanded ? 'chevron-up' : 'chevron-down'}
                         size={16}
-                        color="#94B4A6"
+                        color={colors.onSurfaceVariant}
                       />
                     </Pressable>
                   </View>

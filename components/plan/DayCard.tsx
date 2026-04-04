@@ -2,6 +2,8 @@ import { View, Text, Pressable } from 'react-native'
 import { Image } from 'expo-image'
 import { Ionicons } from '@expo/vector-icons'
 import MealImagePlaceholder from '@/components/ui/MealImagePlaceholder'
+import IconButton from '@/components/ui/IconButton'
+import { colors } from '@/lib/colors'
 import type { DayKey, Meal } from '@/types'
 import { DAY_NAMES_MAP } from '@/lib/utils'
 
@@ -11,7 +13,6 @@ interface DayCardProps {
   meal: Meal | null
   isVacation: boolean
   onPress: () => void
-  onRemove?: () => void
   onToggleVacation: () => void
   onCook: () => void
 }
@@ -26,7 +27,6 @@ export default function DayCard({
   meal,
   isVacation,
   onPress,
-  onRemove: _onRemove,
   onToggleVacation,
   onCook,
 }: DayCardProps) {
@@ -48,7 +48,7 @@ export default function DayCard({
             <Text className="text-on-surface text-sm font-bold">{dayName}</Text>
           </View>
           <View className="flex-row items-center gap-2">
-            <Ionicons name="airplane-outline" size={16} color="#94B4A6" />
+            <Ionicons name="airplane-outline" size={16} color={colors.onSurfaceVariant} />
             <Text className="text-on-surface-variant text-sm line-through">Wolne</Text>
           </View>
         </View>
@@ -94,11 +94,11 @@ export default function DayCard({
             </Text>
             <View className="flex-row items-center gap-3 mt-0.5">
               <View className="flex-row items-center gap-1">
-                <Ionicons name="flame-outline" size={12} color="#69dd96" />
+                <Ionicons name="flame-outline" size={12} color={colors.primary} />
                 <Text className="text-primary text-xs">{meal.kcal_baza} kcal</Text>
               </View>
               <View className="flex-row items-center gap-1">
-                <Ionicons name="barbell-outline" size={12} color="#94B4A6" />
+                <Ionicons name="barbell-outline" size={12} color={colors.onSurfaceVariant} />
                 <Text className="text-on-surface-variant text-xs">{meal.bialko_baza}g</Text>
               </View>
             </View>
@@ -111,7 +111,7 @@ export default function DayCard({
             accessibilityRole="button"
             accessibilityLabel={`Gotuj ${meal.nazwa}`}
           >
-            <Ionicons name="restaurant-outline" size={20} color="#69dd96" />
+            <Ionicons name="restaurant-outline" size={20} color={colors.primary} />
           </Pressable>
         </View>
       </Pressable>
@@ -125,7 +125,7 @@ export default function DayCard({
       onLongPress={onToggleVacation}
       className="bg-surface-container/50 rounded-2xl p-3 mb-2 border border-dashed border-border-dark"
       accessibilityRole="button"
-      accessibilityLabel={`${dayName} ${dateStr}, brak posiłku. Dotknij aby dodać lub przytrzymaj aby ustawić wolne`}
+      accessibilityLabel={`${dayName} ${dateStr}, brak posiłku. Dotknij aby dodać`}
     >
       <View className="flex-row items-center justify-between">
         <View>
@@ -133,8 +133,14 @@ export default function DayCard({
           <Text className="text-on-surface text-sm font-bold">{dayName}</Text>
         </View>
         <View className="flex-row items-center gap-2">
-          <Ionicons name="add-circle-outline" size={20} color="#94B4A6" />
-          <Text className="text-on-surface-variant text-sm">Przeciągnij posiłek</Text>
+          <IconButton
+            icon="airplane-outline"
+            size={18}
+            color={colors.onSurfaceVariant}
+            onPress={onToggleVacation}
+            accessibilityLabel="Ustaw dzień wolny"
+          />
+          <Ionicons name="add-circle-outline" size={20} color={colors.onSurfaceVariant} />
         </View>
       </View>
     </Pressable>

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { View, Text, Pressable, ScrollView, Alert } from 'react-native'
+import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator } from 'react-native'
 import { useRouter } from 'expo-router'
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import { Ionicons } from '@expo/vector-icons'
@@ -9,8 +9,9 @@ import { useWeekDates } from '@/hooks/useWeekDates'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import { useAuthStore } from '@/stores/auth'
 import { useUIStore } from '@/stores/ui'
+import { colors } from '@/lib/colors'
 import type { DayKey, Meal } from '@/types'
-import { DAY_NAMES_MAP } from '@/lib/utils'
+import { DAY_KEYS, DAY_NAMES_MAP } from '@/lib/utils'
 
 export default function PlanScreen() {
   const router = useRouter()
@@ -19,7 +20,7 @@ export default function PlanScreen() {
   const setWeekOffset = useUIStore((s) => s.setWeekOffset)
 
   const { weekKey } = useWeekDates(weekOffset)
-  const { plan, isLoading, isError, refetch, removeMeal, toggleVacation } =
+  const { plan, isLoading, isError, refetch, removeMeal, toggleVacation, isSaving } =
     useWeeklyPlan(weekKey, token)
 
   // Action sheet state
@@ -118,30 +119,29 @@ export default function PlanScreen() {
   }
 
   // Check if plan has any meals
-  const hasMeals = ['mon', 'tue', 'wed', 'thu', 'fri'].some(
-    (day) => plan[day as DayKey] !== null
-  )
+  const hasMeals = DAY_KEYS.some((day) => plan[day] !== null)
 
   return (
     <View className="flex-1 bg-background">
       <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
         {/* Header */}
-        <View className="px-4 pt-4 pb-1">
+        <View className="px-4 pt-4 pb-1 flex-row items-center gap-2">
           <Text
             className="text-on-surface text-2xl font-bold"
             accessibilityRole="header"
           >
             Plan tygodnia
           </Text>
+          {isSaving && (
+            <ActivityIndicator size="small" color={colors.primary} accessibilityLabel="Zapisywanie" />
+          )}
         </View>
 
         <CalendarView
-          weekKey={weekKey}
           weekOffset={weekOffset}
           plan={plan}
           onWeekChange={handleWeekChange}
           onDayPress={handleDayPress}
-          onRemoveMeal={removeMeal}
           onToggleVacation={toggleVacation}
           onCook={handleCook}
         />
@@ -149,7 +149,7 @@ export default function PlanScreen() {
         {/* Empty state hint */}
         {!hasMeals && (
           <View className="items-center px-8 mt-6">
-            <Ionicons name="heart-outline" size={40} color="#94B4A6" />
+            <Ionicons name="heart-outline" size={40} color={colors.onSurfaceVariant} />
             <Text className="text-on-surface-variant text-sm text-center mt-3">
               Zaplanuj posiłki — przejdź do Swipe!
             </Text>
@@ -164,8 +164,8 @@ export default function PlanScreen() {
         snapPoints={snapPoints}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: '#1a211e' }}
-        handleIndicatorStyle={{ backgroundColor: '#94B4A6' }}
+        backgroundStyle={{ backgroundColor: colors.surfaceContainer }}
+        handleIndicatorStyle={{ backgroundColor: colors.onSurfaceVariant }}
         onChange={(index) => {
           if (index === -1) setSelectedDay(null)
         }}
@@ -182,7 +182,7 @@ export default function PlanScreen() {
               accessibilityRole="button"
               accessibilityLabel="Pokaż przepis"
             >
-              <Ionicons name="restaurant-outline" size={20} color="#69dd96" />
+              <Ionicons name="restaurant-outline" size={20} color={colors.primary} />
               <Text className="text-on-surface text-sm">Pokaż przepis</Text>
             </Pressable>
 
@@ -202,7 +202,7 @@ export default function PlanScreen() {
               accessibilityLabel="Zamień posiłek — dostępne wkrótce"
               accessibilityState={{ disabled: true }}
             >
-              <Ionicons name="swap-horizontal-outline" size={20} color="#94B4A6" />
+              <Ionicons name="swap-horizontal-outline" size={20} color={colors.onSurfaceVariant} />
               <Text className="text-on-surface-variant text-sm">Zamień posiłek (wkrótce)</Text>
             </Pressable>
           </View>
