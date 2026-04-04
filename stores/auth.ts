@@ -7,8 +7,8 @@ interface AuthState {
   token: string | null
   isOnboarded: boolean
   isHydrated: boolean
-  setToken: (token: string) => void
-  clearToken: () => void
+  setToken: (token: string) => Promise<void>
+  clearToken: () => Promise<void>
   hydrate: () => Promise<void>
 }
 
@@ -17,19 +17,22 @@ export const useAuthStore = create<AuthState>((set) => ({
   isOnboarded: false,
   isHydrated: false,
 
-  setToken: (token: string) => {
-    set({ token, isOnboarded: true })
-    SecureStore.setItemAsync(TENANT_TOKEN_KEY, token).catch(() => {
-      // SecureStore write failed — clear in-memory state to stay consistent
-      set({ token: null, isOnboarded: false })
-    })
+  setToken: async (token: string) => {
+    try {
+      await SecureStore.setItemAsync(TENANT_TOKEN_KEY, token)
+      set({ token, isOnboarded: true })
+    } catch {
+      // SecureStore write failed — do not update in-memory state
+    }
   },
 
-  clearToken: () => {
-    set({ token: null, isOnboarded: false })
-    SecureStore.deleteItemAsync(TENANT_TOKEN_KEY).catch(() => {
-      // Best-effort deletion — token already cleared from memory
-    })
+  clearToken: async () => {
+    try {
+      await SecureStore.deleteItemAsync(TENANT_TOKEN_KEY)
+      set({ token: null, isOnboarded: false })
+    } catch {
+      // Best-effort deletion — do not clear in-memory state if delete fails
+    }
   },
 
   hydrate: async () => {

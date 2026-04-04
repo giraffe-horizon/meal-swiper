@@ -40,27 +40,27 @@ export default function JoinTokenScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#0e1512] justify-center items-center">
-        <ActivityIndicator size="large" color="#69dd96" />
-        <Text className="text-[#94B4A6] text-base mt-4">Dołączanie do gospodarstwa…</Text>
+      <View className="flex-1 bg-background justify-center items-center">
+        <ActivityIndicator size="large" color="#69dd96" /* primary */ />
+        <Text className="text-on-surface-variant text-base mt-4">Dołączanie do gospodarstwa…</Text>
       </View>
     )
   }
 
   if (error) {
     return (
-      <View className="flex-1 bg-[#0e1512] justify-center items-center px-8">
+      <View className="flex-1 bg-background justify-center items-center px-8">
         <Ionicons name="alert-circle-outline" size={48} color="#f87171" />
-        <Text className="text-[#dde4df] text-xl font-bold mt-4 mb-2">Coś poszło nie tak</Text>
-        <Text className="text-[#94B4A6] text-base text-center mb-8">{error}</Text>
+        <Text className="text-on-surface text-xl font-bold mt-4 mb-2">Coś poszło nie tak</Text>
+        <Text className="text-on-surface-variant text-base text-center mb-8">{error}</Text>
 
         <Pressable
-          className="w-full bg-[#69dd96] rounded-xl py-4 items-center mb-4"
+          className="w-full bg-primary rounded-xl py-4 items-center mb-4"
           onPress={attemptJoin}
           accessibilityRole="button"
           accessibilityLabel="Spróbuj ponownie"
         >
-          <Text className="text-[#0e1512] text-base font-bold">Spróbuj ponownie</Text>
+          <Text className="text-background text-base font-bold">Spróbuj ponownie</Text>
         </Pressable>
 
         <Pressable
@@ -69,7 +69,7 @@ export default function JoinTokenScreen() {
           accessibilityRole="button"
           accessibilityLabel="Wróć do ekranu powitalnego"
         >
-          <Text className="text-[#94B4A6] text-base">Wróć do ekranu powitalnego</Text>
+          <Text className="text-on-surface-variant text-base">Wróć do ekranu powitalnego</Text>
         </Pressable>
       </View>
     )

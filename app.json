@@ -27,6 +27,10 @@
       },
       "package": "com.giraffehorizon.mealswiper"
     },
+    "extra": {
+      "apiUrl": "https://meal-swiper-api.giraffehorizon.workers.dev",
+      "apiKey": ""
+    },
     "plugins": ["expo-router", "expo-secure-store", "expo-haptics"],
     "experiments": {
       "typedRoutes": true

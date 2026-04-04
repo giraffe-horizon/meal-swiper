@@ -13,15 +13,15 @@ export default function Pill({ label, active = false, onPress, className = '' }:
       onPress={onPress}
       disabled={!onPress}
       className={`rounded-full px-3 py-1 ${
-        active ? 'bg-[#69dd96]' : 'bg-surface-container'
+        active ? 'bg-primary' : 'bg-surface-container'
       } ${className}`}
-      accessibilityRole="button"
+      accessibilityRole={onPress ? 'button' : 'text'}
       accessibilityLabel={label}
       accessibilityState={{ selected: active }}
     >
       <Text
         className={`text-sm font-medium ${
-          active ? 'text-[#0e1512]' : 'text-[#94B4A6]'
+          active ? 'text-background' : 'text-on-surface-variant'
         }`}
       >
         {label}

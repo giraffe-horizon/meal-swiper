@@ -33,10 +33,27 @@ export default function SliderField({
   }
 
   return (
-    <View className={`mb-4 ${className}`}>
+    <View
+      className={`mb-4 ${className}`}
+      accessibilityRole="adjustable"
+      accessibilityLabel={label}
+      accessibilityValue={{ min, max, now: value }}
+      onAccessibilityAction={(event) => {
+        switch (event.nativeEvent.actionName) {
+          case 'increment':
+            increment()
+            break
+          case 'decrement':
+            decrement()
+            break
+        }
+      }}
+      accessible
+      accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+    >
       <View className="flex-row justify-between mb-2">
-        <Text className="text-[#94B4A6] text-sm">{label}</Text>
-        <Text className="text-[#dde4df] text-sm font-medium">{value}</Text>
+        <Text className="text-on-surface-variant text-sm">{label}</Text>
+        <Text className="text-on-surface text-sm font-medium">{value}</Text>
       </View>
       <View className="flex-row items-center gap-3">
         <Pressable
@@ -50,7 +67,7 @@ export default function SliderField({
         </Pressable>
         <View className="flex-1 h-2 bg-[#24332D] rounded-full overflow-hidden">
           <View
-            className="h-full bg-[#69dd96] rounded-full"
+            className="h-full bg-primary rounded-full"
             style={{ width: `${ratio * 100}%` }}
           />
         </View>

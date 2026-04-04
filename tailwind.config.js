@@ -11,7 +11,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#10B981', // Szmaragdowy (Emerald 500) - bardziej soczysty
+        primary: '#69dd96', // Main accent green
+        background: '#0e1512', // Main dark background
+        'surface-dim': '#0e1512', // Alias for background
+        'on-surface': '#dde4df', // Primary text on dark surfaces
+        'on-surface-variant': '#94B4A6', // Secondary text on dark surfaces
         'background-light': '#FAFAF8',
         'background-dark': '#0B120F', // Głęboki, niemal czarny zielony (Obsidian Forest)
         'surface-light': '#ffffff',

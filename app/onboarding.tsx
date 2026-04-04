@@ -55,7 +55,7 @@ export default function OnboardingScreen() {
 
   if (mode === 'join') {
     return (
-      <View className="flex-1 bg-[#0e1512] justify-center items-center px-8">
+      <View className="flex-1 bg-background justify-center items-center px-8">
         <Pressable
           className="absolute top-16 left-6"
           onPress={() => {
@@ -65,19 +65,19 @@ export default function OnboardingScreen() {
           accessibilityRole="button"
           accessibilityLabel="Wróć"
         >
-          <Ionicons name="arrow-back" size={24} color="#dde4df" />
+          <Ionicons name="arrow-back" size={24} color="#dde4df" /* on-surface */ />
         </Pressable>
 
-        <Ionicons name="people-outline" size={48} color="#69dd96" />
-        <Text className="text-[#dde4df] text-2xl font-bold mt-4 mb-2">
+        <Ionicons name="people-outline" size={48} color="#69dd96" /* primary */ />
+        <Text className="text-on-surface text-2xl font-bold mt-4 mb-2">
           Dołącz do gospodarstwa
         </Text>
-        <Text className="text-[#94B4A6] text-base text-center mb-8">
+        <Text className="text-on-surface-variant text-base text-center mb-8">
           Wpisz token zaproszenia, który otrzymałeś od domownika.
         </Text>
 
         <TextInput
-          className="w-full bg-[#1a211e] border border-[#24332D] rounded-xl px-4 py-3 text-[#dde4df] text-base mb-4"
+          className="w-full bg-[#1a211e] border border-[#24332D] rounded-xl px-4 py-3 text-on-surface text-base mb-4"
           placeholder="Token zaproszenia"
           placeholderTextColor="#94B4A680"
           value={joinToken}
@@ -92,16 +92,16 @@ export default function OnboardingScreen() {
         )}
 
         <Pressable
-          className="w-full bg-[#69dd96] rounded-xl py-4 items-center"
+          className="w-full bg-primary rounded-xl py-4 items-center"
           onPress={handleJoin}
           disabled={loading}
           accessibilityRole="button"
           accessibilityLabel="Dołącz do gospodarstwa"
         >
           {loading ? (
-            <ActivityIndicator color="#0e1512" />
+            <ActivityIndicator color="#0e1512" /* background */ />
           ) : (
-            <Text className="text-[#0e1512] text-base font-bold">Dołącz</Text>
+            <Text className="text-background text-base font-bold">Dołącz</Text>
           )}
         </Pressable>
       </View>
@@ -109,13 +109,13 @@ export default function OnboardingScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#0e1512] justify-center items-center px-8">
+    <View className="flex-1 bg-background justify-center items-center px-8">
       <View className="w-20 h-20 rounded-3xl bg-[#1a211e] items-center justify-center mb-6">
-        <Ionicons name="restaurant-outline" size={40} color="#69dd96" />
+        <Ionicons name="restaurant-outline" size={40} color="#69dd96" /* primary */ />
       </View>
 
-      <Text className="text-[#dde4df] text-3xl font-bold mb-2">Meal Swiper</Text>
-      <Text className="text-[#94B4A6] text-base text-center mb-12">
+      <Text className="text-on-surface text-3xl font-bold mb-2">Meal Swiper</Text>
+      <Text className="text-on-surface-variant text-base text-center mb-12">
         Planuj posiłki razem z domownikami — szybko i wygodnie.
       </Text>
 
@@ -124,27 +124,27 @@ export default function OnboardingScreen() {
       )}
 
       <Pressable
-        className="w-full bg-[#69dd96] rounded-xl py-4 items-center mb-4"
+        className="w-full bg-primary rounded-xl py-4 items-center mb-4"
         onPress={handleCreate}
         disabled={loading}
         accessibilityRole="button"
         accessibilityLabel="Utwórz gospodarstwo"
       >
         {loading ? (
-          <ActivityIndicator color="#0e1512" />
+          <ActivityIndicator color="#0e1512" /* background */ />
         ) : (
-          <Text className="text-[#0e1512] text-base font-bold">Utwórz gospodarstwo</Text>
+          <Text className="text-background text-base font-bold">Utwórz gospodarstwo</Text>
         )}
       </Pressable>
 
       <Pressable
-        className="w-full border border-[#69dd96] rounded-xl py-4 items-center"
+        className="w-full border border-primary rounded-xl py-4 items-center"
         onPress={() => setMode('join')}
         disabled={loading}
         accessibilityRole="button"
         accessibilityLabel="Dołącz do istniejącego gospodarstwa"
       >
-        <Text className="text-[#69dd96] text-base font-bold">Dołącz do istniejącego</Text>
+        <Text className="text-primary text-base font-bold">Dołącz do istniejącego</Text>
       </Pressable>
     </View>
   )

@@ -5,7 +5,7 @@ import { BlurView } from 'expo-blur'
 import { Ionicons } from '@expo/vector-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const ACTIVE_COLOR = '#69dd96'
+const ACTIVE_COLOR = '#69dd96' // primary
 const INACTIVE_COLOR = 'rgba(236, 243, 240, 0.4)'
 
 type TabConfig = {
@@ -81,7 +81,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
                 {tabConfig.title}
               </Text>
               {isFocused && (
-                <View className="w-1 h-1 rounded-full bg-[#69dd96] mt-1" />
+                <View className="w-1 h-1 rounded-full bg-primary mt-1" />
               )}
             </Pressable>
           )
@@ -95,7 +95,7 @@ export default function TabLayout() {
   return (
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: false, sceneStyle: { paddingBottom: 90 } }}
     >
       {TABS.map((tab) => (
         <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title }} />
