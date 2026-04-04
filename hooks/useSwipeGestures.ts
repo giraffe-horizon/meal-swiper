@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Dimensions } from 'react-native'
+import { useWindowDimensions } from 'react-native'
 import { Gesture } from 'react-native-gesture-handler'
 import {
   useSharedValue,
@@ -12,9 +12,7 @@ import {
   Extrapolation,
 } from 'react-native-reanimated'
 
-const SCREEN_WIDTH = Dimensions.get('window').width
 const SWIPE_VELOCITY_THRESHOLD = 800
-const SWIPE_DISTANCE_THRESHOLD = SCREEN_WIDTH * 0.4
 const MAX_ROTATION_DEG = 18
 const SWIPE_OUT_DURATION = 300
 
@@ -33,6 +31,8 @@ export interface SwipeGesturesResult {
 }
 
 export function useSwipeGestures(callbacks: SwipeGestureCallbacks): SwipeGesturesResult {
+  const { width: SCREEN_WIDTH } = useWindowDimensions()
+  const SWIPE_DISTANCE_THRESHOLD = SCREEN_WIDTH * 0.4
   const reducedMotion = useReducedMotion()
 
   const translateX = useSharedValue(0)
@@ -40,12 +40,20 @@ export function useSwipeGestures(callbacks: SwipeGestureCallbacks): SwipeGesture
   const nopeOpacity = useSharedValue(0)
 
   const triggerSwipeRight = useCallback(() => {
+    // Reset position synchronously before state update to prevent flash/jump on card transition
+    translateX.value = 0
+    likeOpacity.value = 0
+    nopeOpacity.value = 0
     callbacks.onSwipeRight()
-  }, [callbacks])
+  }, [callbacks, translateX, likeOpacity, nopeOpacity])
 
   const triggerSwipeLeft = useCallback(() => {
+    // Reset position synchronously before state update to prevent flash/jump on card transition
+    translateX.value = 0
+    likeOpacity.value = 0
+    nopeOpacity.value = 0
     callbacks.onSwipeLeft()
-  }, [callbacks])
+  }, [callbacks, translateX, likeOpacity, nopeOpacity])
 
   const resetPosition = useCallback(() => {
     if (reducedMotion) {

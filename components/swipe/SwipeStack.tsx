@@ -119,7 +119,7 @@ const SwipeStack = forwardRef<SwipeStackHandle, SwipeStackProps>(function SwipeS
             <SwipeCard
               meal={meal}
               persons={persons}
-              gestureResult={isTop ? gestureResult : gestureResult}
+              gestureResult={gestureResult}
               onPress={() => onCardPress(meal)}
               isTop={isTop}
             />

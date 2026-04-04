@@ -13,7 +13,7 @@ export default function CategoryFilter({
   onFilterChange,
 }: CategoryFilterProps) {
   return (
-    <View accessibilityRole="tablist" accessibilityLabel="Filtruj po kuchni">
+    <View accessibilityRole="radiogroup" accessibilityLabel="Filtruj po kuchni">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -23,6 +23,7 @@ export default function CategoryFilter({
           label="Wszystkie"
           active={activeFilter === null}
           onPress={() => onFilterChange(null)}
+          accessibilityRole="radio"
         />
         {cuisines.map((cuisine) => (
           <Pill
@@ -30,6 +31,7 @@ export default function CategoryFilter({
             label={cuisine}
             active={activeFilter === cuisine}
             onPress={() => onFilterChange(cuisine === activeFilter ? null : cuisine)}
+            accessibilityRole="radio"
           />
         ))}
       </ScrollView>

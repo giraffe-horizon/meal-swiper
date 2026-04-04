@@ -6,17 +6,28 @@ export interface CompatibilityIndicatorProps {
   persons: PersonSettings[]
 }
 
-function isVariantCompatible(variant: MealVariant, diet: DietaryFlag[]): boolean {
-  if (!diet || diet.length === 0) return true
-  return diet.every((flag) => variant.dietary_flags.includes(flag))
+function isVariantCompatible(variant: MealVariant, person: PersonSettings): boolean {
+  const diet = person.diet || []
+  if (diet.length > 0 && !diet.every((flag: DietaryFlag) => variant.dietary_flags.includes(flag))) {
+    return false
+  }
+
+  // Check excluded ingredients (skip seasonings)
+  const excluded = person.excludedIngredients || []
+  if (excluded.length > 0 && variant.ingredients) {
+    const hasExcluded = variant.ingredients.some(
+      (ing) => !ing.ingredient?.is_seasoning && excluded.includes(ing.ingredient_id)
+    )
+    if (hasExcluded) return false
+  }
+
+  return true
 }
 
 function countCompatiblePersons(meal: MealWithVariants, persons: PersonSettings[]): number {
   let count = 0
   for (const person of persons) {
-    const hasCompatible = meal.variants.some((variant) =>
-      isVariantCompatible(variant, person.diet || [])
-    )
+    const hasCompatible = meal.variants.some((variant) => isVariantCompatible(variant, person))
     if (hasCompatible) count++
   }
   return count

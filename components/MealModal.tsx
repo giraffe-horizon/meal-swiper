@@ -1,4 +1,4 @@
-import { useCallback, useRef, useMemo } from 'react'
+import { useCallback, useEffect, useRef, useMemo } from 'react'
 import { View, Text, Pressable } from 'react-native'
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet'
 import { Image } from 'expo-image'
@@ -41,7 +41,15 @@ export default function MealModal({ meal, visible, onClose, onAddToPlan }: MealM
     []
   )
 
-  if (!meal || !visible) return null
+  useEffect(() => {
+    if (visible) {
+      bottomSheetRef.current?.snapToIndex(0)
+    } else {
+      bottomSheetRef.current?.close()
+    }
+  }, [visible])
+
+  if (!meal) return null
 
   const recipe = parseRecipeSteps(meal.przepis)
   const defaultVariant = meal.variants.find((v) => v.is_default) || meal.variants[0]
@@ -49,7 +57,7 @@ export default function MealModal({ meal, visible, onClose, onAddToPlan }: MealM
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={0}
+      index={visible ? 0 : -1}
       snapPoints={snapPoints}
       onChange={handleSheetChange}
       enablePanDownToClose

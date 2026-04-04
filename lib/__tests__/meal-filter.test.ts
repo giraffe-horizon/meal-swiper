@@ -140,6 +140,89 @@ describe('filterMealsByPreferences', () => {
     expect(result.warning).toBe('too_few')
   })
 
+  it('filters out meal when variant contains excluded ingredient for a person', () => {
+    const mealWithExcluded = makeMeal({
+      id: 'excluded',
+      variants: [
+        {
+          id: 'v1',
+          meal_id: 'excluded',
+          name: 'Standard',
+          kcal: 500,
+          protein: 30,
+          dietary_flags: [],
+          is_default: true,
+          ingredients: [
+            {
+              id: 'ing-1',
+              meal_variant_id: 'v1',
+              ingredient_id: 'tomato',
+              amount_grams: 200,
+              display_amount: '200g',
+              scalable: true,
+              optional: false,
+              ingredient: {
+                id: 'tomato',
+                name: 'Pomidor',
+                category: 'warzywa',
+                flags: [],
+                is_seasoning: false,
+              },
+            },
+          ],
+        },
+      ],
+    })
+
+    const result = filterMealsByPreferences([mealWithExcluded], {
+      persons: [makePerson({ name: 'Ala', excludedIngredients: ['tomato'] })],
+    })
+
+    expect(result.total).toBe(0)
+  })
+
+  it('does NOT exclude seasoning ingredients even if in excluded list', () => {
+    const mealWithSeasoning = makeMeal({
+      id: 'seasoning',
+      variants: [
+        {
+          id: 'v1',
+          meal_id: 'seasoning',
+          name: 'Standard',
+          kcal: 500,
+          protein: 30,
+          dietary_flags: [],
+          is_default: true,
+          ingredients: [
+            {
+              id: 'ing-1',
+              meal_variant_id: 'v1',
+              ingredient_id: 'salt',
+              amount_grams: 5,
+              display_amount: '5g',
+              scalable: false,
+              optional: false,
+              ingredient: {
+                id: 'salt',
+                name: 'Sól',
+                category: 'przyprawy',
+                flags: [],
+                is_seasoning: true,
+              },
+            },
+          ],
+        },
+      ],
+    })
+
+    const result = filterMealsByPreferences([mealWithSeasoning], {
+      persons: [makePerson({ name: 'Ala', excludedIngredients: ['salt'] })],
+    })
+
+    expect(result.total).toBe(1)
+    expect(result.results[0].meal.id).toBe('seasoning')
+  })
+
   it('scores cuisine preferences correctly', () => {
     const polskaMeal = makeMeal({ id: 'pl', kuchnia: 'polska' })
     const wloskaMeal = makeMeal({ id: 'it', kuchnia: 'włoska' })

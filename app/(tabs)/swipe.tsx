@@ -48,7 +48,7 @@ export default function SwipeScreen() {
   const persons = settingsQuery.data?.persons ?? []
 
   const filteredMeals = useMemo(() => {
-    const allMeals = (mealsQuery.data as MealWithVariants[] | undefined) ?? []
+    const allMeals = mealsQuery.data ?? []
     if (allMeals.length === 0) return []
 
     // Filter by household preferences (diet, excluded ingredients, cuisine score)
@@ -61,8 +61,11 @@ export default function SwipeScreen() {
       meals = meals.filter((fm) => fm.meal.kuchnia === activeCuisineFilter)
     }
 
+    // TODO: fridgeMode filtering will use lib/fridge.ts but requires ingredient data which is Phase 3+
+
     // Filter out seen meals
-    meals = meals.filter((fm) => !seenIds.includes(fm.meal.id))
+    const seenSet = new Set(seenIds)
+    meals = meals.filter((fm) => !seenSet.has(fm.meal.id))
 
     return meals
   }, [mealsQuery.data, persons, activeCuisineFilter, seenIds])

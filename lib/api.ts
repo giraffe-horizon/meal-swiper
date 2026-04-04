@@ -1,4 +1,4 @@
-import type { Meal, WeeklyPlan, AppSettings, TenantInfo } from '@/types'
+import type { Meal, MealWithVariants, WeeklyPlan, AppSettings, TenantInfo } from '@/types'
 
 let API_BASE = '/api'
 const API_HEADERS: Record<string, string> = {}
@@ -120,7 +120,7 @@ export async function fetchCuisines(): Promise<string[]> {
   return res.json()
 }
 
-export async function fetchMealsWithVariants(): Promise<Meal[]> {
+export async function fetchMealsWithVariants(): Promise<MealWithVariants[]> {
   const res = await fetch(`${API_BASE}/meals?format=variants`, { headers: { ...API_HEADERS } })
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   const data = await res.json()

@@ -39,11 +39,9 @@ function OpacityBadge({
 
   return (
     <Animated.View
-      style={[style]}
+      style={[style, { borderColor: color }]}
       className={`absolute top-6 ${side === 'right' ? 'right-4' : 'left-4'} z-10 rounded-lg border-2 px-3 py-1`}
       pointerEvents="none"
-      // @ts-expect-error — NativeWind className merging with border color
-      borderColor={color}
     >
       <Text style={{ color, fontSize: 20, fontWeight: '800', letterSpacing: 2 }}>{label}</Text>
     </Animated.View>

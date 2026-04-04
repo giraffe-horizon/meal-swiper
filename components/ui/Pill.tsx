@@ -5,9 +5,10 @@ interface PillProps {
   active?: boolean
   onPress?: () => void
   className?: string
+  accessibilityRole?: 'button' | 'radio' | 'text'
 }
 
-export default function Pill({ label, active = false, onPress, className = '' }: PillProps) {
+export default function Pill({ label, active = false, onPress, className = '', accessibilityRole: role }: PillProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -15,7 +16,7 @@ export default function Pill({ label, active = false, onPress, className = '' }:
       className={`rounded-full px-3 py-1 ${
         active ? 'bg-primary' : 'bg-surface-container'
       } ${className}`}
-      accessibilityRole={onPress ? 'button' : 'text'}
+      accessibilityRole={role ?? (onPress ? 'button' : 'text')}
       accessibilityLabel={label}
       accessibilityState={{ selected: active }}
     >
