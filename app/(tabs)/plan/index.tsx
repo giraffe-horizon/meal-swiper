@@ -4,7 +4,9 @@ import { useRouter } from 'expo-router'
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import { Ionicons } from '@expo/vector-icons'
 import CalendarView from '@/components/plan/CalendarView'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import SkeletonPlan from '@/components/ui/SkeletonPlan'
+import ErrorState from '@/components/ui/ErrorState'
+import EmptyState from '@/components/ui/EmptyState'
 import { useWeekDates } from '@/hooks/useWeekDates'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import { useAuthStore } from '@/stores/auth'
@@ -91,30 +93,16 @@ export default function PlanScreen() {
 
   // Loading
   if (isLoading) {
-    return (
-      <View className="flex-1 bg-background">
-        <LoadingSpinner />
-      </View>
-    )
+    return <SkeletonPlan />
   }
 
   // Error
   if (isError) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-8">
-        <Text className="text-on-surface text-lg font-bold text-center">Błąd ładowania</Text>
-        <Text className="text-on-surface-variant text-sm text-center mt-2">
-          Nie udało się pobrać planu. Sprawdź połączenie.
-        </Text>
-        <Pressable
-          onPress={() => refetch()}
-          className="bg-primary rounded-2xl px-6 py-3 mt-4"
-          accessibilityRole="button"
-          accessibilityLabel="Spróbuj ponownie"
-        >
-          <Text className="text-background font-bold">Spróbuj ponownie</Text>
-        </Pressable>
-      </View>
+      <ErrorState
+        message="Nie udało się pobrać planu. Sprawdź połączenie."
+        onRetry={() => refetch()}
+      />
     )
   }
 
@@ -148,12 +136,10 @@ export default function PlanScreen() {
 
         {/* Empty state hint */}
         {!hasMeals && (
-          <View className="items-center px-8 mt-6">
-            <Ionicons name="heart-outline" size={40} color={colors.onSurfaceVariant} />
-            <Text className="text-on-surface-variant text-sm text-center mt-3">
-              Zaplanuj posiłki — przejdź do Swipe!
-            </Text>
-          </View>
+          <EmptyState
+            icon="heart-outline"
+            message="Zaplanuj posiłki — przejdź do Swipe!"
+          />
         )}
       </ScrollView>
 
@@ -197,6 +183,7 @@ export default function PlanScreen() {
             </Pressable>
 
             <Pressable
+              disabled
               className="flex-row items-center gap-3 py-3 min-h-[48px] opacity-40"
               accessibilityRole="button"
               accessibilityLabel="Zamień posiłek — dostępne wkrótce"

@@ -8,6 +8,7 @@ import { useEffect } from 'react'
 import Constants from 'expo-constants'
 import { configureApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/auth'
+import ToastContainer from '@/components/ui/Toast'
 
 configureApi({
   baseUrl:
@@ -41,6 +42,7 @@ export default function RootLayout() {
             <Stack.Screen name="join/[token]" />
             <Stack.Screen name="(tabs)" />
           </Stack>
+          <ToastContainer />
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

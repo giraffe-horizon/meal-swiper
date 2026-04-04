@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, Text, Pressable, BackHandler, Platform } from 'react-native'
+import { View, BackHandler, Platform } from 'react-native'
 import { useNavigation } from 'expo-router'
 import SwipeStack, { type SwipeStackHandle } from '@/components/swipe/SwipeStack'
 import SwipeActions from '@/components/swipe/SwipeActions'
 import CategoryFilter from '@/components/swipe/CategoryFilter'
 import FridgeModeFilter from '@/components/swipe/FridgeModeFilter'
 import MealModal from '@/components/MealModal'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import SkeletonSwipe from '@/components/ui/SkeletonSwipe'
+import ErrorState from '@/components/ui/ErrorState'
 import DaySelector from '@/components/ui/DaySelector'
 import { useMealsWithVariantsQuery } from '@/hooks/queries/useMealsWithVariantsQuery'
 import { useCuisinesQuery } from '@/hooks/queries/useCuisinesQuery'
@@ -183,30 +184,16 @@ export default function SwipeScreen() {
 
   // Loading state
   if (mealsQuery.isLoading) {
-    return (
-      <View className="flex-1 bg-background">
-        <LoadingSpinner />
-      </View>
-    )
+    return <SkeletonSwipe />
   }
 
   // Error state
   if (mealsQuery.isError) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-8">
-        <Text className="text-on-surface text-lg font-bold text-center">Błąd ładowania</Text>
-        <Text className="text-on-surface-variant text-sm text-center mt-2">
-          Nie udało się pobrać posiłków. Sprawdź połączenie.
-        </Text>
-        <Pressable
-          onPress={() => mealsQuery.refetch()}
-          className="bg-primary rounded-2xl px-6 py-3 mt-4"
-          accessibilityRole="button"
-          accessibilityLabel="Spróbuj ponownie"
-        >
-          <Text className="text-background font-bold">Spróbuj ponownie</Text>
-        </Pressable>
-      </View>
+      <ErrorState
+        message="Nie udało się pobrać posiłków. Sprawdź połączenie."
+        onRetry={() => mealsQuery.refetch()}
+      />
     )
   }
 

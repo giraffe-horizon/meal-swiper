@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { View, Text, Pressable, ScrollView, RefreshControl } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import SkeletonShopping from '@/components/ui/SkeletonShopping'
+import ErrorState from '@/components/ui/ErrorState'
+import EmptyState from '@/components/ui/EmptyState'
 import { colors } from '@/lib/colors'
 import { useWeekDates } from '@/hooks/useWeekDates'
 import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
@@ -134,32 +136,12 @@ export default function ShoppingScreen() {
 
   // Loading
   if (planLoading) {
-    return (
-      <View className="flex-1 bg-background">
-        <LoadingSpinner />
-      </View>
-    )
+    return <SkeletonShopping />
   }
 
   // Error
   if (planError) {
-    return (
-      <View className="flex-1 bg-background items-center justify-center px-8">
-        <Ionicons name="alert-circle-outline" size={48} color={colors.onSurfaceVariant} />
-        <Text className="text-on-surface text-lg font-bold text-center mt-3">Błąd ładowania</Text>
-        <Text className="text-on-surface-variant text-sm text-center mt-2">
-          Nie udało się pobrać danych. Sprawdź połączenie.
-        </Text>
-        <Pressable
-          onPress={() => planRefetch()}
-          className="bg-primary rounded-2xl px-6 py-3 mt-4"
-          accessibilityRole="button"
-          accessibilityLabel="Spróbuj ponownie"
-        >
-          <Text className="text-background font-bold">Spróbuj ponownie</Text>
-        </Pressable>
-      </View>
-    )
+    return <ErrorState onRetry={() => planRefetch()} />
   }
 
   return (
@@ -199,12 +181,10 @@ export default function ShoppingScreen() {
 
         {/* Empty state */}
         {shoppingList.length === 0 && (
-          <View className="items-center px-8 mt-10">
-            <Ionicons name="cart-outline" size={48} color={colors.onSurfaceVariant} />
-            <Text className="text-on-surface-variant text-sm text-center mt-3">
-              Brak posiłków w planie — najpierw zaplanuj tydzień!
-            </Text>
-          </View>
+          <EmptyState
+            icon="cart-outline"
+            message="Brak posiłków w planie �� najpierw zaplanuj tydzień!"
+          />
         )}
 
         {/* Clear button + counter */}
