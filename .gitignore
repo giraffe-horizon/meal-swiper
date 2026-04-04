@@ -44,3 +44,27 @@ scripts/generated-images/
 screenshots/
 test-results/
 coverage/
+
+# Expo
+.expo/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+expo-env.d.ts
+
+# EAS
+.eas/
+
+# API worker
+api/node_modules
+api/.wrangler
+api/dist
+
+# Local database
+local.db
+local.db-journal

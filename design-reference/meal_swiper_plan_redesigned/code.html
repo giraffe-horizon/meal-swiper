@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Manrope:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-container": "#acb8b3",
+              "outline": "#879488",
+              "surface-container-lowest": "#09100d",
+              "on-error-container": "#ffdad6",
+              "on-surface": "#dde4df",
+              "on-tertiary-container": "#403500",
+              "surface-container-low": "#161d1a",
+              "inverse-primary": "#006d3d",
+              "on-primary": "#00391d",
+              "on-error": "#690005",
+              "on-tertiary": "#3a3000",
+              "background": "#0e1512",
+              "surface-container-high": "#242c28",
+              "on-secondary-fixed": "#141e1b",
+              "on-primary-fixed": "#00210f",
+              "surface-bright": "#333b37",
+              "tertiary-fixed": "#ffe16d",
+              "surface": "#0e1512",
+              "primary-container": "#3cb371",
+              "on-tertiary-fixed-variant": "#544600",
+              "primary": "#69dd96",
+              "on-tertiary-fixed": "#221b00",
+              "surface-container": "#1a211e",
+              "on-background": "#dde4df",
+              "tertiary": "#e9c400",
+              "primary-fixed": "#86fab0",
+              "on-primary-container": "#003f21",
+              "outline-variant": "#3e4a40",
+              "surface-container-highest": "#2f3633",
+              "surface-variant": "#2f3633",
+              "primary-fixed-dim": "#69dd96",
+              "on-primary-fixed-variant": "#00522d",
+              "error-container": "#93000a",
+              "secondary": "#bec9c4",
+              "on-surface-variant": "#bdcabd",
+              "error": "#ffb4ab",
+              "surface-tint": "#69dd96",
+              "secondary-fixed-dim": "#bec9c4",
+              "tertiary-fixed-dim": "#e9c400",
+              "secondary-fixed": "#dae5e0",
+              "secondary-container": "#3e4945",
+              "inverse-surface": "#dde4df",
+              "on-secondary": "#28332f",
+              "on-secondary-fixed-variant": "#3e4945",
+              "inverse-on-surface": "#2b322e",
+              "surface-dim": "#0e1512",
+              "tertiary-container": "#ba9c00"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(26, 33, 30, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        body {
+            background-color: #0e1512;
+            color: #dde4df;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body selection:bg-primary/30 min-h-screen">
+<!-- TopAppBar -->
+<nav class="bg-[#0e1512] dark:bg-[#0e1512] docked full-width top-0 z-50 flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#69dd96] dark:text-[#3cb371] text-2xl">menu_book</span>
+<span class="font-['Epilogue'] font-bold tracking-tight text-xl uppercase text-[#69dd96]">Culinary Alchemist</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150 text-emerald-100/50">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKiho1lEtYUSH_6dEJwhjUIlEZrVunqihWA81-ZsuzNWOKYCncjig73uOHCQfpWe0wuP-h375jnxU8Bay9t76vknmhxQemd35tUnMSKTlKWINzI5EYhgFFT6B4oQGRXh3m9jI7x71g4gFFTuTTLcyR7rTTd61KHtUBZxMnZSMKDcI7ETatyZcgb0qhuBpNIzeuYzW0ZqIpeCGHd22jpM72tF_Hlrejt-PphdCAFyXwDJ6d4lEv_Swczw_tu3104k2LCprldVrb5-Q"/>
+</div>
+</div>
+</nav>
+<main class="max-w-2xl mx-auto px-6 pt-6 pb-32">
+<!-- Week Selector Section -->
+<header class="mb-10">
+<div class="flex items-center justify-between mb-6">
+<button class="p-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="text-center">
+<h2 class="font-headline font-extrabold text-2xl tracking-tight mb-1">14 - 20 Października</h2>
+<p class="font-label text-xs uppercase tracking-widest text-primary/70 font-bold">Tydzień 42</p>
+</div>
+<button class="p-2 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Horizontal Calendar Scroll -->
+<div class="flex justify-between gap-2 overflow-x-auto pb-4 no-scrollbar">
+<div class="flex flex-col items-center min-w-[56px] py-4 rounded-xl bg-primary text-on-primary">
+<span class="font-label text-[10px] font-bold uppercase opacity-80">Pon</span>
+<span class="font-headline text-lg font-black">14</span>
+</div>
+<div class="flex flex-col items-center min-w-[56px] py-4 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-label text-[10px] font-bold uppercase">Wt</span>
+<span class="font-headline text-lg font-black">15</span>
+</div>
+<div class="flex flex-col items-center min-w-[56px] py-4 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-label text-[10px] font-bold uppercase">Śr</span>
+<span class="font-headline text-lg font-black">16</span>
+</div>
+<div class="flex flex-col items-center min-w-[56px] py-4 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-label text-[10px] font-bold uppercase">Czw</span>
+<span class="font-headline text-lg font-black">17</span>
+</div>
+<div class="flex flex-col items-center min-w-[56px] py-4 rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="font-label text-[10px] font-bold uppercase">Pt</span>
+<span class="font-headline text-lg font-black">18</span>
+</div>
+</div>
+</header>
+<!-- Meal Grid -->
+<div class="space-y-8">
+<!-- Monday: Filled Card -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="font-headline text-lg font-bold">Poniedziałek</span>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<div class="bg-surface-container rounded-lg overflow-hidden flex h-40 shadow-lg">
+<div class="w-1/3 relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Plate of fresh spaghetti bolognese with herbs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9QEEM1ZVRBxIrm3Wegr80a2X8zXhSXp-RTFVXWY0-cBQJey2XBG_0Vmr0eRYhVoTEvKGudXowH8eS5NB2n6vQTuHduwso5ADENDXYx8LwqtrLWpR6Wj44psJBCcaH7YI8IoJZnH6wHqpIJV1GLo3qQ0B2BmESAYyHFTDujhDhmcAE3zChp9ig_fl0228VetwD6QAlmHvtUizmMJOe7jEE6UwPVV-DEc6aQc_vvzFmnf_tSOD-apo76thRm17sAYjtUdritob7JRc"/>
+<div class="absolute inset-0 bg-gradient-to-r from-transparent to-surface-container/20"></div>
+</div>
+<div class="w-2/3 p-5 flex flex-col justify-between">
+<div>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-bold mb-1 block">Lunch</span>
+<h3 class="font-headline text-xl font-bold leading-tight">Spaghetti Bolognese</h3>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label text-xs text-on-surface font-bold">540 kcal</span>
+</div>
+<div class="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+<span class="font-label text-xs text-on-surface font-bold">32g protein</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Tuesday: Empty Card -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="font-headline text-lg font-bold text-on-surface-variant">Wtorek</span>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<button class="w-full h-32 border-2 border-dashed border-outline-variant/40 rounded-lg flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</div>
+<span class="font-body text-sm font-medium">Dodaj posiłek</span>
+</button>
+</section>
+<!-- Wednesday: Filled Card -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="font-headline text-lg font-bold">Środa</span>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<div class="bg-surface-container rounded-lg overflow-hidden flex h-40 shadow-lg">
+<div class="w-1/3 relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Seared salmon with roasted vegetables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ2bpAPDlBQVvt9xp3AzbLOYqJ2l_RMw_gotUd-gzb0d8pYnd76GAi1pknXaqyughIF1ff-SXMFWwFBpmekzRZplTETyTQMYXa_G9STptPSXFwiK5pwc0-yeGCCJzeEzjzB0BNRx3ckGjoAT1rujUczzYOj2sVodiQaN-On-_yINPsAfzlqZ2UNdCxMVBYarNIQ910HBdgD70cZwrMKJ9_0uvN1E_eo99Ha-z9rnkdV_n0pFDiFl4jGgcCP0-M2Ed_5aWbAYgGeSg"/>
+<div class="absolute inset-0 bg-gradient-to-r from-transparent to-surface-container/20"></div>
+</div>
+<div class="w-2/3 p-5 flex flex-col justify-between">
+<div>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-bold mb-1 block">Obiad</span>
+<h3 class="font-headline text-xl font-bold leading-tight">Łosoś z warzywami</h3>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label text-xs text-on-surface font-bold">420 kcal</span>
+</div>
+<div class="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+<span class="font-label text-xs text-on-surface font-bold">38g protein</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Thursday: Empty Card -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="font-headline text-lg font-bold text-on-surface-variant">Czwartek</span>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<button class="w-full h-32 border-2 border-dashed border-outline-variant/40 rounded-lg flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-low transition-all group">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</div>
+<span class="font-body text-sm font-medium">Dodaj posiłek</span>
+</button>
+</section>
+<!-- Friday: Filled Card -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="font-headline text-lg font-bold">Piątek</span>
+<div class="h-[1px] flex-grow bg-outline-variant/30"></div>
+</div>
+<div class="bg-surface-container rounded-lg overflow-hidden flex h-40 shadow-lg">
+<div class="w-1/3 relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Healthy colorful Buddha bowl with quinoa" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDUazR7XVEcySTT679yPS6xTpIyxgX15QfacTOPjx2DJZwBHx7cTmYM3m8DJq4QVgJB-G5qErVgjkzrpCR1zWqqlnDyBJAKE_e7vOBNIoGOSFN95HvZ-LN83S9OTX6TGwT3RuDhsH5NXHckeglgcMEyJ5ict-1LZMFzCOWT4VMozge1AE7zdo3LCaZQ77i20TGb1AZK_XYqv-eczrmdZu8mz4aM7hkTKr36z3Su6Z9X-JSH9SJ-nlm2ut6GttNwcK2Hjm18hnUZv8"/>
+<div class="absolute inset-0 bg-gradient-to-r from-transparent to-surface-container/20"></div>
+</div>
+<div class="w-2/3 p-5 flex flex-col justify-between">
+<div>
+<span class="font-label text-[10px] uppercase tracking-widest text-primary font-bold mb-1 block">Kolacja</span>
+<h3 class="font-headline text-xl font-bold leading-tight">Buddha Bowl</h3>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label text-xs text-on-surface font-bold">380 kcal</span>
+</div>
+<div class="bg-surface-container-highest px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-tertiary/10">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+<span class="font-label text-xs text-on-surface font-bold">18g protein</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-10">
+<div class="bg-[#1a211e]/80 backdrop-blur-xl fixed bottom-8 left-4 right-4 rounded-full border border-white/5 shadow-[0px_40px_40px_rgba(0,0,0,0.4)] flex justify-around items-center py-4 px-2">
+<button class="flex flex-col items-center justify-center text-[#69dd96] relative after:content-[''] after:w-1 after:h-1 after:bg-[#69dd96] after:rounded-full after:mt-1 hover:text-emerald-200 transition-colors active:scale-90 duration-200 ease-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide">Plan</span>
+</button>
+<button class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors active:scale-90 duration-200 ease-out">
+<span class="material-symbols-outlined">swipe_vertical</span>
+<span class="font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide">Swipe</span>
+</button>
+<button class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors active:scale-90 duration-200 ease-out">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide">Lista</span>
+</button>
+<button class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors active:scale-90 duration-200 ease-out">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide">Gotowanie</span>
+</button>
+<button class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors active:scale-90 duration-200 ease-out">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide">Ustawienia</span>
+</button>
+</div>
+</nav>
+
+```</body></html>

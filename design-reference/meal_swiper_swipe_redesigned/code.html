@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-container": "#acb8b3",
+              "outline": "#879488",
+              "surface-container-lowest": "#09100d",
+              "on-error-container": "#ffdad6",
+              "on-surface": "#dde4df",
+              "on-tertiary-container": "#403500",
+              "surface-container-low": "#161d1a",
+              "inverse-primary": "#006d3d",
+              "on-primary": "#00391d",
+              "on-error": "#690005",
+              "on-tertiary": "#3a3000",
+              "background": "#0e1512",
+              "surface-container-high": "#242c28",
+              "on-secondary-fixed": "#141e1b",
+              "on-primary-fixed": "#00210f",
+              "surface-bright": "#333b37",
+              "tertiary-fixed": "#ffe16d",
+              "surface": "#0e1512",
+              "primary-container": "#3cb371",
+              "on-tertiary-fixed-variant": "#544600",
+              "primary": "#69dd96",
+              "on-tertiary-fixed": "#221b00",
+              "surface-container": "#1a211e",
+              "on-background": "#dde4df",
+              "tertiary": "#e9c400",
+              "primary-fixed": "#86fab0",
+              "on-primary-container": "#003f21",
+              "outline-variant": "#3e4a40",
+              "surface-container-highest": "#2f3633",
+              "surface-variant": "#2f3633",
+              "primary-fixed-dim": "#69dd96",
+              "on-primary-fixed-variant": "#00522d",
+              "error-container": "#93000a",
+              "secondary": "#bec9c4",
+              "on-surface-variant": "#bdcabd",
+              "error": "#ffb4ab",
+              "surface-tint": "#69dd96",
+              "secondary-fixed-dim": "#bec9c4",
+              "tertiary-fixed-dim": "#e9c400",
+              "secondary-fixed": "#dae5e0",
+              "secondary-container": "#3e4945",
+              "inverse-surface": "#dde4df",
+              "on-secondary": "#28332f",
+              "on-secondary-fixed-variant": "#3e4945",
+              "inverse-on-surface": "#2b322e",
+              "surface-dim": "#0e1512",
+              "tertiary-container": "#ba9c00"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(26, 33, 30, 0.6);
+        backdrop-filter: blur(20px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-[#0e1512] dark:bg-[#0e1512] flex items-center justify-between px-6 py-4 w-full docked full-width top-0 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#3cb371]" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<h1 class="font-['Epilogue'] font-bold tracking-tight text-xl uppercase text-[#69dd96]">Culinary Alchemist</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150 text-emerald-100/50">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="User profile portrait close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWyZzy74faOhOXjB9tZzcSToxp9m_y5GMUVKmHWwsexNddyw6pOUy3pGfNQVaZ4Hd_jWURl0FTAo80MdW_3KLHrU1qM77_iCwBvfUwcIreBWbrt-squ5Qz8lxAtJJuLZyGSmQJ76iZY04qUAMfW08LG_e64Mtg2YWIqQovk4tFPnevqg2guRw8jU9tKE59Zud0FTNwxxRSVpGynbRLPel3Wi90XWv4M7Hvtdu8r2vu2tp7sOESkHdPuAMq4uwn-PyIU0oOqP88xeA"/>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center px-4 pt-6 pb-32 max-w-lg mx-auto w-full relative">
+<!-- Matching Badge -->
+<div class="mb-6 self-start">
+<div class="inline-flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-primary/10">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label text-sm font-bold text-primary tracking-wide">23 POSIŁKI PASUJĄ</span>
+</div>
+</div>
+<!-- Tinder-style Card Stack -->
+<div class="relative w-full aspect-[3/4] group">
+<!-- Background Card (Stacking Effect) -->
+<div class="absolute inset-0 translate-y-4 scale-[0.92] bg-surface-container-low rounded-lg opacity-40 blur-[1px]"></div>
+<div class="absolute inset-0 translate-y-2 scale-[0.96] bg-surface-container rounded-lg opacity-70 blur-[0.5px]"></div>
+<!-- Active Card -->
+<div class="absolute inset-0 bg-surface-container rounded-lg overflow-hidden shadow-2xl transition-transform duration-300 hover:rotate-1">
+<!-- Meal Photo -->
+<img alt="Łosoś z grilla" class="w-full h-full object-cover" data-alt="Gourmet grilled salmon with asparagus and lemon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN3AEAKJbOt6CCL6wpmX81MmiQNeIrZFWBszyh_KiEJZjWGBQCJNECBxC_HsHMND5JZT9CGuav_biod591p0JA_iI9KStmdFoo6qpCIHNaciSTXc4ZUN8Ydv3B9WYd1Fwmo7F3temq16EgwxslxsbP8hw95kzBEMB9sEtIz7mj-EArgffUQb3JMpPDtXZsQI91VVwIgGwhCmnu9wn4SZWjHWvah1-wteUVtCFIhpA3mm_HouMLhG07LA9MGYuZf0pNik5i7MYRRtc"/>
+<!-- LIKE/NOPE Overlays (Hidden by default) -->
+<div class="absolute top-8 left-8 border-4 border-primary text-primary font-headline font-black text-4xl px-4 py-1 rounded-lg uppercase -rotate-12 opacity-0 group-hover:opacity-10 transition-opacity">LIKE</div>
+<div class="absolute top-8 right-8 border-4 border-error text-error font-headline font-black text-4xl px-4 py-1 rounded-lg uppercase rotate-12 opacity-0 group-hover:opacity-10 transition-opacity">NOPE</div>
+<!-- Glassmorphism Overlay -->
+<div class="absolute bottom-0 left-0 right-0 p-6 glass-card border-t border-white/5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded">Włoska</span>
+<h2 class="font-headline text-2xl font-bold text-on-surface mt-1">Łosoś z grilla</h2>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant bg-black/20 px-2 py-1 rounded-md backdrop-blur-md">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-label text-xs font-bold">25 min</span>
+</div>
+</div>
+<!-- Nutritional Highlights -->
+<div class="flex gap-4 mt-4">
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px] uppercase font-semibold tracking-tighter">Kcal</span>
+<span class="font-label text-tertiary font-bold text-lg leading-tight">480</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/30"></div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px] uppercase font-semibold tracking-tighter">Białko</span>
+<span class="font-label text-on-surface font-bold text-lg leading-tight">38g</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/30"></div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px] uppercase font-semibold tracking-tighter">Tłuszcze</span>
+<span class="font-label text-on-surface font-bold text-lg leading-tight">22g</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-8 mt-8">
+<button class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-error border border-error/20 hover:bg-error/10 transition-colors active:scale-90 duration-200 shadow-xl">
+<span class="material-symbols-outlined !text-3xl">close</span>
+</button>
+<button class="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-[0_0_30px_rgba(105,221,150,0.3)] hover:scale-105 transition-transform active:scale-90 duration-200">
+<span class="material-symbols-outlined !text-4xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<button class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-tertiary border border-tertiary/20 hover:bg-tertiary/10 transition-colors active:scale-90 duration-200 shadow-xl">
+<span class="material-symbols-outlined !text-3xl">star</span>
+</button>
+</div>
+<!-- Week Selector Section -->
+<section class="w-full mt-10">
+<h3 class="font-headline text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4 px-2">Twój Tydzień</h3>
+<div class="flex justify-between items-center bg-surface-container-low p-4 rounded-xl border border-white/5">
+<!-- Mon (Filled) -->
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant">Pn</span>
+<div class="w-12 h-12 rounded-full border-2 border-primary overflow-hidden">
+<img alt="Meal" class="w-full h-full object-cover" data-alt="Healthy salad bowl top view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBC-YYYBxZYJ15xpQnthwG_91-vzbT0fq3yPOqoe2GuTWwws6G8O9VVn0oabX3ZyaIhDF8BRkaFaKOmsJLvFwfHQs0wEr_4i1rZ6Oglq9J1p0ZV-MftDn0QwfJC_nkHfVnBrYu-wW-fDgHCTPnZ35TlVwsplxsATn432HpHubF0Xt4Kk8MiuLHvXheCDrAA8UUwUPzrSiULcUfslpLSrbdwefqRhNsyqopvpfPMggts3khe0DIx9pHF_0pWueq0Ej80gAczGskmws"/>
+</div>
+</div>
+<!-- Tue (Empty) -->
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant">Wt</span>
+<button class="w-12 h-12 rounded-full border border-dashed border-outline-variant flex items-center justify-center text-primary hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-xl">add</span>
+</button>
+</div>
+<!-- Wed (Filled) -->
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant text-primary">Śr</span>
+<div class="w-12 h-12 rounded-full border-2 border-primary overflow-hidden relative">
+<img alt="Meal" class="w-full h-full object-cover" data-alt="Avocado toast on wooden board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHkkH6AphIxwaog6bmHtV6aE9IrsihmyRqFSZGYxHHCYf32Yk3svYBhlZWXav0JR6XrMRqCt1Kg4RIKRs3JtkzU4j8HmS1541n7hzq0FRTBUgmLlOjy8EUfmzefc5q1wyf3SwsUuBzpV8ee6KTheoRJUueI2ty84vviLVkckEEK11SuUXTdWP9EvFOo7Yn7_Uvut_ojgcZiy8YPYqI1LLe3_xuxKo_p-kuwbB_B_7HbyBkLl2kgekUdVUmqvYDTbd67FckVVESmgk"/>
+<div class="absolute inset-0 bg-primary/20"></div>
+</div>
+</div>
+<!-- Thu (Empty) -->
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant">Cz</span>
+<button class="w-12 h-12 rounded-full border border-dashed border-outline-variant flex items-center justify-center text-primary hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-xl">add</span>
+</button>
+</div>
+<!-- Fri (Empty) -->
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] font-bold text-on-surface-variant">Pt</span>
+<button class="w-12 h-12 rounded-full border border-dashed border-outline-variant flex items-center justify-center text-primary hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-xl">add</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-10 bg-[#1a211e]/80 backdrop-blur-xl">
+<div class="fixed bottom-8 left-4 right-4 rounded-full border border-white/5 h-16 bg-[#1a211e]/80 backdrop-blur-xl flex justify-around items-center shadow-[0px_40px_40px_rgba(0,0,0,0.4)] px-2">
+<a class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide active:scale-90 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Plan</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#69dd96] relative after:content-[''] after:w-1 after:h-1 after:bg-[#69dd96] after:rounded-full after:mt-1 font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide active:scale-90 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">swipe_vertical</span>
+<span>Swipe</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide active:scale-90 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span>Lista</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide active:scale-90 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span>Gotowanie</span>
+</a>
+<a class="flex flex-col items-center justify-center text-emerald-100/40 hover:text-emerald-200 transition-colors font-['Be_Vietnam_Pro'] font-semibold text-[10px] tracking-wide active:scale-90 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Ustawienia</span>
+</a>
+</div>
+</nav>
+</body></html>
