@@ -1,5 +1,3 @@
-'use client'
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchPlan, savePlan } from '@/lib/api'
 import type { WeeklyPlan } from '@/types'
@@ -22,7 +20,7 @@ export function usePlanMutation(token: string | null) {
     mutationFn: ({ weekKey, plan }: { weekKey: string; plan: WeeklyPlan }) =>
       savePlan(weekKey, plan, token),
     onSuccess: (_, { weekKey }) => {
-      queryClient.invalidateQueries({ queryKey: ['plan', weekKey, token] })
+      queryClient.invalidateQueries({ queryKey: planQueryKey(weekKey, token) })
     },
   })
 }

@@ -1,12 +1,6 @@
 import { createMiddleware } from 'hono/factory'
 import type { Context } from 'hono'
-
-type Env = {
-  Bindings: {
-    DB: D1Database
-    MEAL_SWIPER_API_KEY: string
-  }
-}
+import type { Env } from './index'
 
 /**
  * API key validation middleware.

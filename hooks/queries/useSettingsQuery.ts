@@ -1,5 +1,3 @@
-'use client'
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchSettings, saveSettings } from '@/lib/api'
 import type { AppSettings } from '@/types'

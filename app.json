@@ -32,7 +32,7 @@
       "typedRoutes": true
     },
     "updates": {
-      "url": "https://u.expo.dev/meal-swiper"
+      "url": "https://u.expo.dev/YOUR_PROJECT_UUID"
     },
     "runtimeVersion": {
       "policy": "appVersion"

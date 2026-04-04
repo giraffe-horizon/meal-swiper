@@ -3,7 +3,7 @@ import type { DayKey } from '@/types'
 
 interface SwipeState {
   currentIndex: number
-  seenIds: Set<string>
+  seenIds: string[]
   currentDay: DayKey
   setCurrentIndex: (index: number) => void
   addSeenId: (id: string) => void
@@ -14,24 +14,24 @@ interface SwipeState {
 
 export const useSwipeStore = create<SwipeState>((set) => ({
   currentIndex: 0,
-  seenIds: new Set(),
+  seenIds: [],
   currentDay: 'mon',
 
   setCurrentIndex: (index: number) => set({ currentIndex: index }),
 
   addSeenId: (id: string) =>
     set((state) => ({
-      seenIds: new Set([...state.seenIds, id]),
+      seenIds: state.seenIds.includes(id) ? state.seenIds : [...state.seenIds, id],
     })),
 
-  clearSeenIds: () => set({ seenIds: new Set() }),
+  clearSeenIds: () => set({ seenIds: [] }),
 
   setCurrentDay: (day: DayKey) => set({ currentDay: day }),
 
   reset: () =>
     set({
       currentIndex: 0,
-      seenIds: new Set(),
+      seenIds: [],
       currentDay: 'mon',
     }),
 }))

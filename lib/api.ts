@@ -106,3 +106,29 @@ export async function updateTenantName(token: string, name: string): Promise<voi
     body: JSON.stringify({ token, name }),
   })
 }
+
+export async function fetchIngredients(): Promise<string[]> {
+  const res = await fetch(`${API_BASE}/ingredients`, { headers: { ...API_HEADERS } })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export async function fetchCuisines(): Promise<string[]> {
+  const res = await fetch(`${API_BASE}/cuisines`, { headers: { ...API_HEADERS } })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  return res.json()
+}
+
+export async function fetchMealsWithVariants(): Promise<Meal[]> {
+  const res = await fetch(`${API_BASE}/meals?format=variants`, { headers: { ...API_HEADERS } })
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
+  const data = await res.json()
+  return Array.isArray(data) ? data : []
+}
+
+export async function deleteAccount(token: string): Promise<void> {
+  await fetch(`${API_BASE}/account`, {
+    method: 'DELETE',
+    headers: tenantHeaders(token),
+  })
+}
