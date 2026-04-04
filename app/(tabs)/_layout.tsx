@@ -98,7 +98,15 @@ export default function TabLayout() {
       screenOptions={{ headerShown: false, sceneStyle: { paddingBottom: 90 } }}
     >
       {TABS.map((tab) => (
-        <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.title }} />
+        <Tabs.Screen
+          key={tab.name}
+          name={tab.name}
+          options={{
+            title: tab.title,
+            // Disable iOS swipe-back on Swipe tab to avoid gesture conflict with card swipe
+            ...(tab.name === 'swipe' ? { gestureEnabled: false } : {}),
+          }}
+        />
       ))}
     </Tabs>
   )
