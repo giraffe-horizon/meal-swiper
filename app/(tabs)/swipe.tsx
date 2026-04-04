@@ -7,14 +7,19 @@ import CategoryFilter from '@/components/swipe/CategoryFilter'
 import FridgeModeFilter from '@/components/swipe/FridgeModeFilter'
 import MealModal from '@/components/MealModal'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import DaySelector from '@/components/ui/DaySelector'
 import { useMealsWithVariantsQuery } from '@/hooks/queries/useMealsWithVariantsQuery'
 import { useCuisinesQuery } from '@/hooks/queries/useCuisinesQuery'
 import { useSettingsQuery } from '@/hooks/queries/useSettingsQuery'
+import { useWeekDates } from '@/hooks/useWeekDates'
+import { useWeeklyPlan } from '@/hooks/useWeeklyPlan'
 import { useSwipeStore } from '@/stores/swipe'
 import { useUIStore } from '@/stores/ui'
 import { useAuthStore } from '@/stores/auth'
 import { filterMealsByPreferences } from '@/lib/meal-filter'
-import type { MealWithVariants } from '@/types'
+import { toMealForModal } from '@/lib/meal-convert'
+import { DAY_KEYS, DAY_NAMES_MAP } from '@/lib/utils'
+import type { DayKey, MealWithVariants } from '@/types'
 
 export default function SwipeScreen() {
   const navigation = useNavigation()
@@ -27,8 +32,12 @@ export default function SwipeScreen() {
   const settingsQuery = useSettingsQuery(token)
 
   // Stores
-  const { seenIds, addSeenId } = useSwipeStore()
-  const { activeFilters, setActiveFilters } = useUIStore()
+  const { seenIds, addSeenId, currentDay, setCurrentDay } = useSwipeStore()
+  const { activeFilters, setActiveFilters, weekOffset, addToast } = useUIStore()
+
+  // Plan integration
+  const { weekKey } = useWeekDates(weekOffset)
+  const { plan, setMeal } = useWeeklyPlan(weekKey, token)
 
   // Local state
   const [modalMeal, setModalMeal] = useState<MealWithVariants | null>(null)
@@ -73,13 +82,45 @@ export default function SwipeScreen() {
   // Extract just the MealWithVariants for SwipeStack
   const stackMeals = useMemo(() => filteredMeals.map((fm) => fm.meal), [filteredMeals])
 
+  // Find next empty day helper
+  const findNextEmptyDay = useCallback(
+    (startDay: DayKey): DayKey | null => {
+      const startIdx = DAY_KEYS.indexOf(startDay)
+      for (let i = 0; i < DAY_KEYS.length; i++) {
+        const idx = (startIdx + i) % DAY_KEYS.length
+        const day = DAY_KEYS[idx]
+        const freeKey = `${day}_free` as `${DayKey}_free`
+        if (!plan[day] && !plan[freeKey]) return day
+      }
+      return null
+    },
+    [plan]
+  )
+
   // Swipe handlers
   const handleSwipeRight = useCallback(
     (meal: MealWithVariants) => {
       addSeenId(meal.id)
-      // TODO: Phase 3 — save to plan for currentDay
+
+      // Save to plan
+      const mealForPlan = toMealForModal(meal)
+      setMeal(currentDay, mealForPlan)
+      addToast({
+        message: `Dodano ${meal.nazwa} na ${DAY_NAMES_MAP[currentDay]}!`,
+        type: 'success',
+      })
+
+      // Advance to next empty day
+      const nextIdx = DAY_KEYS.indexOf(currentDay) + 1
+      const nextDay = nextIdx < DAY_KEYS.length ? DAY_KEYS[nextIdx] : null
+      const emptyDay = nextDay ? findNextEmptyDay(nextDay) : findNextEmptyDay(DAY_KEYS[0])
+      if (emptyDay) {
+        setCurrentDay(emptyDay)
+      } else {
+        addToast({ message: 'Plan pełny!', type: 'info' })
+      }
     },
-    [addSeenId]
+    [addSeenId, currentDay, setMeal, setCurrentDay, addToast, findNextEmptyDay]
   )
 
   const handleSwipeLeft = useCallback(
@@ -97,9 +138,25 @@ export default function SwipeScreen() {
     (meal: MealWithVariants) => {
       addSeenId(meal.id)
       setModalMeal(null)
-      // TODO: Phase 3 — save to plan for currentDay
+
+      const mealForPlan = toMealForModal(meal)
+      setMeal(currentDay, mealForPlan)
+      addToast({
+        message: `Dodano ${meal.nazwa} na ${DAY_NAMES_MAP[currentDay]}!`,
+        type: 'success',
+      })
+
+      // Advance to next empty day
+      const nextIdx = DAY_KEYS.indexOf(currentDay) + 1
+      const nextDay = nextIdx < DAY_KEYS.length ? DAY_KEYS[nextIdx] : null
+      const emptyDay = nextDay ? findNextEmptyDay(nextDay) : findNextEmptyDay(DAY_KEYS[0])
+      if (emptyDay) {
+        setCurrentDay(emptyDay)
+      } else {
+        addToast({ message: 'Plan pełny!', type: 'info' })
+      }
     },
-    [addSeenId]
+    [addSeenId, currentDay, setMeal, setCurrentDay, addToast, findNextEmptyDay]
   )
 
   // Disable iOS swipe-back on this screen
@@ -157,8 +214,13 @@ export default function SwipeScreen() {
 
   return (
     <View className="flex-1 bg-background">
+      {/* Day selector — which day are we swiping for? */}
+      <View className="px-4 pt-3 pb-1">
+        <DaySelector activeDay={currentDay} onSelect={setCurrentDay} />
+      </View>
+
       {/* Filters row */}
-      <View className="flex-row items-center gap-2 pt-4 pb-2">
+      <View className="flex-row items-center gap-2 pt-2 pb-2">
         <View className="flex-1">
           <CategoryFilter
             cuisines={cuisines}
