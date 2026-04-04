@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { View, Text, TextInput, Pressable, Share, ActivityIndicator } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import Card from '@/components/ui/Card'
@@ -25,13 +25,26 @@ export default function HouseholdSection({
     setLocalName(name)
   }, [name])
 
-  // Debounced save
+  // Debounced save — flush immediately on cleanup instead of discarding
+  const pendingNameRef = useRef<string | null>(null)
   useEffect(() => {
-    if (localName === name) return
+    if (localName === name) {
+      pendingNameRef.current = null
+      return
+    }
+    pendingNameRef.current = localName
     const timer = setTimeout(() => {
+      pendingNameRef.current = null
       onNameChange(localName)
     }, 600)
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+      // Flush: save pending name change immediately
+      if (pendingNameRef.current !== null) {
+        onNameChange(pendingNameRef.current)
+        pendingNameRef.current = null
+      }
+    }
   }, [localName, name, onNameChange])
 
   const handleInvite = useCallback(async () => {

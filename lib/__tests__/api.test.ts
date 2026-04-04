@@ -32,3 +32,28 @@ describe('configureApi', () => {
     )
   })
 })
+
+describe('deleteAccount', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    mockFetch.mockReset()
+  })
+
+  it('throws on non-ok response', async () => {
+    mockFetch.mockResolvedValue({ ok: false, status: 500 })
+
+    const { deleteAccount } = await import('../api')
+
+    await expect(deleteAccount('test-token')).rejects.toThrow(
+      'Delete account failed: 500'
+    )
+  })
+
+  it('resolves on ok response', async () => {
+    mockFetch.mockResolvedValue({ ok: true })
+
+    const { deleteAccount } = await import('../api')
+
+    await expect(deleteAccount('test-token')).resolves.toBeUndefined()
+  })
+})

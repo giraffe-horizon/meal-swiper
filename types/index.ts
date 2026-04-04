@@ -132,6 +132,7 @@ export interface Tab {
 }
 
 export interface PersonSettings {
+  id?: string
   name: string
   kcal: number // Deprecated: use dailyKcal
   protein: number // Deprecated: use dailyProtein

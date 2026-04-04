@@ -3,6 +3,7 @@ import { Text } from 'react-native'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  useReducedMotion,
   withTiming,
   withDelay,
   runOnJS,
@@ -57,10 +58,23 @@ function ToastItem({
   topInset: number
   onDismiss: (id: string) => void
 }) {
+  const reduceMotion = useReducedMotion()
   const translateY = useSharedValue(-100)
   const opacity = useSharedValue(0)
 
   useEffect(() => {
+    if (reduceMotion) {
+      translateY.value = 0
+      opacity.value = 1
+      // Auto-dismiss after 3s
+      const timer = setTimeout(() => {
+        translateY.value = -100
+        opacity.value = 0
+        onDismiss(id)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+
     translateY.value = withTiming(0, { duration: 300 })
     opacity.value = withTiming(1, { duration: 300 })
 
@@ -72,7 +86,7 @@ function ToastItem({
         runOnJS(onDismiss)(id)
       })
     )
-  }, [id, translateY, opacity, onDismiss])
+  }, [id, translateY, opacity, onDismiss, reduceMotion])
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],

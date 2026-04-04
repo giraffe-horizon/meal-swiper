@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { View, Text, ScrollView, Pressable, Alert, ActivityIndicator } from 'react-native'
-import { router } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import HouseholdSection from '@/components/settings/HouseholdSection'
 import PersonCard from '@/components/settings/PersonCard'
 import ErrorState from '@/components/ui/ErrorState'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import SkeletonSettings from '@/components/ui/SkeletonSettings'
 import Section from '@/components/ui/Section'
 import { useSettingsQuery, useSettingsMutation } from '@/hooks/queries/useSettingsQuery'
 import { useTenantQuery, useUpdateTenantNameMutation } from '@/hooks/queries/useTenantQuery'
@@ -13,6 +13,7 @@ import { useCuisinesQuery } from '@/hooks/queries/useCuisinesQuery'
 import { useAuthStore } from '@/stores/auth'
 import { useUIStore } from '@/stores/ui'
 import { deleteAccount } from '@/lib/api'
+import { randomUUID } from '@/lib/uuid'
 import { colors } from '@/lib/colors'
 import type { AppSettings, PersonSettings } from '@/types'
 
@@ -51,6 +52,13 @@ export default function SettingsScreen() {
     }
   }, [settingsQuery.data, localSettings])
 
+  // Reset local settings on mutation failure (rollback)
+  useEffect(() => {
+    if (settingsMutation.isError && settingsQuery.data) {
+      setLocalSettings(settingsQuery.data)
+    }
+  }, [settingsMutation.isError, settingsQuery.data])
+
   // Debounced save
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -67,12 +75,21 @@ export default function SettingsScreen() {
     [mutateSettings]
   )
 
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
-    }
-  }, [])
+  // Flush pending save on screen blur instead of discarding
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (saveTimerRef.current) {
+          clearTimeout(saveTimerRef.current)
+          saveTimerRef.current = null
+        }
+        // Flush: save immediately if there are unsaved local changes
+        if (localSettings) {
+          mutateSettings(localSettings)
+        }
+      }
+    }, [localSettings, mutateSettings])
+  )
 
   const settings = localSettings ?? settingsQuery.data
 
@@ -88,7 +105,7 @@ export default function SettingsScreen() {
 
   const handleAddPerson = useCallback(() => {
     if (!settings) return
-    const persons = [...settings.persons, { ...DEFAULT_PERSON, name: `Osoba ${settings.persons.length + 1}` }]
+    const persons = [...settings.persons, { ...DEFAULT_PERSON, id: randomUUID(), name: `Osoba ${settings.persons.length + 1}` }]
     saveSettings({ ...settings, persons, people: persons.length })
   }, [settings, saveSettings])
 
@@ -101,11 +118,13 @@ export default function SettingsScreen() {
     [settings, saveSettings]
   )
 
+  const { mutate: mutateTenantName } = tenantNameMutation
+
   const handleTenantNameChange = useCallback(
     (name: string) => {
-      tenantNameMutation.mutate(name)
+      mutateTenantName(name)
     },
-    [tenantNameMutation]
+    [mutateTenantName]
   )
 
   const handleLogout = useCallback(async () => {
@@ -141,11 +160,7 @@ export default function SettingsScreen() {
 
   // Loading
   if (settingsQuery.isLoading) {
-    return (
-      <View className="flex-1 bg-background">
-        <LoadingSpinner />
-      </View>
-    )
+    return <SkeletonSettings />
   }
 
   // Error
@@ -184,7 +199,7 @@ export default function SettingsScreen() {
           <Section title="Osoby">
             {settings?.persons.map((person, index) => (
               <PersonCard
-                key={index}
+                key={person.id ?? person.name + index}
                 person={person}
                 index={index}
                 cuisines={cuisines}

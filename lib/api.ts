@@ -128,8 +128,9 @@ export async function fetchMealsWithVariants(): Promise<MealWithVariants[]> {
 }
 
 export async function deleteAccount(token: string): Promise<void> {
-  await fetch(`${API_BASE}/account`, {
+  const res = await fetch(`${API_BASE}/account`, {
     method: 'DELETE',
     headers: tenantHeaders(token),
   })
+  if (!res.ok) throw new Error('Delete account failed: ' + res.status)
 }
