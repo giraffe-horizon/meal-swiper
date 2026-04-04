@@ -1,88 +1,60 @@
 # Meal Swiper
 
-Aplikacja do planowania posiłków na tydzień w stylu Tinder — przesuń w prawo, aby dodać danie do planu, w lewo, aby pominąć.
-
-## Funkcje
-
-- **Plan** — kalendarz tygodniowy (Pn–Pt) z podglądem planu, oznaczaniem wolnych dni i menu kontekstowym
-- **Swipe** — przeglądaj dania i wybieraj przesunięciem (drag/strzałki klawiaturowe)
-- **Lista zakupów** — automatycznie generowana z planu, skalowana na liczbę osób, z checkboxami i udostępnianiem
-- **Gotowanie** — przepis dla wybranego dnia z listą składników (skalowanych) i krokami
-- **Ustawienia** — konfiguracja liczby osób i celów kalorycznych
+Mobilna aplikacja do planowania posiłków na tydzień w stylu Tinder — przesuń w prawo, aby dodać danie do planu, w lewo, aby pominąć. Zbudowana w Expo/React Native.
 
 ## Stack
 
-- **Next.js 15** (App Router) + **TypeScript** (strict mode)
-- **Tailwind CSS 3**
-- **Framer Motion** (animacje swipe)
-- **Cloudflare D1** (SQLite database)
-- **Cloudflare R2** (Image storage)
-- **@cloudflare/next-on-pages** (edge runtime na Cloudflare Pages)
+- **Expo SDK 53** + **React Native** + **TypeScript**
+- **NativeWind v4** (Tailwind CSS for React Native)
+- **Zustand** (UI state) + **React Query** (server state)
+- **React Native Reanimated** + **Gesture Handler** (gesture-based swipe)
+- **Expo Router** (file-based routing)
+- **Cloudflare Workers** (API — Hono) + **D1** (SQLite)
 
-## Architektura
-
-```
-┌─────────────────────────────────────────────┐
-│              Cloudflare Pages               │
-│  ┌────────────────────────────────────────┐  │
-│  │         Next.js 15 (App Router)        │  │
-│  │                                        │  │
-│  │  /plan  /swipe  /shopping              │  │
-│  │  /cooking  /settings                   │  │
-│  │                                        │  │
-│  │  /api/meals     (edge, D1)             │  │
-│  │  /api/plan      (edge, D1)             │  │
-│  │  /api/shopping-checked (edge, D1)      │  │
-│  └──────────────┬─────────────────────────┘  │
-│                 │                             │
-│  @cloudflare/next-on-pages + D1 + R2         │
-└─────────────────┼─────────────────────────────┘
-                  │
-    ┌─────────────┴─────────────┐
-    │       Cloudflare D1       │
-    │  (SQLite database)        │
-    └───────────────────────────┘
-```
-
-## Env vars
-
-| Zmienna          | Opis                                  |
-| ---------------- | ------------------------------------- |
-| `DB`             | Cloudflare D1 binding                 |
-| `R2_BUCKET`      | Cloudflare R2 bucket binding          |
-| `GEMINI_API_KEY` | Google Gemini API key (dla przepisów) |
-| `CLOUDFLARE_ID`  | Account ID do operacji na R2          |
-
-## Uruchomienie lokalne
+## Getting Started
 
 ```bash
 npm install
-cp .dev.vars.example .dev.vars   # uzupełnij env vars
+npx expo start
+```
+
+API (standalone Cloudflare Worker):
+
+```bash
+cd api
+npm install
 npm run dev
 ```
 
-Aplikacja dostępna pod `http://localhost:3000`.
+## Architektura
 
-## Build & Deploy
+Aplikacja ma 4 taby:
 
-```bash
-npm run build          # Next.js build (sprawdzenie lokalne)
-npm run pages:build    # Build dla Cloudflare Pages
-npm run deploy         # Build + wrangler deploy
-```
+| Tab | Opis |
+|-----|------|
+| **Swipe** | Przeglądaj dania gestem (swipe right = dodaj, left = skip). Velocity-based threshold + button fallback dla a11y. |
+| **Plan** | Kalendarz tygodniowy (Pn–Pt) z podglądem planu. Tap → bottom sheet z opcjami (Gotuj / Usuń / Zamień). Cooking jako sub-screen. |
+| **Lista zakupów** | Automatycznie generowana z planu, skalowana na liczbę osób, pogrupowana po składnikach z checkboxami. |
+| **Ustawienia** | Profile osób (kcal, białko, dieta), excluded ingredients, household management, delete account. |
 
-Ustaw env vars w Cloudflare Pages Dashboard → Settings → Environment variables.
+### State Management
 
-## Skrypty
+- **React Query** = source of truth dla server data (meals, plan, settings, shopping)
+- **Zustand** = UI-only state (filters, week offset, swipe index, toasts, auth token)
 
-| Skrypt                | Opis                         |
-| --------------------- | ---------------------------- |
-| `npm run dev`         | Next.js dev server           |
-| `npm run build`       | Next.js production build     |
-| `npm run pages:build` | Build dla Cloudflare Pages   |
-| `npm run deploy`      | Build + deploy na Cloudflare |
-| `npm run type-check`  | Sprawdzenie typów TypeScript |
-| `npm test`            | Testy Vitest (130+ testów)   |
+### API
+
+Standalone Cloudflare Worker w `api/` z własnym `package.json` i `wrangler.toml`. Hono router z middleware (API key auth, tenant extraction). Database: Cloudflare D1 (SQLite).
+
+## Scripts
+
+| Script | Opis |
+|--------|------|
+| `npm run dev` | Expo dev server |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript check |
+| `npm test` | Vitest (unit tests) |
+| `npm run test:coverage` | Vitest z coverage |
 
 ## Autor
 

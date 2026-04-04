@@ -45,16 +45,24 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
-  # TODO: Re-enable tests after Phase 5 (Maestro E2E + RNTL component tests)
-  # test:
-  #   name: 🧪 Test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - uses: actions/setup-node@v6
-  #       with: { node-version: "20", cache: "npm" }
-  #     - run: npm ci
-  #     - run: npx vitest run --coverage
+  test:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npx vitest run --coverage --coverage.thresholds.lines=70
 
   # TODO: EAS Build will be configured in Phase 5 for production builds
   # build:
