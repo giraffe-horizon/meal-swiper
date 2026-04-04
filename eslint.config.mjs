@@ -35,6 +35,12 @@ const config = [
       'api/**',
       'ios/**',
       'android/**',
+      'data/**',
+      'coverage/**',
+      'design-reference/**',
+      '.next/**',
+      '.open-next/**',
+      '.wrangler/**',
     ],
   },
 ]

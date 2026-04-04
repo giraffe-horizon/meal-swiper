@@ -152,7 +152,7 @@ export function mergeAmounts(a: string, b: string): string {
   if (parsedA.unit === parsedB.unit) {
     const sum = parsedA.value + parsedB.value
     let gramsSum: number | undefined
-    let hintUnit: 'g' | 'ml' = 'g'
+    let hintUnit: 'g' | 'ml' = 'g' // eslint-disable-line no-useless-assignment
 
     if (parsedA.gramsHint !== undefined && parsedB.gramsHint !== undefined) {
       // Both have hints - sum if same hintUnit

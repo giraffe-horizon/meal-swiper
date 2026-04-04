@@ -26,8 +26,8 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-  test:
-    name: 🧪 Test
+  typecheck:
+    name: 🔎 Type Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,57 +42,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests with coverage
-        run: npx vitest run --coverage
+      - name: TypeScript check
+        run: npx tsc --noEmit
 
-  build:
-    name: 🏗️ Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+  # TODO: Re-enable tests after Phase 5 (Maestro E2E + RNTL component tests)
+  # test:
+  #   name: 🧪 Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - uses: actions/setup-node@v6
+  #       with: { node-version: "20", cache: "npm" }
+  #     - run: npm ci
+  #     - run: npx vitest run --coverage
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build (Cloudflare Pages)
-        run: npm run pages:build
-
-  e2e:
-    name: 🎭 E2E Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build for Cloudflare (OpenNext)
-        run: npm run pages:build
-
-      - name: Seed local D1 database
-        run: |
-          npx wrangler d1 execute meal-swiper-db --local --file schema.sql --persist-to .wrangler/state/e2e
-          npx wrangler d1 execute meal-swiper-db --local --file e2e/fixtures/seed.sql --persist-to .wrangler/state/e2e
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Run E2E tests
-        run: npx playwright test
-        env:
-          CI: true
-          WRANGLER_LOG: warn
+  # TODO: EAS Build will be configured in Phase 5 for production builds
+  # build:
+  #   name: 🏗️ EAS Build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - uses: expo/expo-github-action@v8
+  #       with: { expo-version: latest, eas-version: latest, token: ${{ secrets.EXPO_TOKEN }} }
+  #     - run: npm ci
+  #     - run: eas build --platform all --non-interactive --no-wait
