@@ -14,8 +14,20 @@
 
 ## Build Configuration
 - [ ] app.json bundleIdentifier + package set
-- [ ] expo-updates URL set to real project UUID
+- [ ] expo-updates: run `eas init`, set real project UUID, then set `enabled: true` in app.json
 - [ ] EAS credentials configured (eas credentials)
+
+## Store Listings & Compliance
+- [ ] Apple: App Privacy details questionnaire
+- [ ] Google: Data Safety form
+- [ ] Both: Content rating questionnaire
+- [ ] Both: App category selection (Food & Drink)
+- [ ] Apple: App Review Information (contact, demo account if needed)
+- [ ] Apple: Age rating
+- [ ] Google: Target audience and content
+
+## Build Configuration (extra.apiKey)
+- [ ] Set `apiKey` in app.json via EAS secrets before production build (see Build Configuration below)
 
 ## Build & Testing
 - [ ] First production build: eas build --profile production

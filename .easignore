@@ -2,7 +2,7 @@ api/
 data/
 design-reference/
 docs/
-__tests__/
+**/__tests__/
 *.test.ts
 *.spec.ts
 EXPO_MIGRATION_PLAN.md

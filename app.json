@@ -36,7 +36,7 @@
       "typedRoutes": true
     },
     "updates": {
-      "enabled": true,
+      "enabled": false,
       "url": "https://u.expo.dev/YOUR_PROJECT_UUID"
     },
     "runtimeVersion": {

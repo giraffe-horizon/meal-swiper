@@ -6,6 +6,11 @@ export default defineConfig({
     environment: 'node',
     include: ['lib/__tests__/**', 'stores/__tests__/**', 'hooks/__tests__/**'],
     exclude: ['node_modules', 'api/', '.expo/'],
+    coverage: {
+      thresholds: {
+        lines: 70,
+      },
+    },
   },
   resolve: {
     alias: {
